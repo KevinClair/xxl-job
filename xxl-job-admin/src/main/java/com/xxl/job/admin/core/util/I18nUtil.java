@@ -23,13 +23,12 @@ public class I18nUtil {
     private static Logger logger = LoggerFactory.getLogger(I18nUtil.class);
 
     private static Properties prop = null;
-    public static Properties loadI18nProp(){
+    public static Properties loadI18nProp(String i18n){
         if (prop != null) {
             return prop;
         }
         try {
             // build i18n prop
-            String i18n = XxlJobAdminConfig.getAdminConfig().getI18n();
             String i18nFile = MessageFormat.format("i18n/message_{0}.properties", i18n);
 
             // load prop
@@ -45,11 +44,22 @@ public class I18nUtil {
     /**
      * get val of i18n key
      *
-     * @param key
+     * @param i18n 国际化类型
+     * @param key  配置key
+     * @return
+     */
+    public static String getString(String i18n, String key) {
+        return loadI18nProp(i18n).getProperty(key);
+    }
+
+    /**
+     * get val of i18n key
+     *
+     * @param key 配置Key
      * @return
      */
     public static String getString(String key) {
-        return loadI18nProp().getProperty(key);
+        return loadI18nProp("zh_CN").getProperty(key);
     }
 
     /**
@@ -61,7 +71,7 @@ public class I18nUtil {
     public static String getMultString(String... keys) {
         Map<String, String> map = new HashMap<String, String>();
 
-        Properties prop = loadI18nProp();
+        Properties prop = loadI18nProp("zh_CN");
         if (keys!=null && keys.length>0) {
             for (String key: keys) {
                 map.put(key, prop.getProperty(key));

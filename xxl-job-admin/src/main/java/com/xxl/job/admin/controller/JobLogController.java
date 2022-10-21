@@ -1,5 +1,6 @@
 package com.xxl.job.admin.controller;
 
+import com.xxl.job.admin.core.ExecutorBizRepository;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
 import com.xxl.job.admin.core.model.XxlJobGroup;
@@ -46,6 +47,15 @@ public class JobLogController {
 	public XxlJobInfoDao xxlJobInfoDao;
 	@Resource
 	public XxlJobLogDao xxlJobLogDao;
+
+	@Resource
+	private XxlJobScheduler jobScheduler;
+
+	@Resource
+	private ExecutorBizRepository executorBizRepository;
+
+	@Resource
+	private XxlJobCompleter jobCompleter;
 
 	@RequestMapping
 	public String index(HttpServletRequest request, Model model, @RequestParam(required = false, defaultValue = "0") Integer jobId) {
@@ -139,7 +149,7 @@ public class JobLogController {
 	@ResponseBody
 	public ReturnT<LogResult> logDetailCat(String executorAddress, long triggerTime, long logId, int fromLineNum){
 		try {
-			ExecutorBiz executorBiz = XxlJobScheduler.getExecutorBiz(executorAddress);
+			ExecutorBiz executorBiz = executorBizRepository.getExecutorBiz(executorAddress);
 			ReturnT<LogResult> logResult = executorBiz.log(new LogParam(triggerTime, logId, fromLineNum));
 
 			// is end
@@ -173,7 +183,7 @@ public class JobLogController {
 		// request of kill
 		ReturnT<String> runResult = null;
 		try {
-			ExecutorBiz executorBiz = XxlJobScheduler.getExecutorBiz(log.getExecutorAddress());
+			ExecutorBiz executorBiz = executorBizRepository.getExecutorBiz(log.getExecutorAddress());
 			runResult = executorBiz.kill(new KillParam(jobInfo.getId()));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -184,7 +194,7 @@ public class JobLogController {
 			log.setHandleCode(ReturnT.FAIL_CODE);
 			log.setHandleMsg( I18nUtil.getString("joblog_kill_log_byman")+":" + (runResult.getMsg()!=null?runResult.getMsg():""));
 			log.setHandleTime(new Date());
-			XxlJobCompleter.updateHandleInfoAndFinish(log);
+			jobCompleter.updateHandleInfoAndFinish(log);
 			return new ReturnT<String>(runResult.getMsg());
 		} else {
 			return new ReturnT<String>(500, runResult.getMsg());

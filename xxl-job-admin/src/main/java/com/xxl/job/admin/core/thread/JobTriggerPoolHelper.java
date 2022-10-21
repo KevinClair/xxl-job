@@ -5,17 +5,27 @@ import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.trigger.XxlJobTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.annotation.Resource;
 
 /**
  * job trigger thread pool helper
  *
  * @author xuxueli 2018-07-03 21:08:07
  */
+@Component
 public class JobTriggerPoolHelper {
     private static Logger logger = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
+
+    @Resource
+    private XxlJobTrigger jobTrigger;
+
+    @Resource
+    private XxlJobAdminConfig jobAdminConfig;
 
 
     // ---------------------- trigger pool ----------------------
@@ -27,7 +37,7 @@ public class JobTriggerPoolHelper {
     public void start(){
         fastTriggerPool = new ThreadPoolExecutor(
                 10,
-                XxlJobAdminConfig.getAdminConfig().getTriggerPoolFastMax(),
+                jobAdminConfig.getTriggerPoolFastMax(),
                 60L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(1000),
@@ -40,7 +50,7 @@ public class JobTriggerPoolHelper {
 
         slowTriggerPool = new ThreadPoolExecutor(
                 10,
-                XxlJobAdminConfig.getAdminConfig().getTriggerPoolSlowMax(),
+                jobAdminConfig.getTriggerPoolSlowMax(),
                 60L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(2000),
@@ -92,7 +102,7 @@ public class JobTriggerPoolHelper {
 
                 try {
                     // do trigger
-                    XxlJobTrigger.trigger(jobId, triggerType, failRetryCount, executorShardingParam, executorParam, addressList);
+                    jobTrigger.trigger(jobId, triggerType, failRetryCount, executorShardingParam, executorParam, addressList);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 } finally {

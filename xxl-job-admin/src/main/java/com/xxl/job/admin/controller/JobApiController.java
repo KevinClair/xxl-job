@@ -28,6 +28,9 @@ public class JobApiController {
     @Resource
     private AdminBiz adminBiz;
 
+    @Resource
+    private XxlJobAdminConfig adminConfig;
+
     /**
      * api
      *
@@ -47,9 +50,9 @@ public class JobApiController {
         if (uri==null || uri.trim().length()==0) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping empty.");
         }
-        if (XxlJobAdminConfig.getAdminConfig().getAccessToken()!=null
-                && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length()>0
-                && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN))) {
+        if (adminConfig.getAccessToken()!=null
+                && adminConfig.getAccessToken().trim().length()>0
+                && adminConfig.getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN))) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
         }
 

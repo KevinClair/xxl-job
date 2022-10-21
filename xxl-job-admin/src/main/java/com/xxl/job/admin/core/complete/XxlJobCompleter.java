@@ -6,18 +6,30 @@ import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.admin.dao.XxlJobInfoDao;
+import com.xxl.job.admin.dao.XxlJobLogDao;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.context.XxlJobContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
+
+import javax.annotation.Resource;
 
 /**
  * @author xuxueli 2020-10-30 20:43:10
  */
+@Component
 public class XxlJobCompleter {
     private static Logger logger = LoggerFactory.getLogger(XxlJobCompleter.class);
+
+    @Resource
+    private XxlJobLogDao jobLogDao;
+
+    @Resource
+    private XxlJobInfoDao jobInfoDao;
 
     /**
      * common fresh handle entrance (limit only once)
@@ -25,7 +37,7 @@ public class XxlJobCompleter {
      * @param xxlJobLog
      * @return
      */
-    public static int updateHandleInfoAndFinish(XxlJobLog xxlJobLog) {
+    public int updateHandleInfoAndFinish(XxlJobLog xxlJobLog) {
 
         // finish
         finishJob(xxlJobLog);
@@ -36,19 +48,19 @@ public class XxlJobCompleter {
         }
 
         // fresh handle
-        return XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateHandleInfo(xxlJobLog);
+        return jobLogDao.updateHandleInfo(xxlJobLog);
     }
 
 
     /**
      * do somethind to finish job
      */
-    private static void finishJob(XxlJobLog xxlJobLog){
+    private void finishJob(XxlJobLog xxlJobLog){
 
         // 1、handle success, to trigger child job
         String triggerChildMsg = null;
         if (XxlJobContext.HANDLE_CODE_SUCCESS == xxlJobLog.getHandleCode()) {
-            XxlJobInfo xxlJobInfo = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().loadById(xxlJobLog.getJobId());
+            XxlJobInfo xxlJobInfo = jobInfoDao.loadById(xxlJobLog.getJobId());
             if (xxlJobInfo!=null && xxlJobInfo.getChildJobId()!=null && xxlJobInfo.getChildJobId().trim().length()>0) {
                 triggerChildMsg = "<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_child_run") +"<<<<<<<<<<< </span><br>";
 

@@ -6,8 +6,11 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
+import com.xxl.job.admin.dao.XxlJobInfoDao;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,16 +19,23 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+
 /**
  * @author xuxueli 2019-05-21
  */
+@Component
 public class JobScheduleHelper {
     private static Logger logger = LoggerFactory.getLogger(JobScheduleHelper.class);
 
-    private static JobScheduleHelper instance = new JobScheduleHelper();
-    public static JobScheduleHelper getInstance(){
-        return instance;
-    }
+    @Resource
+    private XxlJobAdminConfig jobAdminConfig;
+    @Resource
+    private DataSource dataSource;
+
+    @Resource
+    private XxlJobInfoDao jobInfoDao;
 
     public static final long PRE_READ_MS = 5000;    // pre read
 
@@ -52,7 +62,7 @@ public class JobScheduleHelper {
                 logger.info(">>>>>>>>> init xxl-job admin scheduler success.");
 
                 // pre-read count: treadpool-size * trigger-qps (each trigger cost 50ms, qps = 1000/50 = 20)
-                int preReadCount = (XxlJobAdminConfig.getAdminConfig().getTriggerPoolFastMax() + XxlJobAdminConfig.getAdminConfig().getTriggerPoolSlowMax()) * 20;
+                int preReadCount = (jobAdminConfig.getTriggerPoolFastMax() + jobAdminConfig.getTriggerPoolSlowMax()) * 20;
 
                 while (!scheduleThreadToStop) {
 
@@ -66,7 +76,7 @@ public class JobScheduleHelper {
                     boolean preReadSuc = true;
                     try {
 
-                        conn = XxlJobAdminConfig.getAdminConfig().getDataSource().getConnection();
+                        conn = dataSource.getConnection();
                         connAutoCommit = conn.getAutoCommit();
                         conn.setAutoCommit(false);
 
@@ -77,7 +87,7 @@ public class JobScheduleHelper {
 
                         // 1、pre read
                         long nowTime = System.currentTimeMillis();
-                        List<XxlJobInfo> scheduleList = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().scheduleJobQuery(nowTime + PRE_READ_MS, preReadCount);
+                        List<XxlJobInfo> scheduleList = jobInfoDao.scheduleJobQuery(nowTime + PRE_READ_MS, preReadCount);
                         if (scheduleList!=null && scheduleList.size()>0) {
                             // 2、push time-ring
                             for (XxlJobInfo jobInfo: scheduleList) {
@@ -140,7 +150,7 @@ public class JobScheduleHelper {
 
                             // 3、update trigger info
                             for (XxlJobInfo jobInfo: scheduleList) {
-                                XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().scheduleUpdate(jobInfo);
+                                jobInfoDao.scheduleUpdate(jobInfo);
                             }
 
                         } else {

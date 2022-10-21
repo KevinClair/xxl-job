@@ -38,6 +38,8 @@ public class SampleXxlJob {
     public void demoJobHandler() throws Exception {
         XxlJobHelper.log("XXL-JOB, Hello World.");
 
+        logger.info("执行日志");
+
         for (int i = 0; i < 5; i++) {
             XxlJobHelper.log("beat at:" + i);
             TimeUnit.SECONDS.sleep(2);
