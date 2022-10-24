@@ -1,7 +1,6 @@
 package com.xxl.job.admin.core.trigger;
 
 import com.xxl.job.admin.core.ExecutorBizRepository;
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
@@ -21,9 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * xxl-job trigger
@@ -172,7 +170,7 @@ public class XxlJobTrigger {
                     address = group.getRegistryList().get(0);
                 }
             } else {
-                routeAddressResult = executorRouteStrategyEnum.getRouter().route(triggerParam, group.getRegistryList());
+//                routeAddressResult = executorRouteStrategyEnum.getRouter().routeAddress(triggerParam, group.getRegistryList());
                 if (routeAddressResult.getCode() == ReturnT.SUCCESS_CODE) {
                     address = routeAddressResult.getContent();
                 }

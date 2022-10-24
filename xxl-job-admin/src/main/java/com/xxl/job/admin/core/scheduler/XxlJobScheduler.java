@@ -3,19 +3,12 @@ package com.xxl.job.admin.core.scheduler;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.thread.*;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.client.ExecutorBizClient;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
@@ -44,13 +37,16 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
     @Resource
     private JobScheduleHelper scheduleHelper;
 
+    @Resource
+    private JobTriggerPoolHelper triggerPoolHelper;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         // init i18n
         initI18n();
 
         // admin trigger pool start
-        JobTriggerPoolHelper.toStart();
+        triggerPoolHelper.start();
 
         // admin registry monitor run
         registryHelper.start();
@@ -89,7 +85,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
         registryHelper.toStop();
 
         // admin trigger pool stop
-        JobTriggerPoolHelper.toStop();
+        triggerPoolHelper.stop();
 
     }
 

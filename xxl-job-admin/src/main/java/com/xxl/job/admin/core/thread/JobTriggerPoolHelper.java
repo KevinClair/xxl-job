@@ -7,10 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.Resource;
 
 /**
  * job trigger thread pool helper
@@ -133,15 +132,6 @@ public class JobTriggerPoolHelper {
 
     // ---------------------- helper ----------------------
 
-    private static JobTriggerPoolHelper helper = new JobTriggerPoolHelper();
-
-    public static void toStart() {
-        helper.start();
-    }
-    public static void toStop() {
-        helper.stop();
-    }
-
     /**
      * @param jobId
      * @param triggerType
@@ -153,8 +143,8 @@ public class JobTriggerPoolHelper {
      *          null: use job param
      *          not null: cover job param
      */
-    public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorShardingParam, String executorParam, String addressList) {
-        helper.addTrigger(jobId, triggerType, failRetryCount, executorShardingParam, executorParam, addressList);
+    public void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorShardingParam, String executorParam, String addressList) {
+        addTrigger(jobId, triggerType, failRetryCount, executorShardingParam, executorParam, addressList);
     }
 
 }

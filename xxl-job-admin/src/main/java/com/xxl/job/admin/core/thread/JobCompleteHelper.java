@@ -1,7 +1,6 @@
 package com.xxl.job.admin.core.thread;
 
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobLogDao;
@@ -10,18 +9,19 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
-
-import javax.annotation.Resource;
 
 /**
  * job lose-monitor instance
  *
  * @author xuxueli 2015-9-1 18:05:56
  */
+@Component
 public class JobCompleteHelper {
 	private static Logger logger = LoggerFactory.getLogger(JobCompleteHelper.class);
 

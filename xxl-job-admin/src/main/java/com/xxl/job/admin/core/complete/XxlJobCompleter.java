@@ -1,6 +1,5 @@
 package com.xxl.job.admin.core.complete;
 
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
@@ -14,9 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.text.MessageFormat;
-
 import javax.annotation.Resource;
+import java.text.MessageFormat;
 
 /**
  * @author xuxueli 2020-10-30 20:43:10
@@ -30,6 +28,9 @@ public class XxlJobCompleter {
 
     @Resource
     private XxlJobInfoDao jobInfoDao;
+
+    @Resource
+    private JobTriggerPoolHelper triggerPoolHelper;
 
     /**
      * common fresh handle entrance (limit only once)
@@ -69,7 +70,7 @@ public class XxlJobCompleter {
                     int childJobId = (childJobIds[i]!=null && childJobIds[i].trim().length()>0 && isNumeric(childJobIds[i]))?Integer.valueOf(childJobIds[i]):-1;
                     if (childJobId > 0) {
 
-                        JobTriggerPoolHelper.trigger(childJobId, TriggerTypeEnum.PARENT, -1, null, null, null);
+                        triggerPoolHelper.trigger(childJobId, TriggerTypeEnum.PARENT, -1, null, null, null);
                         ReturnT<String> triggerChildResult = ReturnT.SUCCESS;
 
                         // add msg
