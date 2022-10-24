@@ -1,15 +1,14 @@
 package com.xxl.job.admin.core;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Component;
-
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.client.ExecutorBizClient;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * TODO
@@ -26,21 +25,12 @@ public class ExecutorBizRepository {
 
     public ExecutorBiz getExecutorBiz(String address) throws Exception {
         // valid
-        if (address==null || address.trim().length()==0) {
+        if (!StringUtils.hasLength(address)) {
             return null;
         }
 
         // load-cache
         address = address.trim();
-        ExecutorBiz executorBiz = executorBizRepository.get(address);
-        if (executorBiz != null) {
-            return executorBiz;
-        }
-
-        // set-cache
-        executorBiz = new ExecutorBizClient(address, jobAdminConfig.getAccessToken());
-
-        executorBizRepository.put(address, executorBiz);
-        return executorBiz;
+        return executorBizRepository.computeIfAbsent(address, k -> new ExecutorBizClient(k, jobAdminConfig.getAccessToken()));
     }
 }

@@ -15,22 +15,22 @@ public enum ExecutorRouteStrategyEnum {
     CONSISTENT_HASH(I18nUtil.getString("jobconf_route_consistenthash"), new ExecutorRouteConsistentHash()),
     LEAST_FREQUENTLY_USED(I18nUtil.getString("jobconf_route_lfu"), new ExecutorRouteLFU()),
     LEAST_RECENTLY_USED(I18nUtil.getString("jobconf_route_lru"), new ExecutorRouteLRU()),
-    FAILOVER(I18nUtil.getString("jobconf_route_failover"), new ExecutorRouteFailover()),
-    BUSYOVER(I18nUtil.getString("jobconf_route_busyover"), new ExecutorRouteBusyover()),
+//    FAILOVER(I18nUtil.getString("jobconf_route_failover"), new ExecutorRouteFailover()),
+//    BUSYOVER(I18nUtil.getString("jobconf_route_busyover"), new ExecutorRouteBusyover()),
     SHARDING_BROADCAST(I18nUtil.getString("jobconf_route_shard"), null);
 
-    ExecutorRouteStrategyEnum(String title, ExecutorRouter router) {
+    ExecutorRouteStrategyEnum(String title, AbstractExecutorRouter router) {
         this.title = title;
         this.router = router;
     }
 
     private String title;
-    private ExecutorRouter router;
+    private AbstractExecutorRouter router;
 
     public String getTitle() {
         return title;
     }
-    public ExecutorRouter getRouter() {
+    public AbstractExecutorRouter getRouter() {
         return router;
     }
 

@@ -1,7 +1,7 @@
 package com.xxl.job.admin.core.route.strategy;
 
-import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
-import com.xxl.job.admin.core.route.ExecutorRouter;
+import com.xxl.job.admin.core.ExecutorBizRepository;
+import com.xxl.job.admin.core.route.AbstractExecutorRouter;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -12,10 +12,16 @@ import java.util.List;
 /**
  * Created by xuxueli on 17/3/10.
  */
-public class ExecutorRouteFailover extends ExecutorRouter {
+public class ExecutorRouteFailover extends AbstractExecutorRouter {
+
+    private ExecutorBizRepository executorBizRepository;
+
+    public ExecutorRouteFailover(ExecutorBizRepository executorBizRepository) {
+        this.executorBizRepository = executorBizRepository;
+    }
 
     @Override
-    public ReturnT<String> route(TriggerParam triggerParam, List<String> addressList) {
+    public ReturnT<String> routeAddress(TriggerParam triggerParam, List<String> addressList) {
 
         StringBuffer beatResultSB = new StringBuffer();
         for (String address : addressList) {

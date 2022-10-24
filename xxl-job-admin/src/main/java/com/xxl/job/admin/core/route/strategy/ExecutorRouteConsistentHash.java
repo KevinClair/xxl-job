@@ -1,6 +1,6 @@
 package com.xxl.job.admin.core.route.strategy;
 
-import com.xxl.job.admin.core.route.ExecutorRouter;
+import com.xxl.job.admin.core.route.AbstractExecutorRouter;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
 
@@ -17,7 +17,7 @@ import java.util.TreeMap;
  *      b、hash method replace hashCode：String的hashCode可能重复，需要进一步扩大hashCode的取值范围
  * Created by xuxueli on 17/3/10.
  */
-public class ExecutorRouteConsistentHash extends ExecutorRouter {
+public class ExecutorRouteConsistentHash extends AbstractExecutorRouter {
 
     private static int VIRTUAL_NODE_NUM = 100;
 
@@ -77,7 +77,7 @@ public class ExecutorRouteConsistentHash extends ExecutorRouter {
     }
 
     @Override
-    public ReturnT<String> route(TriggerParam triggerParam, List<String> addressList) {
+    public ReturnT<String> routeAddress(TriggerParam triggerParam, List<String> addressList) {
         String address = hashJob(triggerParam.getJobId(), addressList);
         return new ReturnT<String>(address);
     }
