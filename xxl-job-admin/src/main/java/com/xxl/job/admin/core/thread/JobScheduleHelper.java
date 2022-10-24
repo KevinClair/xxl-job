@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,16 +26,19 @@ import java.util.concurrent.TimeUnit;
 public class JobScheduleHelper {
     private static Logger logger = LoggerFactory.getLogger(JobScheduleHelper.class);
 
-    @Resource
-    private XxlJobAdminConfig jobAdminConfig;
-    @Resource
-    private DataSource dataSource;
+    private final XxlJobAdminConfig jobAdminConfig;
+    private final DataSource dataSource;
 
-    @Resource
-    private XxlJobInfoDao jobInfoDao;
+    private final XxlJobInfoDao jobInfoDao;
 
-    @Resource
-    private JobTriggerPoolHelper triggerPoolHelper;
+    private final JobTriggerPoolHelper triggerPoolHelper;
+
+    public JobScheduleHelper(XxlJobAdminConfig jobAdminConfig, DataSource dataSource, XxlJobInfoDao jobInfoDao, JobTriggerPoolHelper triggerPoolHelper) {
+        this.jobAdminConfig = jobAdminConfig;
+        this.dataSource = dataSource;
+        this.jobInfoDao = jobInfoDao;
+        this.triggerPoolHelper = triggerPoolHelper;
+    }
 
     public static final long PRE_READ_MS = 5000;    // pre read
 

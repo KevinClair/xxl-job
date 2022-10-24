@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -39,14 +38,17 @@ import java.util.*;
 public class JobInfoController {
 	private static Logger logger = LoggerFactory.getLogger(JobInfoController.class);
 
-	@Resource
-	private XxlJobGroupDao xxlJobGroupDao;
-	@Resource
-	private XxlJobService xxlJobService;
+	private final XxlJobGroupDao xxlJobGroupDao;
+	private final XxlJobService xxlJobService;
 
-	@Resource
-	private JobTriggerPoolHelper triggerPoolHelper;
-	
+	private final JobTriggerPoolHelper triggerPoolHelper;
+
+	public JobInfoController(XxlJobGroupDao xxlJobGroupDao, XxlJobService xxlJobService, JobTriggerPoolHelper triggerPoolHelper) {
+		this.xxlJobGroupDao = xxlJobGroupDao;
+		this.xxlJobService = xxlJobService;
+		this.triggerPoolHelper = triggerPoolHelper;
+	}
+
 	@RequestMapping
 	public String index(HttpServletRequest request, Model model, @RequestParam(required = false, defaultValue = "-1") int jobGroup) {
 

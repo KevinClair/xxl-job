@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ExecutorRouteFailover extends AbstractExecutorRouter {
 
-    private ExecutorBizRepository executorBizRepository;
+    private final ExecutorBizRepository executorBizRepository;
 
     public ExecutorRouteFailover(ExecutorBizRepository executorBizRepository) {
         this.executorBizRepository = executorBizRepository;

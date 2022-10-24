@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.text.MessageFormat;
 
 /**
@@ -23,14 +22,17 @@ import java.text.MessageFormat;
 public class XxlJobCompleter {
     private static Logger logger = LoggerFactory.getLogger(XxlJobCompleter.class);
 
-    @Resource
-    private XxlJobLogDao jobLogDao;
+    private final XxlJobLogDao jobLogDao;
 
-    @Resource
-    private XxlJobInfoDao jobInfoDao;
+    private final XxlJobInfoDao jobInfoDao;
 
-    @Resource
-    private JobTriggerPoolHelper triggerPoolHelper;
+    private final JobTriggerPoolHelper triggerPoolHelper;
+
+    public XxlJobCompleter(XxlJobLogDao jobLogDao, XxlJobInfoDao jobInfoDao, JobTriggerPoolHelper triggerPoolHelper) {
+        this.jobLogDao = jobLogDao;
+        this.jobInfoDao = jobInfoDao;
+        this.triggerPoolHelper = triggerPoolHelper;
+    }
 
     /**
      * common fresh handle entrance (limit only once)

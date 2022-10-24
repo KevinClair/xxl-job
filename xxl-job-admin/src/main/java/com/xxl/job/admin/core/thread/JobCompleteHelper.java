@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
@@ -25,13 +24,15 @@ import java.util.concurrent.*;
 public class JobCompleteHelper {
 	private static Logger logger = LoggerFactory.getLogger(JobCompleteHelper.class);
 
-	@Resource
-	private XxlJobLogDao jobLogDao;
+	private final XxlJobLogDao jobLogDao;
 
-	@Resource
-	private XxlJobCompleter jobCompleter;
+	private final XxlJobCompleter jobCompleter;
 
-	// ---------------------- monitor ----------------------
+	public JobCompleteHelper(XxlJobLogDao jobLogDao, XxlJobCompleter jobCompleter) {
+		this.jobLogDao = jobLogDao;
+		this.jobCompleter = jobCompleter;
+	}
+// ---------------------- monitor ----------------------
 
 	private ThreadPoolExecutor callbackThreadPool = null;
 	private Thread monitorThread;

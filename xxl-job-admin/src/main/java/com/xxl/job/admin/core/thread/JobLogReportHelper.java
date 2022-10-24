@@ -4,7 +4,6 @@ import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobLogReport;
 import com.xxl.job.admin.dao.XxlJobLogDao;
 import com.xxl.job.admin.dao.XxlJobLogReportDao;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
-
 /**
  * job log report helper
  *
@@ -26,15 +23,17 @@ import javax.annotation.Resource;
 public class JobLogReportHelper {
     private static Logger logger = LoggerFactory.getLogger(JobLogReportHelper.class);
 
-    @Resource
-    private XxlJobLogDao jobLogDao;
+    private final XxlJobLogDao jobLogDao;
 
-    @Resource
-    private XxlJobLogReportDao jobLogReportDao;
+    private final XxlJobLogReportDao jobLogReportDao;
 
-    @Resource
-    private XxlJobAdminConfig jobAdminConfig;
+    private final XxlJobAdminConfig jobAdminConfig;
 
+    public JobLogReportHelper(XxlJobLogDao jobLogDao, XxlJobLogReportDao jobLogReportDao, XxlJobAdminConfig jobAdminConfig) {
+        this.jobLogDao = jobLogDao;
+        this.jobLogReportDao = jobLogReportDao;
+        this.jobAdminConfig = jobAdminConfig;
+    }
 
     private Thread logrThread;
     private volatile boolean toStop = false;

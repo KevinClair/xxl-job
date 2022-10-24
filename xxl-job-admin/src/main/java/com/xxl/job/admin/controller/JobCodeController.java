@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -25,10 +24,13 @@ import java.util.List;
 @RequestMapping("/jobcode")
 public class JobCodeController {
 	
-	@Resource
-	private XxlJobInfoDao xxlJobInfoDao;
-	@Resource
-	private XxlJobLogGlueDao xxlJobLogGlueDao;
+	private final XxlJobInfoDao xxlJobInfoDao;
+	private final XxlJobLogGlueDao xxlJobLogGlueDao;
+
+	public JobCodeController(XxlJobInfoDao xxlJobInfoDao, XxlJobLogGlueDao xxlJobLogGlueDao) {
+		this.xxlJobInfoDao = xxlJobInfoDao;
+		this.xxlJobLogGlueDao = xxlJobLogGlueDao;
+	}
 
 	@RequestMapping
 	public String index(HttpServletRequest request, Model model, int jobId) {

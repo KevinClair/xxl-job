@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 /**
  * @author xuxueli 2017-07-27 21:54:20
  */
 @Service
 public class AdminBizImpl implements AdminBiz {
 
-    @Resource
-    private JobCompleteHelper jobCompleteHelper;
+    private final JobCompleteHelper jobCompleteHelper;
 
-    @Resource
-    private JobRegistryHelper jobRegistryHelper;
+    private final JobRegistryHelper jobRegistryHelper;
 
+    public AdminBizImpl(JobCompleteHelper jobCompleteHelper, JobRegistryHelper jobRegistryHelper) {
+        this.jobCompleteHelper = jobCompleteHelper;
+        this.jobRegistryHelper = jobRegistryHelper;
+    }
 
     @Override
     public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList) {

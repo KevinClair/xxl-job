@@ -1,12 +1,11 @@
 package com.xxl.job.admin.controller;
 
 import com.xxl.job.admin.core.ExecutorBizRepository;
-import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
+import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
-import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,21 +39,23 @@ import java.util.Map;
 public class JobLogController {
 	private static Logger logger = LoggerFactory.getLogger(JobLogController.class);
 
-	@Resource
-	private XxlJobGroupDao xxlJobGroupDao;
-	@Resource
-	public XxlJobInfoDao xxlJobInfoDao;
-	@Resource
-	public XxlJobLogDao xxlJobLogDao;
+	private final XxlJobGroupDao xxlJobGroupDao;
 
-	@Resource
-	private XxlJobScheduler jobScheduler;
+	public final XxlJobInfoDao xxlJobInfoDao;
 
-	@Resource
-	private ExecutorBizRepository executorBizRepository;
+	public final XxlJobLogDao xxlJobLogDao;
 
-	@Resource
-	private XxlJobCompleter jobCompleter;
+	private final ExecutorBizRepository executorBizRepository;
+
+	private final XxlJobCompleter jobCompleter;
+
+	public JobLogController(XxlJobGroupDao xxlJobGroupDao, XxlJobInfoDao xxlJobInfoDao, XxlJobLogDao xxlJobLogDao, ExecutorBizRepository executorBizRepository, XxlJobCompleter jobCompleter) {
+		this.xxlJobGroupDao = xxlJobGroupDao;
+		this.xxlJobInfoDao = xxlJobInfoDao;
+		this.xxlJobLogDao = xxlJobLogDao;
+		this.executorBizRepository = executorBizRepository;
+		this.jobCompleter = jobCompleter;
+	}
 
 	@RequestMapping
 	public String index(HttpServletRequest request, Model model, @RequestParam(required = false, defaultValue = "0") Integer jobId) {

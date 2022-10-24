@@ -9,7 +9,6 @@ import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.DigestUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigInteger;
@@ -22,9 +21,11 @@ public class LoginService {
 
     public static final String LOGIN_IDENTITY_KEY = "XXL_JOB_LOGIN_IDENTITY";
 
-    @Resource
-    private XxlJobUserDao xxlJobUserDao;
+    private final XxlJobUserDao xxlJobUserDao;
 
+    public LoginService(XxlJobUserDao xxlJobUserDao) {
+        this.xxlJobUserDao = xxlJobUserDao;
+    }
 
     private String makeToken(XxlJobUser xxlJobUser){
         String tokenJson = JacksonUtil.writeValueAsString(xxlJobUser);

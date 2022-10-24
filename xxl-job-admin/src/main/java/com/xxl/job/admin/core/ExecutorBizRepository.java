@@ -6,7 +6,6 @@ import com.xxl.job.core.biz.client.ExecutorBizClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,8 +17,11 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class ExecutorBizRepository {
 
-    @Resource
-    private XxlJobAdminConfig jobAdminConfig;
+    private final XxlJobAdminConfig jobAdminConfig;
+
+    public ExecutorBizRepository(XxlJobAdminConfig jobAdminConfig) {
+        this.jobAdminConfig = jobAdminConfig;
+    }
 
     private static ConcurrentMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<>();
 

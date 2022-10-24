@@ -5,7 +5,6 @@ import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
-import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Date;
 
 /**
@@ -31,20 +29,20 @@ import java.util.Date;
 public class XxlJobTrigger {
     private static Logger logger = LoggerFactory.getLogger(XxlJobTrigger.class);
 
-    @Resource
-    private XxlJobInfoDao jobInfoDao;
+    private final XxlJobInfoDao jobInfoDao;
 
-    @Resource
-    private XxlJobGroupDao jobGroupDao;
+    private final XxlJobGroupDao jobGroupDao;
 
-    @Resource
-    private XxlJobLogDao jobLogDao;
+    private final XxlJobLogDao jobLogDao;
 
-    @Resource
-    private XxlJobScheduler jobScheduler;
+    private final ExecutorBizRepository executorBizRepository;
 
-    @Resource
-    private ExecutorBizRepository executorBizRepository;
+    public XxlJobTrigger(XxlJobInfoDao jobInfoDao, XxlJobGroupDao jobGroupDao, XxlJobLogDao jobLogDao, ExecutorBizRepository executorBizRepository) {
+        this.jobInfoDao = jobInfoDao;
+        this.jobGroupDao = jobGroupDao;
+        this.jobLogDao = jobLogDao;
+        this.executorBizRepository = executorBizRepository;
+    }
 
     /**
      * trigger job

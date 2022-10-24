@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -31,17 +30,20 @@ import java.util.*;
 public class XxlJobServiceImpl implements XxlJobService {
 	private static Logger logger = LoggerFactory.getLogger(XxlJobServiceImpl.class);
 
-	@Resource
-	private XxlJobGroupDao xxlJobGroupDao;
-	@Resource
-	private XxlJobInfoDao xxlJobInfoDao;
-	@Resource
-	public XxlJobLogDao xxlJobLogDao;
-	@Resource
-	private XxlJobLogGlueDao xxlJobLogGlueDao;
-	@Resource
-	private XxlJobLogReportDao xxlJobLogReportDao;
-	
+	private final XxlJobGroupDao xxlJobGroupDao;
+	private final XxlJobInfoDao xxlJobInfoDao;
+	private final XxlJobLogDao xxlJobLogDao;
+	private final XxlJobLogGlueDao xxlJobLogGlueDao;
+	private final XxlJobLogReportDao xxlJobLogReportDao;
+
+	public XxlJobServiceImpl(XxlJobGroupDao xxlJobGroupDao, XxlJobInfoDao xxlJobInfoDao, XxlJobLogDao xxlJobLogDao, XxlJobLogGlueDao xxlJobLogGlueDao, XxlJobLogReportDao xxlJobLogReportDao) {
+		this.xxlJobGroupDao = xxlJobGroupDao;
+		this.xxlJobInfoDao = xxlJobInfoDao;
+		this.xxlJobLogDao = xxlJobLogDao;
+		this.xxlJobLogGlueDao = xxlJobLogGlueDao;
+		this.xxlJobLogReportDao = xxlJobLogReportDao;
+	}
+
 	@Override
 	public Map<String, Object> pageList(int start, int length, int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
 

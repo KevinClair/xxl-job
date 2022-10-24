@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -29,10 +28,14 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-    @Resource
-    private XxlJobUserDao xxlJobUserDao;
-    @Resource
-    private XxlJobGroupDao xxlJobGroupDao;
+    private final XxlJobUserDao xxlJobUserDao;
+
+    private final XxlJobGroupDao xxlJobGroupDao;
+
+    public UserController(XxlJobUserDao xxlJobUserDao, XxlJobGroupDao xxlJobGroupDao) {
+        this.xxlJobUserDao = xxlJobUserDao;
+        this.xxlJobGroupDao = xxlJobGroupDao;
+    }
 
     @RequestMapping
     @PermissionLimit(adminuser = true)

@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ExecutorRouteBusyover extends AbstractExecutorRouter {
 
-    private ExecutorBizRepository executorBizRepository;
+    private final ExecutorBizRepository executorBizRepository;
 
     public ExecutorRouteBusyover(ExecutorBizRepository executorBizRepository) {
         this.executorBizRepository = executorBizRepository;

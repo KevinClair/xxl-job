@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,14 +19,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class JobTriggerPoolHelper {
     private static Logger logger = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
 
-    @Resource
-    private XxlJobTrigger jobTrigger;
+    private final XxlJobTrigger jobTrigger;
 
-    @Resource
-    private XxlJobAdminConfig jobAdminConfig;
+    private final XxlJobAdminConfig jobAdminConfig;
 
+    public JobTriggerPoolHelper(XxlJobTrigger jobTrigger, XxlJobAdminConfig jobAdminConfig) {
+        this.jobTrigger = jobTrigger;
+        this.jobAdminConfig = jobAdminConfig;
+    }
 
-    // ---------------------- trigger pool ----------------------
+// ---------------------- trigger pool ----------------------
 
     // fast/slow thread pool
     private ThreadPoolExecutor fastTriggerPool = null;

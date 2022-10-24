@@ -1,6 +1,5 @@
 package com.xxl.job.admin.core.thread;
 
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
@@ -16,8 +15,6 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.concurrent.*;
 
-import javax.annotation.Resource;
-
 /**
  * job registry instance
  * @author xuxueli 2016-10-02 19:10:24
@@ -26,11 +23,14 @@ import javax.annotation.Resource;
 public class JobRegistryHelper {
 	private static Logger logger = LoggerFactory.getLogger(JobRegistryHelper.class);
 
-	@Resource
-	private XxlJobGroupDao jobGroupDao;
+	private final XxlJobGroupDao jobGroupDao;
 
-	@Resource
-	private XxlJobRegistryDao jobRegistryDao;
+	private final XxlJobRegistryDao jobRegistryDao;
+
+	public JobRegistryHelper(XxlJobGroupDao jobGroupDao, XxlJobRegistryDao jobRegistryDao) {
+		this.jobGroupDao = jobGroupDao;
+		this.jobRegistryDao = jobRegistryDao;
+	}
 
 	private ThreadPoolExecutor registryOrRemoveThreadPool = null;
 	private Thread registryMonitorThread;

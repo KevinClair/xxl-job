@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -29,11 +28,13 @@ import java.util.Map;
 @Controller
 public class IndexController {
 
-	@Resource
-	private XxlJobService xxlJobService;
-	@Resource
-	private LoginService loginService;
+	private final XxlJobService xxlJobService;
+	private final LoginService loginService;
 
+	public IndexController(XxlJobService xxlJobService, LoginService loginService) {
+		this.xxlJobService = xxlJobService;
+		this.loginService = loginService;
+	}
 
 	@RequestMapping("/")
 	public String index(Model model) {

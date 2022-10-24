@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -26,12 +25,15 @@ import java.util.*;
 @RequestMapping("/jobgroup")
 public class JobGroupController {
 
-	@Resource
-	public XxlJobInfoDao xxlJobInfoDao;
-	@Resource
-	public XxlJobGroupDao xxlJobGroupDao;
-	@Resource
-	private XxlJobRegistryDao xxlJobRegistryDao;
+	public final XxlJobInfoDao xxlJobInfoDao;
+	public final XxlJobGroupDao xxlJobGroupDao;
+	private final XxlJobRegistryDao xxlJobRegistryDao;
+
+	public JobGroupController(XxlJobInfoDao xxlJobInfoDao, XxlJobGroupDao xxlJobGroupDao, XxlJobRegistryDao xxlJobRegistryDao) {
+		this.xxlJobInfoDao = xxlJobInfoDao;
+		this.xxlJobGroupDao = xxlJobGroupDao;
+		this.xxlJobRegistryDao = xxlJobRegistryDao;
+	}
 
 	@RequestMapping
 	public String index(Model model) {

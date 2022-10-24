@@ -10,8 +10,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-
 /**
  * @author xuxueli 2018-10-28 00:18:17
  */
@@ -19,26 +17,29 @@ import javax.annotation.Resource;
 public class XxlJobScheduler implements InitializingBean, DisposableBean {
     private static final Logger logger = LoggerFactory.getLogger(XxlJobScheduler.class);
 
-    @Resource
-    private XxlJobAdminConfig jobAdminConfig;
+    private final XxlJobAdminConfig jobAdminConfig;
 
-    @Resource
-    private JobRegistryHelper registryHelper;
+    private final JobRegistryHelper registryHelper;
 
-    @Resource
-    private JobFailMonitorHelper failMonitorHelper;
+    private final JobFailMonitorHelper failMonitorHelper;
 
-    @Resource
-    private JobCompleteHelper completeHelper;
+    private final JobCompleteHelper completeHelper;
 
-    @Resource
-    private JobLogReportHelper logReportHelper;
+    private final JobLogReportHelper logReportHelper;
 
-    @Resource
-    private JobScheduleHelper scheduleHelper;
+    private final JobScheduleHelper scheduleHelper;
 
-    @Resource
-    private JobTriggerPoolHelper triggerPoolHelper;
+    private final JobTriggerPoolHelper triggerPoolHelper;
+
+    public XxlJobScheduler(XxlJobAdminConfig jobAdminConfig, JobRegistryHelper registryHelper, JobFailMonitorHelper failMonitorHelper, JobCompleteHelper completeHelper, JobLogReportHelper logReportHelper, JobScheduleHelper scheduleHelper, JobTriggerPoolHelper triggerPoolHelper) {
+        this.jobAdminConfig = jobAdminConfig;
+        this.registryHelper = registryHelper;
+        this.failMonitorHelper = failMonitorHelper;
+        this.completeHelper = completeHelper;
+        this.logReportHelper = logReportHelper;
+        this.scheduleHelper = scheduleHelper;
+        this.triggerPoolHelper = triggerPoolHelper;
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -91,8 +92,8 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
 
     // ---------------------- I18n ----------------------
 
-    private void initI18n(){
-        for (ExecutorBlockStrategyEnum item:ExecutorBlockStrategyEnum.values()) {
+    private void initI18n() {
+        for (ExecutorBlockStrategyEnum item : ExecutorBlockStrategyEnum.values()) {
             item.setTitle(I18nUtil.getString("jobconf_block_".concat(item.name())));
         }
     }

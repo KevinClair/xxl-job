@@ -10,12 +10,10 @@ import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -31,14 +29,17 @@ import java.util.Set;
 public class EmailJobAlarm implements JobAlarm {
     private static Logger logger = LoggerFactory.getLogger(EmailJobAlarm.class);
 
-    @Resource
-    private XxlJobGroupDao jobGroupDao;
+    private final XxlJobGroupDao jobGroupDao;
 
-    @Resource
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
-    @Resource
-    private XxlJobAdminConfig jobAdminConfig;
+    private final XxlJobAdminConfig jobAdminConfig;
+
+    public EmailJobAlarm(XxlJobGroupDao jobGroupDao, JavaMailSender mailSender, XxlJobAdminConfig jobAdminConfig) {
+        this.jobGroupDao = jobGroupDao;
+        this.mailSender = mailSender;
+        this.jobAdminConfig = jobAdminConfig;
+    }
 
     /**
      * fail alarm

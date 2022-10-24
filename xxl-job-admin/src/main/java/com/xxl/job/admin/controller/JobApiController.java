@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -25,11 +24,14 @@ import java.util.List;
 @RequestMapping("/api")
 public class JobApiController {
 
-    @Resource
-    private AdminBiz adminBiz;
+    private final AdminBiz adminBiz;
 
-    @Resource
-    private XxlJobAdminConfig adminConfig;
+    private final XxlJobAdminConfig adminConfig;
+
+    public JobApiController(AdminBiz adminBiz, XxlJobAdminConfig adminConfig) {
+        this.adminBiz = adminBiz;
+        this.adminConfig = adminConfig;
+    }
 
     /**
      * api

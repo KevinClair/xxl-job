@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -24,17 +23,20 @@ import java.util.concurrent.TimeUnit;
 public class JobFailMonitorHelper {
 	private static Logger logger = LoggerFactory.getLogger(JobFailMonitorHelper.class);
 
-	@Resource
-	private XxlJobLogDao jobLogDao;
+	private final XxlJobLogDao jobLogDao;
 
-	@Resource
-	private XxlJobInfoDao jobInfoDao;
+	private final XxlJobInfoDao jobInfoDao;
 
-	@Resource
-	private JobAlarmer jobAlarmer;
+	private final JobAlarmer jobAlarmer;
 
-	@Resource
-	private JobTriggerPoolHelper triggerPoolHelper;
+	private final JobTriggerPoolHelper triggerPoolHelper;
+
+	public JobFailMonitorHelper(XxlJobLogDao jobLogDao, XxlJobInfoDao jobInfoDao, JobAlarmer jobAlarmer, JobTriggerPoolHelper triggerPoolHelper) {
+		this.jobLogDao = jobLogDao;
+		this.jobInfoDao = jobInfoDao;
+		this.jobAlarmer = jobAlarmer;
+		this.triggerPoolHelper = triggerPoolHelper;
+	}
 
 	// ---------------------- monitor ----------------------
 
