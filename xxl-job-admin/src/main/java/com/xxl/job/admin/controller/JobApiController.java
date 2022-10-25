@@ -54,7 +54,7 @@ public class JobApiController {
         }
         if (adminConfig.getAccessToken()!=null
                 && adminConfig.getAccessToken().trim().length()>0
-                && adminConfig.getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN))) {
+                && !adminConfig.getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN))) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
         }
 
