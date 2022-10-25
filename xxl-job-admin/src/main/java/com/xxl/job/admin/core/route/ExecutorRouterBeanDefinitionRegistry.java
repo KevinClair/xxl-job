@@ -1,8 +1,6 @@
 package com.xxl.job.admin.core.route;
 
-import com.xxl.job.admin.core.route.strategy.ExecutorRouteBusyover;
-import com.xxl.job.admin.core.route.strategy.ExecutorRouteFailover;
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.admin.core.route.strategy.*;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -21,14 +19,62 @@ public class ExecutorRouterBeanDefinitionRegistry implements BeanDefinitionRegis
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
         BeanDefinition executorBizRepository = beanDefinitionRegistry.getBeanDefinition("executorBizRepository");
-        BeanDefinitionBuilder executorRouteBusyover = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteBusyover.class);
-        executorRouteBusyover.addConstructorArgValue(executorBizRepository);
-        beanDefinitionRegistry.registerBeanDefinition(I18nUtil.getString("jobconf_route_busyover"), executorRouteBusyover.getBeanDefinition());
+        registerExecutorRouteBusyover(beanDefinitionRegistry, executorBizRepository);
+        registerExecutorRouteFailover(beanDefinitionRegistry, executorBizRepository);
+        registerExecutorRouteLast(beanDefinitionRegistry);
+        registerExecutorRouteRound(beanDefinitionRegistry);
+        registerExecutorRouteRandom(beanDefinitionRegistry);
+        registerExecutorRouteConsistentHash(beanDefinitionRegistry);
+        registerExecutorRouteLFU(beanDefinitionRegistry);
+        registerExecutorRouteLRU(beanDefinitionRegistry);
+        registerExecutorRouteFirst(beanDefinitionRegistry);
+    }
 
+    private void registerExecutorRouteBusyover(BeanDefinitionRegistry beanDefinitionRegistry, BeanDefinition executorBizRepository) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteBusyover.class);
+        beanDefinitionBuilder.addConstructorArgValue(executorBizRepository);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteBusyover", beanDefinitionBuilder.getBeanDefinition());
+    }
 
-        BeanDefinitionBuilder executorRouteFailover = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteFailover.class);
-        executorRouteFailover.addConstructorArgValue(executorBizRepository);
-        beanDefinitionRegistry.registerBeanDefinition(I18nUtil.getString("jobconf_route_failover"), executorRouteFailover.getBeanDefinition());
+    private void registerExecutorRouteFailover(BeanDefinitionRegistry beanDefinitionRegistry, BeanDefinition executorBizRepository) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteFailover.class);
+        beanDefinitionBuilder.addConstructorArgValue(executorBizRepository);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteFailover", beanDefinitionBuilder.getBeanDefinition());
+    }
+
+    private void registerExecutorRouteLast(BeanDefinitionRegistry beanDefinitionRegistry) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteLast.class);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteLast", beanDefinitionBuilder.getBeanDefinition());
+    }
+
+    private void registerExecutorRouteRound(BeanDefinitionRegistry beanDefinitionRegistry) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteRound.class);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteRound", beanDefinitionBuilder.getBeanDefinition());
+    }
+
+    private void registerExecutorRouteRandom(BeanDefinitionRegistry beanDefinitionRegistry) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteRandom.class);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteRandom", beanDefinitionBuilder.getBeanDefinition());
+    }
+
+    private void registerExecutorRouteConsistentHash(BeanDefinitionRegistry beanDefinitionRegistry) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteConsistentHash.class);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteConsistentHash", beanDefinitionBuilder.getBeanDefinition());
+    }
+
+    private void registerExecutorRouteLFU(BeanDefinitionRegistry beanDefinitionRegistry) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteLFU.class);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteLFU", beanDefinitionBuilder.getBeanDefinition());
+    }
+
+    private void registerExecutorRouteLRU(BeanDefinitionRegistry beanDefinitionRegistry) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteLRU.class);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteLRU", beanDefinitionBuilder.getBeanDefinition());
+    }
+
+    private void registerExecutorRouteFirst(BeanDefinitionRegistry beanDefinitionRegistry) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ExecutorRouteFirst.class);
+        beanDefinitionRegistry.registerBeanDefinition("executorRouteFirst", beanDefinitionBuilder.getBeanDefinition());
     }
 
     @Override
