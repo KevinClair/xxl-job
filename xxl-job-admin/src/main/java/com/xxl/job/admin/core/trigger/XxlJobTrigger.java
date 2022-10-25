@@ -5,6 +5,7 @@ import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
+import com.xxl.job.admin.core.route.ExecutorRouter;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * xxl-job trigger
@@ -37,11 +39,14 @@ public class XxlJobTrigger {
 
     private final ExecutorBizRepository executorBizRepository;
 
-    public XxlJobTrigger(XxlJobInfoDao jobInfoDao, XxlJobGroupDao jobGroupDao, XxlJobLogDao jobLogDao, ExecutorBizRepository executorBizRepository) {
+    private final Map<String, ExecutorRouter> executorRouterMap;
+
+    public XxlJobTrigger(XxlJobInfoDao jobInfoDao, XxlJobGroupDao jobGroupDao, XxlJobLogDao jobLogDao, ExecutorBizRepository executorBizRepository, Map<String, ExecutorRouter> executorRouterMap) {
         this.jobInfoDao = jobInfoDao;
         this.jobGroupDao = jobGroupDao;
         this.jobLogDao = jobLogDao;
         this.executorBizRepository = executorBizRepository;
+        this.executorRouterMap = executorRouterMap;
     }
 
     /**
@@ -95,7 +100,7 @@ public class XxlJobTrigger {
                 shardingParam[1] = Integer.valueOf(shardingArr[1]);
             }
         }
-        if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST==ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null)
+        if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST.equals(ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null))
                 && group.getRegistryList()!=null && !group.getRegistryList().isEmpty()
                 && shardingParam==null) {
             for (int i = 0; i < group.getRegistryList().size(); i++) {
@@ -132,7 +137,7 @@ public class XxlJobTrigger {
         // param
         ExecutorBlockStrategyEnum blockStrategy = ExecutorBlockStrategyEnum.match(jobInfo.getExecutorBlockStrategy(), ExecutorBlockStrategyEnum.SERIAL_EXECUTION);  // block strategy
         ExecutorRouteStrategyEnum executorRouteStrategyEnum = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null);    // route strategy
-        String shardingParam = (ExecutorRouteStrategyEnum.SHARDING_BROADCAST==executorRouteStrategyEnum)?String.valueOf(index).concat("/").concat(String.valueOf(total)):null;
+        String shardingParam = (ExecutorRouteStrategyEnum.SHARDING_BROADCAST.equals(executorRouteStrategyEnum))?String.valueOf(index).concat("/").concat(String.valueOf(total)):null;
 
         // 1、save log-id
         XxlJobLog jobLog = new XxlJobLog();
@@ -161,14 +166,14 @@ public class XxlJobTrigger {
         String address = null;
         ReturnT<String> routeAddressResult = null;
         if (group.getRegistryList()!=null && !group.getRegistryList().isEmpty()) {
-            if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) {
+            if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST.equals(executorRouteStrategyEnum)) {
                 if (index < group.getRegistryList().size()) {
                     address = group.getRegistryList().get(index);
                 } else {
                     address = group.getRegistryList().get(0);
                 }
             } else {
-//                routeAddressResult = executorRouteStrategyEnum.getRouter().routeAddress(triggerParam, group.getRegistryList());
+                routeAddressResult = executorRouterMap.get(executorRouteStrategyEnum.getRouterBeanName()).route(triggerParam, group.getRegistryList());
                 if (routeAddressResult.getCode() == ReturnT.SUCCESS_CODE) {
                     address = routeAddressResult.getContent();
                 }
