@@ -6,12 +6,14 @@ import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by xuxueli on 17/3/10.
  */
+@Component("executorRouteFailover")
 public class ExecutorRouteFailover extends AbstractExecutorRouter {
 
     private final ExecutorBizRepository executorBizRepository;

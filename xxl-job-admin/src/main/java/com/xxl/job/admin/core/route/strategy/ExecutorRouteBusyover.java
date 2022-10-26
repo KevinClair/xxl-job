@@ -7,12 +7,14 @@ import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.IdleBeatParam;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by xuxueli on 17/3/10.
  */
+@Component("executorRouteBusyover")
 public class ExecutorRouteBusyover extends AbstractExecutorRouter {
 
     private final ExecutorBizRepository executorBizRepository;

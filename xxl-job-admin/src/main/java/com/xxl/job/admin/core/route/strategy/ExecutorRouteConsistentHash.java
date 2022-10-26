@@ -3,6 +3,7 @@ package com.xxl.job.admin.core.route.strategy;
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
+import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -17,6 +18,7 @@ import java.util.TreeMap;
  *      b、hash method replace hashCode：String的hashCode可能重复，需要进一步扩大hashCode的取值范围
  * Created by xuxueli on 17/3/10.
  */
+@Component("executorRouteConsistentHash")
 public class ExecutorRouteConsistentHash extends AbstractExecutorRouter {
 
     private static int VIRTUAL_NODE_NUM = 100;

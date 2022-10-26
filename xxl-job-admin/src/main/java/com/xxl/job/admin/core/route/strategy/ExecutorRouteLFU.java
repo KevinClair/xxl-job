@@ -3,6 +3,7 @@ package com.xxl.job.admin.core.route.strategy;
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * Created by xuxueli on 17/3/10.
  */
+@Component("executorRouteLFU")
 public class ExecutorRouteLFU extends AbstractExecutorRouter {
 
     private static ConcurrentMap<Integer, HashMap<String, Integer>> jobLfuMap = new ConcurrentHashMap<Integer, HashMap<String, Integer>>();
