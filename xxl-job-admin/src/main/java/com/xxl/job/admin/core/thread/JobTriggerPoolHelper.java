@@ -23,45 +23,29 @@ public class JobTriggerPoolHelper {
 
     private final XxlJobAdminConfig jobAdminConfig;
 
+    private final ThreadPoolExecutor fastTriggerPool;
+    private final ThreadPoolExecutor slowTriggerPool;
+
     public JobTriggerPoolHelper(XxlJobTrigger jobTrigger, XxlJobAdminConfig jobAdminConfig) {
         this.jobTrigger = jobTrigger;
         this.jobAdminConfig = jobAdminConfig;
-    }
-
-// ---------------------- trigger pool ----------------------
-
-    // fast/slow thread pool
-    private ThreadPoolExecutor fastTriggerPool = null;
-    private ThreadPoolExecutor slowTriggerPool = null;
-
-    public void start(){
-        fastTriggerPool = new ThreadPoolExecutor(
+        // todo 拒绝策略，当任务过多时，线程池执行不过来
+        this.fastTriggerPool = new ThreadPoolExecutor(
                 10,
                 jobAdminConfig.getTriggerPoolFastMax(),
                 60L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(1000),
-                new ThreadFactory() {
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        return new Thread(r, "xxl-job, admin JobTriggerPoolHelper-fastTriggerPool-" + r.hashCode());
-                    }
-                });
+                r -> new Thread(r, "xxl-job, admin JobTriggerPoolHelper-fastTriggerPool-" + r.hashCode()));
 
-        slowTriggerPool = new ThreadPoolExecutor(
+        this.slowTriggerPool = new ThreadPoolExecutor(
                 10,
                 jobAdminConfig.getTriggerPoolSlowMax(),
                 60L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(2000),
-                new ThreadFactory() {
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        return new Thread(r, "xxl-job, admin JobTriggerPoolHelper-slowTriggerPool-" + r.hashCode());
-                    }
-                });
+                r -> new Thread(r, "xxl-job, admin JobTriggerPoolHelper-slowTriggerPool-" + r.hashCode()));
     }
-
 
     public void stop() {
         //triggerPool.shutdown();
