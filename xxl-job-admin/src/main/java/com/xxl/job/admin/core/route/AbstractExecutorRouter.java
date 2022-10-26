@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * Created by xuxueli on 17/3/10.
  */
-// TODO 路由规则重写
 public abstract class AbstractExecutorRouter implements ExecutorRouter {
     protected static Logger logger = LoggerFactory.getLogger(AbstractExecutorRouter.class);
 
