@@ -46,9 +46,6 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
         // init i18n
         initI18n();
 
-        // admin trigger pool start
-        triggerPoolHelper.start();
-
         // admin registry monitor run
         registryHelper.start();
 
@@ -96,5 +93,6 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
         for (ExecutorBlockStrategyEnum item : ExecutorBlockStrategyEnum.values()) {
             item.setTitle(I18nUtil.getString("jobconf_block_".concat(item.name())));
         }
+        I18nUtil.initProperties(jobAdminConfig.getI18n());
     }
 }
