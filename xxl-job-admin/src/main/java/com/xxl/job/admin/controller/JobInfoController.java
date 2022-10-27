@@ -11,6 +11,7 @@ import com.xxl.job.admin.core.thread.JobScheduleHelper;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.admin.core.util.TriggerUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.service.LoginService;
 import com.xxl.job.admin.service.XxlJobService;
@@ -165,7 +166,7 @@ public class JobInfoController {
 		try {
 			Date lastTime = new Date();
 			for (int i = 0; i < 5; i++) {
-				lastTime = JobScheduleHelper.generateNextValidTime(paramXxlJobInfo, lastTime);
+				lastTime = TriggerUtil.generateNextValidTime(paramXxlJobInfo, lastTime);
 				if (lastTime != null) {
 					result.add(DateUtil.formatDateTime(lastTime));
 				} else {
