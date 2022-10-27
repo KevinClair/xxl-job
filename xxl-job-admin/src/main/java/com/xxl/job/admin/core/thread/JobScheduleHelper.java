@@ -91,12 +91,17 @@ public class JobScheduleHelper {
                         // 1、pre read
                         long nowTime = System.currentTimeMillis();
                         List<XxlJobInfo> scheduleList = jobInfoDao.scheduleJobQuery(nowTime + PRE_READ_MS, preReadCount);
+                        // |         now-PRE_READ_MS                       now                      now+PRE_READ_MS
+                        // |-------A--------|----------------B--------------|-----------------C-------------|
+                        // scheduleList查询的数据为所有调度时间小于now+PRE_READ_MS的数据，进行遍历
                         if (scheduleList!=null && scheduleList.size()>0) {
                             // 2、push time-ring
                             for (XxlJobInfo jobInfo: scheduleList) {
 
                                 // time-ring jump
                                 if (nowTime > jobInfo.getTriggerNextTime() + PRE_READ_MS) {
+                                    // 当前任务的调度时间，在A范围内，根据调度过期策略选择忽略或者立即执行一次，并且刷新下一次的执行时间
+
                                     // 2.1、trigger-expire > 5s：pass && make next-trigger-time
                                     logger.warn(">>>>>>>>>>> xxl-job, schedule misfire, jobId = " + jobInfo.getId());
 
@@ -112,8 +117,8 @@ public class JobScheduleHelper {
                                     refreshNextValidTime(jobInfo, new Date());
 
                                 } else if (nowTime > jobInfo.getTriggerNextTime()) {
+                                    // 当前任务的调度时间，在B范围内，直接执行，并且刷新下一次的执行时间
                                     // 2.2、trigger-expire < 5s：direct-trigger && make next-trigger-time
-
                                     // 1、trigger
                                     triggerPoolHelper.trigger(jobInfo.getId(), TriggerTypeEnum.CRON, -1, null, null, null);
                                     logger.debug(">>>>>>>>>>> xxl-job, schedule push trigger : jobId = " + jobInfo.getId() );
@@ -122,6 +127,8 @@ public class JobScheduleHelper {
                                     refreshNextValidTime(jobInfo, new Date());
 
                                     // next-trigger-time in 5s, pre-read again
+                                    // 如果此时当前调度任务的下一次执行时间依然是小于nowTime + PRE_READ_MS
+                                    // todo
                                     if (jobInfo.getTriggerStatus()==1 && nowTime + PRE_READ_MS > jobInfo.getTriggerNextTime()) {
 
                                         // 1、make ring second
@@ -136,6 +143,7 @@ public class JobScheduleHelper {
                                     }
 
                                 } else {
+                                    // 当前任务的调度时间在C范围内
                                     // 2.3、trigger-pre-read：time-ring trigger && make next-trigger-time
 
                                     // 1、make ring second
@@ -210,6 +218,7 @@ public class JobScheduleHelper {
 
                     // Wait seconds, align second
                     if (cost < 1000) {  // scan-overtime, not wait
+                        // todo 如果执行时间小于1s
                         try {
                             // pre-read period: success > scan each second; fail > skip this period;
                             TimeUnit.MILLISECONDS.sleep((preReadSuc?1000:PRE_READ_MS) - System.currentTimeMillis()%1000);
@@ -298,11 +307,7 @@ public class JobScheduleHelper {
 
     private void pushTimeRing(int ringSecond, int jobId){
         // push async ring
-        List<Integer> ringItemData = ringData.get(ringSecond);
-        if (ringItemData == null) {
-            ringItemData = new ArrayList<Integer>();
-            ringData.put(ringSecond, ringItemData);
-        }
+        List<Integer> ringItemData = ringData.computeIfAbsent(ringSecond, k -> new ArrayList<>());
         ringItemData.add(jobId);
 
         logger.debug(">>>>>>>>>>> xxl-job, schedule push time-ring : " + ringSecond + " = " + Arrays.asList(ringItemData) );
