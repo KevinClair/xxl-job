@@ -28,19 +28,13 @@ public class JobCompleteHelper {
 
 	private final XxlJobCompleter jobCompleter;
 
+	private final ThreadPoolExecutor callbackThreadPool;
+
 	public JobCompleteHelper(XxlJobLogDao jobLogDao, XxlJobCompleter jobCompleter) {
 		this.jobLogDao = jobLogDao;
 		this.jobCompleter = jobCompleter;
-	}
-// ---------------------- monitor ----------------------
-
-	private ThreadPoolExecutor callbackThreadPool = null;
-	private Thread monitorThread;
-	private volatile boolean toStop = false;
-	public void start(){
-
 		// for callback
-		callbackThreadPool = new ThreadPoolExecutor(
+		this.callbackThreadPool = new ThreadPoolExecutor(
 				2,
 				20,
 				30L,
@@ -59,8 +53,11 @@ public class JobCompleteHelper {
 						logger.warn(">>>>>>>>>>> xxl-job, callback too fast, match threadpool rejected handler(run now).");
 					}
 				});
-
-
+	}
+// ---------------------- monitor ----------------------
+	private Thread monitorThread;
+	private volatile boolean toStop = false;
+	public void start(){
 		// for monitor
 		monitorThread = new Thread(new Runnable() {
 
