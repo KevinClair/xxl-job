@@ -59,17 +59,20 @@ public class JobTriggerPoolHelper {
     private volatile long minTim = System.currentTimeMillis()/60000;     // ms > min
     private volatile ConcurrentMap<Integer, AtomicInteger> jobTimeoutCountMap = new ConcurrentHashMap<>();
 
+    // ---------------------- helper ----------------------
 
     /**
-     * add trigger
+     * @param jobId
+     * @param triggerType
+     * @param failRetryCount
+     * 			>=0: use this param
+     * 			<0: use param from job info config
+     * @param executorShardingParam
+     * @param executorParam
+     *          null: use job param
+     *          not null: cover job param
      */
-    public void addTrigger(final int jobId,
-                           final TriggerTypeEnum triggerType,
-                           final int failRetryCount,
-                           final String executorShardingParam,
-                           final String executorParam,
-                           final String addressList) {
-
+    public void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorShardingParam, String executorParam, String addressList) {
         // choose thread pool
         ThreadPoolExecutor triggerPool_ = fastTriggerPool;
         AtomicInteger jobTimeoutCount = jobTimeoutCountMap.get(jobId);
@@ -105,25 +108,6 @@ public class JobTriggerPoolHelper {
             }
 
         });
-    }
-
-
-
-    // ---------------------- helper ----------------------
-
-    /**
-     * @param jobId
-     * @param triggerType
-     * @param failRetryCount
-     * 			>=0: use this param
-     * 			<0: use param from job info config
-     * @param executorShardingParam
-     * @param executorParam
-     *          null: use job param
-     *          not null: cover job param
-     */
-    public void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorShardingParam, String executorParam, String addressList) {
-        addTrigger(jobId, triggerType, failRetryCount, executorShardingParam, executorParam, addressList);
     }
 
 }
