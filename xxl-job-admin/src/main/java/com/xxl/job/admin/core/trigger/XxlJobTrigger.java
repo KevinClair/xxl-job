@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * xxl-job trigger
@@ -74,7 +75,7 @@ public class XxlJobTrigger {
 
         // load data
         XxlJobInfo jobInfo = jobInfoDao.loadById(jobId);
-        if (jobInfo == null) {
+        if (Objects.isNull(jobInfo)) {
             logger.warn(">>>>>>>>>>>> trigger fail, jobId invalid，jobId={}", jobId);
             return;
         }
