@@ -2,6 +2,7 @@ package com.xxl.job.starter;
 
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
+import com.xxl.job.core.util.IpUtil;
 import com.xxl.job.starter.config.XxlJobAdminConfiguration;
 import com.xxl.job.starter.config.XxlJobConfiguration;
 import com.xxl.job.starter.config.XxlJobExecutorConfiguration;
@@ -31,30 +32,24 @@ public class XxlJobAutoConfiguration implements EnvironmentAware {
     private ConfigurableEnvironment environment;
 
     @Bean
-    @ConditionalOnProperty(prefix = "xxl-jon.executor", value = "address")
-    public XxlJobExecutor xxlJobExecutor(@NonNull XxlJobAdminConfiguration adminConfiguration, @NonNull XxlJobExecutorConfiguration executorConfiguration){
-        XxlJobExecutor executor = new XxlJobSpringExecutor();
-        executor.setAdminAddresses(adminConfiguration.getAddresses());
-        executor.setAccessToken(adminConfiguration.getAccessToken());
+    @ConditionalOnProperty(prefix = "xxl-job.executor", value = "address")
+    public XxlJobConfiguration xxlJobExecutor(@NonNull XxlJobAdminConfiguration adminConfiguration, @NonNull XxlJobExecutorConfiguration executorConfiguration){
+        XxlJobConfiguration configuration = new XxlJobConfiguration();
+        configuration.setAdmin(adminConfiguration);
 
-        if (StringUtils.hasLength(executorConfiguration.getAppName())){
-            executor.setAppname(executorConfiguration.getAppName());
-        } else {
+        if (!StringUtils.hasLength(executorConfiguration.getAppName())){
             String applicationName = environment.getProperty("spring.application.name");
             if (!StringUtils.hasLength(applicationName)){
                 throw new IllegalArgumentException("The name of executor is empty.");
             }
-            executor.setAppname(applicationName);
+            executorConfiguration.setAppName(applicationName);
         }
 
-        executor.setAppname(appname);
-        executor.setAddress(address);
-        executor.setIp(ip);
-        executor.setPort(port);
-        executor.setAccessToken(accessToken);
-        executor.setLogPath(logPath);
-        executor.setLogRetentionDays(logRetentionDays);
-        return executor;
+        if (!StringUtils.hasLength(executorConfiguration.getIp())){
+            executorConfiguration.setIp(IpUtil.getIp());
+        }
+        configuration.setExecutor(executorConfiguration);
+        return configuration;
     }
 
     @Override
