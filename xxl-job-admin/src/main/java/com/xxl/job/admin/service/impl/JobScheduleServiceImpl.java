@@ -1,29 +1,21 @@
 package com.xxl.job.admin.service.impl;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.xxl.job.admin.common.Constants;
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
-import com.xxl.job.admin.core.cron.CronExpression;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
-import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
+import com.xxl.job.admin.core.util.TriggerUtil;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLockDao;
 import com.xxl.job.admin.service.JobScheduleService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.util.*;
 
 @Service
 public class JobScheduleServiceImpl implements JobScheduleService {
@@ -48,7 +40,6 @@ public class JobScheduleServiceImpl implements JobScheduleService {
     public boolean execute(Integer preReadCount, Map<Integer, List<Integer>> ringData) throws ParseException {
         // 开始分布式锁
         jobLockDao.lock();
-        logger.info("获取到锁啦");
         long nowTime = System.currentTimeMillis();
         List<XxlJobInfo> scheduleList = jobInfoDao.scheduleJobQuery(nowTime + Constants.PRE_READ_MS, preReadCount);
         if (scheduleList.isEmpty()){
@@ -126,7 +117,7 @@ public class JobScheduleServiceImpl implements JobScheduleService {
     }
 
     private void refreshNextValidTime(XxlJobInfo jobInfo, Date fromTime) throws ParseException {
-        Date nextValidTime = generateNextValidTime(jobInfo, fromTime);
+        Date nextValidTime = TriggerUtil.generateNextValidTime(jobInfo, fromTime);
         if (nextValidTime != null) {
             jobInfo.setTriggerLastTime(jobInfo.getTriggerNextTime());
             jobInfo.setTriggerNextTime(nextValidTime.getTime());
@@ -137,17 +128,6 @@ public class JobScheduleServiceImpl implements JobScheduleService {
             logger.warn(">>>>>>>>>>> xxl-job, refreshNextValidTime fail for job: jobId={}, scheduleType={}, scheduleConf={}",
                 jobInfo.getId(), jobInfo.getScheduleType(), jobInfo.getScheduleConf());
         }
-    }
-
-    private static Date generateNextValidTime(XxlJobInfo jobInfo, Date fromTime) throws ParseException {
-        ScheduleTypeEnum scheduleTypeEnum = ScheduleTypeEnum.match(jobInfo.getScheduleType(), null);
-        if (ScheduleTypeEnum.CRON == scheduleTypeEnum) {
-            Date nextValidTime = new CronExpression(jobInfo.getScheduleConf()).getNextValidTimeAfter(fromTime);
-            return nextValidTime;
-        } else if (ScheduleTypeEnum.FIX_RATE == scheduleTypeEnum /*|| ScheduleTypeEnum.FIX_DELAY == scheduleTypeEnum*/) {
-            return new Date(fromTime.getTime() + Integer.valueOf(jobInfo.getScheduleConf())*1000 );
-        }
-        return null;
     }
 
     private void pushTimeRing(int ringSecond, int jobId, Map<Integer, List<Integer>> ringData){

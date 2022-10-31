@@ -2,26 +2,14 @@ package com.xxl.job.admin.core.thread;
 
 import com.xxl.job.admin.common.Constants;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
-import com.xxl.job.admin.core.cron.CronExpression;
-import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
-import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
-import com.xxl.job.admin.core.util.JacksonUtil;
-import com.xxl.job.admin.core.util.TriggerUtil;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.service.JobScheduleService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -130,7 +118,6 @@ public class JobScheduleHelper {
                         }
                     }
                     try {
-                        logger.info("当前时间"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
                         // second data
                         List<Integer> ringItemData = new ArrayList<>();
                         int nowSecond = Calendar.getInstance().get(Calendar.SECOND);   // 避免处理耗时太长，跨过刻度，向前校验一个刻度；
@@ -138,7 +125,6 @@ public class JobScheduleHelper {
                             int i1 = (nowSecond + 60 - i) % 60;
                             List<Integer> tmpData = ringData.remove(i1);
                             if (tmpData != null) {
-                                logger.info("当前秒数："+nowSecond+",当前key:"+i1+",当前tmpData:"+ JacksonUtil.writeValueAsString(tmpData));
                                 ringItemData.addAll(tmpData);
                             }
                         }
@@ -166,13 +152,6 @@ public class JobScheduleHelper {
         ringThread.setDaemon(true);
         ringThread.setName("xxl-job, admin JobScheduleHelper#ringThread");
         ringThread.start();
-    }
-
-    @Scheduled(cron = "0/1 * * * * ?")
-    public void ringData(){
-        if (!ringThreadToStop){
-            logger.info("当前时间"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
-        }
     }
 
     public void toStop(){

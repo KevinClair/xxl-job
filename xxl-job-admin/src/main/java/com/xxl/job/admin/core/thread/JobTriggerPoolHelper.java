@@ -20,15 +20,11 @@ public class JobTriggerPoolHelper {
     private static Logger logger = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
 
     private final XxlJobTrigger jobTrigger;
-
-    private final XxlJobAdminConfig jobAdminConfig;
-
     private final ThreadPoolExecutor fastTriggerPool;
     private final ThreadPoolExecutor slowTriggerPool;
 
     public JobTriggerPoolHelper(XxlJobTrigger jobTrigger, XxlJobAdminConfig jobAdminConfig) {
         this.jobTrigger = jobTrigger;
-        this.jobAdminConfig = jobAdminConfig;
         // todo 拒绝策略，当任务过多时，线程池执行不过来
         this.fastTriggerPool = new ThreadPoolExecutor(
                 10,
