@@ -1,10 +1,11 @@
 package com.xxl.job.admin.core.util;
 
-import java.util.Date;
-
 import com.xxl.job.admin.core.cron.CronExpression;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
+
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * TODO
@@ -21,7 +22,7 @@ public class TriggerUtil {
      * @return
      * @throws Exception
      */
-    public static Date generateNextValidTime(XxlJobInfo jobInfo, Date fromTime) throws Exception {
+    public static Date generateNextValidTime(XxlJobInfo jobInfo, Date fromTime) throws ParseException {
         ScheduleTypeEnum scheduleTypeEnum = ScheduleTypeEnum.match(jobInfo.getScheduleType(), null);
         if (ScheduleTypeEnum.CRON == scheduleTypeEnum) {
             Date nextValidTime = new CronExpression(jobInfo.getScheduleConf()).getNextValidTimeAfter(fromTime);
