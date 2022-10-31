@@ -10,15 +10,13 @@ public class XxlJobExecutorConfiguration {
 
     private String appName;
 
-    private String address;
-
     private String ip;
 
-    private int port;
+    private int port = 9999;
 
-    private String logPath;
+    private String logPath = "/data/applogs/xxl-job/jobhandler";
 
-    private int logRetentionDays;
+    private int logRetentionDays = 30;
 
     public String getAppName() {
         return appName;
@@ -26,14 +24,6 @@ public class XxlJobExecutorConfiguration {
 
     public void setAppName(String appName) {
         this.appName = appName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getIp() {
