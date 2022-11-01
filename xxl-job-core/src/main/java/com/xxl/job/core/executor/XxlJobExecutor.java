@@ -2,6 +2,7 @@ package com.xxl.job.core.executor;
 
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.client.AdminBizClient;
+import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import com.xxl.job.core.handler.impl.MethodJobHandler;
@@ -28,54 +29,24 @@ import java.util.concurrent.ConcurrentMap;
 public class XxlJobExecutor  {
     private static final Logger logger = LoggerFactory.getLogger(XxlJobExecutor.class);
 
-    // ---------------------- param ----------------------
-    private String adminAddresses;
-    private String accessToken;
-    private String appname;
-    private String address;
-    private String ip;
-    private int port;
-    private String logPath;
-    private int logRetentionDays;
+    private final XxlJobConfiguration configuration;
 
-    public void setAdminAddresses(String adminAddresses) {
-        this.adminAddresses = adminAddresses;
+    public XxlJobExecutor(XxlJobConfiguration configuration) {
+        this.configuration = configuration;
     }
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-    public void setAppname(String appname) {
-        this.appname = appname;
-    }
-    public void setAddress(String address) {
-        this.address = address;
-    }
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-    public void setPort(int port) {
-        this.port = port;
-    }
-    public void setLogPath(String logPath) {
-        this.logPath = logPath;
-    }
-    public void setLogRetentionDays(int logRetentionDays) {
-        this.logRetentionDays = logRetentionDays;
-    }
-
 
     // ---------------------- start + stop ----------------------
     public void start() throws Exception {
 
         // init logpath
-        XxlJobFileAppender.initLogPath(logPath);
+        XxlJobFileAppender.initLogPath(configuration.getLogPath());
 
         // init invoker, admin-client
-        initAdminBizList(adminAddresses, accessToken);
+        initAdminBizList(configuration.getAddress(), configuration.getAccessToken());
 
 
         // init JobLogFileCleanThread
-        JobLogFileCleanThread.getInstance().start(logRetentionDays);
+        JobLogFileCleanThread.getInstance().start(configuration.getLogRetentionDays());
 
         // init TriggerCallbackThread
         TriggerCallbackThread.getInstance().start();
@@ -141,10 +112,6 @@ public class XxlJobExecutor  {
     private EmbedServer embedServer = null;
 
     private void initEmbedServer(String address, String ip, int port, String appname, String accessToken) throws Exception {
-
-        // fill ip port
-        port = port>0?port: NetUtil.findAvailablePort(9999);
-        ip = (ip!=null&&ip.trim().length()>0)?ip: IpUtil.getIp();
 
         // generate address
         if (address==null || address.trim().length()==0) {
