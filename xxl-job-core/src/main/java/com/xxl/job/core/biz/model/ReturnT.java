@@ -49,6 +49,10 @@ public class ReturnT<T> implements Serializable {
 		this.content = content;
 	}
 
+	public static ReturnT fail(String msg){
+		return new ReturnT<String>(ReturnT.FAIL_CODE, msg);
+	}
+
 	@Override
 	public String toString() {
 		return "ReturnT [code=" + code + ", msg=" + msg + ", content=" + content + "]";
