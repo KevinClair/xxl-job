@@ -1,6 +1,7 @@
 package com.xxl.job.core.executor.impl;
 
 import com.xxl.job.core.executor.XxlJobExecutor;
+import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.glue.GlueFactory;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.slf4j.Logger;
@@ -26,6 +27,9 @@ import java.util.Map;
 public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
     private static final Logger logger = LoggerFactory.getLogger(XxlJobSpringExecutor.class);
 
+    public XxlJobSpringExecutor(XxlJobConfiguration configuration) {
+        super(configuration);
+    }
 
     // start
     @Override
