@@ -8,16 +8,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "xxl-job.admin")
 public class XxlJobAdminConfiguration {
 
-    private String addresses;
+    private String address;
 
     private String accessToken;
 
-    public String getAddresses() {
-        return addresses;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAddresses(String addresses) {
-        this.addresses = addresses;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getAccessToken() {

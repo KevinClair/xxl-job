@@ -1,5 +1,6 @@
 package com.xxl.job.executor.sample.frameless.config;
 
+import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.executor.sample.frameless.jobhandler.SampleXxlJob;
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
 import org.slf4j.Logger;
@@ -34,15 +35,16 @@ public class FrameLessXxlJobConfig {
         Properties xxlJobProp = loadProperties("xxl-job-executor.properties");
 
         // init executor
-        xxlJobExecutor = new XxlJobSimpleExecutor();
-        xxlJobExecutor.setAdminAddresses(xxlJobProp.getProperty("xxl.job.admin.addresses"));
-        xxlJobExecutor.setAccessToken(xxlJobProp.getProperty("xxl.job.accessToken"));
-        xxlJobExecutor.setAppname(xxlJobProp.getProperty("xxl.job.executor.appname"));
-        xxlJobExecutor.setAddress(xxlJobProp.getProperty("xxl.job.executor.address"));
-        xxlJobExecutor.setIp(xxlJobProp.getProperty("xxl.job.executor.ip"));
-        xxlJobExecutor.setPort(Integer.valueOf(xxlJobProp.getProperty("xxl.job.executor.port")));
-        xxlJobExecutor.setLogPath(xxlJobProp.getProperty("xxl.job.executor.logpath"));
-        xxlJobExecutor.setLogRetentionDays(Integer.valueOf(xxlJobProp.getProperty("xxl.job.executor.logretentiondays")));
+        XxlJobConfiguration configuration = new XxlJobConfiguration();
+        configuration.setAddress(xxlJobProp.getProperty("xxl.job.admin.addresses"));
+        configuration.setAccessToken(xxlJobProp.getProperty("xxl.job.accessToken"));
+        configuration.setAppName(xxlJobProp.getProperty("xxl.job.executor.appname"));
+        configuration.setAddress(xxlJobProp.getProperty("xxl.job.executor.address"));
+        configuration.setIp(xxlJobProp.getProperty("xxl.job.executor.ip"));
+        configuration.setPort(Integer.valueOf(xxlJobProp.getProperty("xxl.job.executor.port")));
+        configuration.setLogPath(xxlJobProp.getProperty("xxl.job.executor.logpath"));
+        configuration.setLogRetentionDays(Integer.valueOf(xxlJobProp.getProperty("xxl.job.executor.logretentiondays")));
+        xxlJobExecutor = new XxlJobSimpleExecutor(configuration);
 
         // registry job bean
         xxlJobExecutor.setXxlJobBeanList(Arrays.asList(new SampleXxlJob()));
