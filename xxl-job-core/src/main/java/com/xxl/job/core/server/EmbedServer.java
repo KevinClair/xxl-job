@@ -41,8 +41,6 @@ public class EmbedServer implements DisposableBean {
     private EventLoopGroup bossGroup = new NioEventLoopGroup();
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
 
-    private Channel channel;
-
     public EmbedServer(final ExecutorBiz executorBiz, final XxlJobConfiguration configuration) {
         this.executorBiz = executorBiz;
         this.configuration = configuration;
@@ -64,15 +62,15 @@ public class EmbedServer implements DisposableBean {
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             // bind
-            channel = bootstrap.bind(configuration.getPort()).sync().channel();
+            ChannelFuture future = bootstrap.bind(configuration.getPort()).sync();
 
             logger.info(">>>>>>>>>>> xxl-job remoting server start success, nettype = {}, port = {}", EmbedServer.class, configuration.getPort());
 
             // start registry
             startRegistry(configuration.getAppName(), configuration.getAddress());
 
-        } catch (InterruptedException e) {
-            logger.info(">>>>>>>>>>> xxl-job remoting server stop.");
+            future.channel().close().sync();
+            logger.info(">>>>>>>>>>> xxl-job remoting server stop success, nettype = {}, port = {}", EmbedServer.class, configuration.getPort());
         } catch (Exception e) {
             logger.error(">>>>>>>>>>> xxl-job remoting server error.", e);
         }
@@ -82,9 +80,6 @@ public class EmbedServer implements DisposableBean {
     @Override
     public void destroy() throws Exception {
         // close server
-        if (Objects.nonNull(channel)){
-            channel.close().sync();
-        }
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
         // stop registry
