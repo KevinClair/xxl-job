@@ -50,14 +50,9 @@ public class XxlJobExecutor  {
 
         // init TriggerCallbackThread
         TriggerCallbackThread.getInstance().start();
-
-        // init executor-server
-        initEmbedServer(address, ip, port, appname, accessToken);
     }
 
     public void destroy(){
-        // destroy executor-server
-        stopEmbedServer();
 
         // destroy jobThreadRepository
         if (jobThreadRepository.size() > 0) {
@@ -106,38 +101,6 @@ public class XxlJobExecutor  {
 
     public static List<AdminBiz> getAdminBizList(){
         return adminBizList;
-    }
-
-    // ---------------------- executor-server (rpc provider) ----------------------
-    private EmbedServer embedServer = null;
-
-    private void initEmbedServer(String address, String ip, int port, String appname, String accessToken) throws Exception {
-
-        // generate address
-        if (address==null || address.trim().length()==0) {
-            String ip_port_address = IpUtil.getIpPort(ip, port);   // registry-address：default use address to registry , otherwise use ip:port if address is null
-            address = "http://{ip_port}/".replace("{ip_port}", ip_port_address);
-        }
-
-        // accessToken
-        if (accessToken==null || accessToken.trim().length()==0) {
-            logger.warn(">>>>>>>>>>> xxl-job accessToken is empty. To ensure system security, please set the accessToken.");
-        }
-
-        // start
-        embedServer = new EmbedServer();
-        embedServer.start(address, port, appname, accessToken);
-    }
-
-    private void stopEmbedServer() {
-        // stop provider factory
-        if (embedServer != null) {
-            try {
-                embedServer.stop();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
     }
 
 
