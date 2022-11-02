@@ -1,49 +1,42 @@
 package com.xxl.job.core.server;
 
 import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.impl.ExecutorBizImpl;
-import com.xxl.job.core.biz.model.*;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.server.handler.EmbedHttpServerHandler;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
-import com.xxl.job.core.util.GsonTool;
-import com.xxl.job.core.util.ThrowableUtil;
-import com.xxl.job.core.util.XxlJobRemotingUtil;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.*;
-import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 
-import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copy from : https://github.com/xuxueli/xxl-rpc
  *
  * @author xuxueli 2020-04-11 21:25
  */
-public class EmbedServer implements DisposableBean {
+public class EmbedServer {
     private static final Logger logger = LoggerFactory.getLogger(EmbedServer.class);
 
-    private final ExecutorBiz executorBiz;
+//    private final ExecutorBiz executorBiz;
+//
+//    private final XxlJobConfiguration configuration;
 
-    private final XxlJobConfiguration configuration;
-
-    private EventLoopGroup bossGroup = new NioEventLoopGroup();
-    private EventLoopGroup workerGroup = new NioEventLoopGroup();
-
-    public EmbedServer(final ExecutorBiz executorBiz, final XxlJobConfiguration configuration) {
-        this.executorBiz = executorBiz;
-        this.configuration = configuration;
+    public EmbedServer(final ExecutorBiz executorBiz, final XxlJobConfiguration configuration, final ExecutorRegistryThread executorRegistryThread) {
+//        this.executorBiz = executorBiz;
+//        this.configuration = configuration;
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             // start server
             ServerBootstrap bootstrap = new ServerBootstrap();
@@ -67,35 +60,17 @@ public class EmbedServer implements DisposableBean {
             logger.info(">>>>>>>>>>> xxl-job remoting server start success, nettype = {}, port = {}", EmbedServer.class, configuration.getPort());
 
             // start registry
-            startRegistry(configuration.getAppName(), configuration.getAddress());
+            executorRegistryThread.startRegistry();
 
             future.channel().close().sync();
             logger.info(">>>>>>>>>>> xxl-job remoting server stop success, nettype = {}, port = {}", EmbedServer.class, configuration.getPort());
         } catch (Exception e) {
             logger.error(">>>>>>>>>>> xxl-job remoting server error.", e);
+        } finally {
+            // close server
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
         }
 
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        // close server
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
-        // stop registry
-        stopRegistry();
-        logger.info(">>>>>>>>>>> xxl-job remoting server destroy success.");
-    }
-
-    // ---------------------- registry ----------------------
-
-    public void startRegistry(final String appname, final String address) {
-        // start registry
-        ExecutorRegistryThread.getInstance().start(appname, address);
-    }
-
-    public void stopRegistry() {
-        // stop registry
-        ExecutorRegistryThread.getInstance().toStop();
     }
 }
