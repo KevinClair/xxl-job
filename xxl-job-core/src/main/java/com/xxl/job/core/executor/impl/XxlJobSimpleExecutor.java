@@ -3,6 +3,7 @@ package com.xxl.job.core.executor.impl;
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.handler.annotation.XxlJob;
+import com.xxl.job.core.thread.TriggerCallbackThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +23,8 @@ public class XxlJobSimpleExecutor extends XxlJobExecutor {
 
     private List<Object> xxlJobBeanList = new ArrayList<>();
 
-    public XxlJobSimpleExecutor(XxlJobConfiguration configuration) {
-        super(configuration);
+    public XxlJobSimpleExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread) {
+        super(configuration, triggerCallbackThread);
     }
 
     public List<Object> getXxlJobBeanList() {
