@@ -2,18 +2,19 @@ package com.xxl.job.starter;
 
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.impl.ExecutorBizImpl;
+import com.xxl.job.core.executor.AdminBizClientManager;
 import com.xxl.job.core.executor.XxlJobExecutor;
+import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import com.xxl.job.core.server.EmbedServer;
+import com.xxl.job.core.thread.ExecutorRegistryThread;
+import com.xxl.job.core.thread.TriggerCallbackThread;
 import com.xxl.job.core.util.IpUtil;
 import com.xxl.job.core.util.NetUtil;
 import com.xxl.job.starter.config.XxlJobAdminConfiguration;
-import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.starter.config.XxlJobExecutorConfiguration;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.EnvironmentAware;
@@ -68,20 +69,33 @@ public class XxlJobAutoConfiguration implements EnvironmentAware {
     }
 
     @Bean
-    public XxlJobExecutor xxlJobExecutor(XxlJobConfiguration configuration){
-        return new XxlJobSpringExecutor(configuration);
-    }
-
-    @Bean
-    @ConditionalOnBean(value = XxlJobExecutor.class)
     public ExecutorBiz executorBiz(){
         return new ExecutorBizImpl();
     }
 
     @Bean
-    @ConditionalOnBean(value = XxlJobExecutor.class)
-    public EmbedServer embedServer(ExecutorBiz executorBiz, XxlJobConfiguration configuration){
-        return new EmbedServer(executorBiz, configuration);
+    public AdminBizClientManager adminBizClientManager(XxlJobConfiguration configuration){
+        return new AdminBizClientManager(configuration);
+    }
+
+    @Bean
+    public TriggerCallbackThread triggerCallbackThread(AdminBizClientManager bizClientManager){
+        return new TriggerCallbackThread(bizClientManager);
+    }
+
+    @Bean
+    public XxlJobExecutor xxlJobExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread){
+        return new XxlJobSpringExecutor(configuration, triggerCallbackThread);
+    }
+
+    @Bean
+    public ExecutorRegistryThread executorRegistryThread(AdminBizClientManager bizClientManager, XxlJobConfiguration configuration){
+        return new ExecutorRegistryThread(bizClientManager, configuration);
+    }
+
+    @Bean
+    public EmbedServer embedServer(ExecutorBiz executorBiz, XxlJobConfiguration configuration, ExecutorRegistryThread executorRegistryThread){
+        return new EmbedServer(executorBiz, configuration, executorRegistryThread);
     }
 
     @Override
