@@ -1,6 +1,8 @@
 package com.xxl.job.executor.sample.frameless.config;
 
+import com.xxl.job.core.executor.AdminBizClientManager;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
+import com.xxl.job.core.thread.TriggerCallbackThread;
 import com.xxl.job.executor.sample.frameless.jobhandler.SampleXxlJob;
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
 import org.slf4j.Logger;
@@ -44,7 +46,10 @@ public class FrameLessXxlJobConfig {
         configuration.setPort(Integer.valueOf(xxlJobProp.getProperty("xxl.job.executor.port")));
         configuration.setLogPath(xxlJobProp.getProperty("xxl.job.executor.logpath"));
         configuration.setLogRetentionDays(Integer.valueOf(xxlJobProp.getProperty("xxl.job.executor.logretentiondays")));
-        xxlJobExecutor = new XxlJobSimpleExecutor(configuration);
+
+        AdminBizClientManager bizClientManager = new AdminBizClientManager(configuration);
+        TriggerCallbackThread callbackThread = new TriggerCallbackThread(bizClientManager);
+        xxlJobExecutor = new XxlJobSimpleExecutor(configuration, callbackThread);
 
         // registry job bean
         xxlJobExecutor.setXxlJobBeanList(Arrays.asList(new SampleXxlJob()));
