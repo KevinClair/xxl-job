@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration
 @EnableConfigurationProperties({XxlJobAdminConfiguration.class, XxlJobExecutorConfiguration.class})
-@ConditionalOnProperty(prefix = "xxl-job.admin", value = "addresses")
+@ConditionalOnProperty(prefix = "xxl-job.admin", value = "address")
 public class XxlJobAutoConfiguration implements EnvironmentAware {
 
     private static final Logger logger = LoggerFactory.getLogger(XxlJobAutoConfiguration.class);
@@ -39,8 +39,7 @@ public class XxlJobAutoConfiguration implements EnvironmentAware {
     private ConfigurableEnvironment environment;
 
     @Bean
-    @ConditionalOnProperty(prefix = "xxl-job.executor", value = "address")
-    public XxlJobConfiguration xxlJobExecutor(@NonNull XxlJobAdminConfiguration adminConfiguration, @NonNull XxlJobExecutorConfiguration executorConfiguration) {
+    public XxlJobConfiguration xxlJobConfiguration(@NonNull XxlJobAdminConfiguration adminConfiguration, @NonNull XxlJobExecutorConfiguration executorConfiguration) {
         XxlJobConfiguration configuration = new XxlJobConfiguration();
         configuration.setAddress(adminConfiguration.getAddress());
         if (!StringUtils.hasLength(adminConfiguration.getAccessToken())){
@@ -90,8 +89,8 @@ public class XxlJobAutoConfiguration implements EnvironmentAware {
     }
 
     @Bean
-    public XxlJobExecutor xxlJobExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread, JobHandlerRepository jobHandlerRepository){
-        return new XxlJobSpringExecutor(configuration, triggerCallbackThread, jobHandlerRepository);
+    public XxlJobSpringExecutor xxlJobSpringExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread, JobHandlerRepository jobHandlerRepository){
+        return new XxlJobSpringExecutor(configuration, triggerCallbackThread);
     }
 
     @Bean
