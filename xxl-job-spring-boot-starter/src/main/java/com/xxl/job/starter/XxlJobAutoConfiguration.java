@@ -70,8 +70,13 @@ public class XxlJobAutoConfiguration implements EnvironmentAware {
     }
 
     @Bean
-    public ExecutorBiz executorBiz(){
-        return new ExecutorBizImpl();
+    public JobHandlerRepository jobHandlerRepository(){
+        return new JobHandlerRepository();
+    }
+
+    @Bean
+    public ExecutorBiz executorBiz(JobHandlerRepository jobHandlerRepository){
+        return new ExecutorBizImpl(jobHandlerRepository);
     }
 
     @Bean
@@ -82,11 +87,6 @@ public class XxlJobAutoConfiguration implements EnvironmentAware {
     @Bean
     public TriggerCallbackThread triggerCallbackThread(AdminBizClientManager bizClientManager){
         return new TriggerCallbackThread(bizClientManager);
-    }
-
-    @Bean
-    public JobHandlerRepository jobHandlerRepository(){
-        return new JobHandlerRepository();
     }
 
     @Bean
