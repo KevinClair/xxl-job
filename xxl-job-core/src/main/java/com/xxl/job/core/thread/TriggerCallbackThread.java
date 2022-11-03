@@ -7,6 +7,7 @@ import com.xxl.job.core.context.XxlJobContext;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.enums.RegistryConfig;
 import com.xxl.job.core.executor.AdminBizClientManager;
+import com.xxl.job.core.handler.HandleCallbackParamRepository;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.util.FileUtil;
 import com.xxl.job.core.util.JdkSerializeTool;
@@ -18,7 +19,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,11 +36,6 @@ public class TriggerCallbackThread implements DisposableBean {
     private final Thread triggerRetryCallbackThread;
     private volatile boolean toStop = false;
 
-    /**
-     * job results callback queue
-     */
-    private LinkedBlockingQueue<HandleCallbackParam> callBackQueue = new LinkedBlockingQueue<HandleCallbackParam>();
-
     public TriggerCallbackThread(AdminBizClientManager bizClientManager) {
         this.bizClientManager = bizClientManager;
         this.triggerCallbackThread = new Thread(() -> {
@@ -48,11 +43,11 @@ public class TriggerCallbackThread implements DisposableBean {
             // normal callback
             while(!toStop){
                 try {
-                    HandleCallbackParam callback = callBackQueue.take();
+                    HandleCallbackParam callback = HandleCallbackParamRepository.take();
 
                     // callback list param
                     List<HandleCallbackParam> callbackParamList = new ArrayList<HandleCallbackParam>();
-                    int drainToNum = callBackQueue.drainTo(callbackParamList);
+                    int drainToNum = HandleCallbackParamRepository.drainTo(callbackParamList);
                     callbackParamList.add(callback);
 
                     // callback, will retry if error
@@ -67,7 +62,7 @@ public class TriggerCallbackThread implements DisposableBean {
             // last callback
             try {
                 List<HandleCallbackParam> callbackParamList = new ArrayList<HandleCallbackParam>();
-                int drainToNum = callBackQueue.drainTo(callbackParamList);
+                int drainToNum = HandleCallbackParamRepository.drainTo(callbackParamList);
                 if (callbackParamList!=null && callbackParamList.size()>0) {
                     doCallback(callbackParamList);
                 }
@@ -106,16 +101,6 @@ public class TriggerCallbackThread implements DisposableBean {
             }
         });
         this.triggerRetryCallbackThread.setDaemon(true);
-    }
-
-    /**
-     * 向队列中推送数据
-     *
-     * @param callback
-     */
-    public void pushCallBack(HandleCallbackParam callback){
-        callBackQueue.add(callback);
-        logger.debug(">>>>>>>>>>> xxl-job, push callback request, logId:{}", callback.getLogId());
     }
 
     /**
