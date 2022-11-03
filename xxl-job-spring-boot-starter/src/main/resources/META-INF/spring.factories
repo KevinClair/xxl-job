@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.xxl.job.starter.XxlJobAutoConfiguration
+
+
+
+#org.springframework.context.ApplicationListener = com.xxl.job.core.handler.JobHandlerRepository
