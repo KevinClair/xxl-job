@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.CollectionUtils;
@@ -24,18 +27,26 @@ import com.xxl.job.core.handler.impl.MethodJobHandler;
 /**
  * JobHandler管理工厂
  */
-public class JobHandlerRepository implements ApplicationContextAware, DisposableBean {
+public class JobHandlerRepository implements ApplicationListener<ContextRefreshedEvent>, DisposableBean {
 
     private static final Logger logger = LoggerFactory.getLogger(JobHandlerRepository.class);
 
-    private ApplicationContext applicationContext;
-
     private static ConcurrentMap<String, IJobHandler> jobHandlerRepository = new ConcurrentHashMap<>();
+
+    private final AtomicBoolean flag = new AtomicBoolean(false);
+
+    @Override
+    public void onApplicationEvent(final ContextRefreshedEvent event) {
+        if (!flag.compareAndSet(false, true)) {
+            return;
+        }
+        this.initJobHandlerMethodRepository(event.getApplicationContext());
+    }
 
     /**
      * init job handler.
      */
-    public void initJobHandlerMethodRepository() {
+    public void initJobHandlerMethodRepository(ApplicationContext applicationContext) {
         // init job handler from method
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
@@ -130,11 +141,6 @@ public class JobHandlerRepository implements ApplicationContextAware, Disposable
     public IJobHandler registerJobHandler(String name, IJobHandler jobHandler){
         logger.info(">>>>>>>>>>> xxl-job register jobHandler success, name:{}, jobHandler:{}", name, jobHandler);
         return jobHandlerRepository.put(name, jobHandler);
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     @Override
