@@ -6,6 +6,7 @@ import com.xxl.job.core.executor.AdminBizClientManager;
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
+import com.xxl.job.core.handler.JobHandlerRepository;
 import com.xxl.job.core.server.EmbedServer;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
 import com.xxl.job.core.thread.TriggerCallbackThread;
@@ -84,8 +85,13 @@ public class XxlJobAutoConfiguration implements EnvironmentAware {
     }
 
     @Bean
-    public XxlJobExecutor xxlJobExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread){
-        return new XxlJobSpringExecutor(configuration, triggerCallbackThread);
+    public JobHandlerRepository jobHandlerRepository(){
+        return new JobHandlerRepository();
+    }
+
+    @Bean
+    public XxlJobExecutor xxlJobExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread, JobHandlerRepository jobHandlerRepository){
+        return new XxlJobSpringExecutor(configuration, triggerCallbackThread, jobHandlerRepository);
     }
 
     @Bean
