@@ -4,21 +4,11 @@ import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.glue.GlueFactory;
 import com.xxl.job.core.handler.JobHandlerRepository;
-import com.xxl.job.core.handler.annotation.XxlJob;
 import com.xxl.job.core.thread.TriggerCallbackThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.core.MethodIntrospector;
-import org.springframework.core.annotation.AnnotatedElementUtils;
-
-import java.lang.reflect.Method;
-import java.util.Map;
 
 
 /**
@@ -34,7 +24,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements Initializing
 
     public XxlJobSpringExecutor(final XxlJobConfiguration configuration, final TriggerCallbackThread triggerCallbackThread,
                                 final JobHandlerRepository jobHandlerRepository) {
-        super(configuration, triggerCallbackThread, jobHandlerRepository);
+        super(configuration, triggerCallbackThread);
         this.jobHandlerRepository = jobHandlerRepository;
     }
 
