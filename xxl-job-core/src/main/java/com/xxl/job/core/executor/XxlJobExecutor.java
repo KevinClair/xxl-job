@@ -2,6 +2,7 @@ package com.xxl.job.core.executor;
 
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.handler.JobHandlerRepository;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import com.xxl.job.core.handler.impl.MethodJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;
@@ -26,9 +27,13 @@ public class XxlJobExecutor  {
 
     private final TriggerCallbackThread triggerCallbackThread;
 
-    public XxlJobExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread) {
+    private final JobHandlerRepository jobHandlerRepository;
+
+    public XxlJobExecutor(final XxlJobConfiguration configuration, final TriggerCallbackThread triggerCallbackThread,
+                          final JobHandlerRepository jobHandlerRepository) {
         this.configuration = configuration;
         this.triggerCallbackThread = triggerCallbackThread;
+        this.jobHandlerRepository = jobHandlerRepository;
     }
 
     // ---------------------- start + stop ----------------------
@@ -61,74 +66,9 @@ public class XxlJobExecutor  {
             }
             jobThreadRepository.clear();
         }
-        jobHandlerRepository.clear();
-
 
         // destroy JobLogFileCleanThread
         JobLogFileCleanThread.getInstance().toStop();
-    }
-
-    // ---------------------- job handler repository ----------------------
-    private static ConcurrentMap<String, IJobHandler> jobHandlerRepository = new ConcurrentHashMap<String, IJobHandler>();
-    public static IJobHandler loadJobHandler(String name){
-        return jobHandlerRepository.get(name);
-    }
-    public static IJobHandler registJobHandler(String name, IJobHandler jobHandler){
-        logger.info(">>>>>>>>>>> xxl-job register jobhandler success, name:{}, jobHandler:{}", name, jobHandler);
-        return jobHandlerRepository.put(name, jobHandler);
-    }
-    protected void registJobHandler(XxlJob xxlJob, Object bean, Method executeMethod){
-        if (xxlJob == null) {
-            return;
-        }
-
-        String name = xxlJob.value();
-        //make and simplify the variables since they'll be called several times later
-        Class<?> clazz = bean.getClass();
-        String methodName = executeMethod.getName();
-        if (name.trim().length() == 0) {
-            throw new RuntimeException("xxl-job method-jobhandler name invalid, for[" + clazz + "#" + methodName + "] .");
-        }
-        if (loadJobHandler(name) != null) {
-            throw new RuntimeException("xxl-job jobhandler[" + name + "] naming conflicts.");
-        }
-
-        // execute method
-        /*if (!(method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isAssignableFrom(String.class))) {
-            throw new RuntimeException("xxl-job method-jobhandler param-classtype invalid, for[" + bean.getClass() + "#" + method.getName() + "] , " +
-                    "The correct method format like \" public ReturnT<String> execute(String param) \" .");
-        }
-        if (!method.getReturnType().isAssignableFrom(ReturnT.class)) {
-            throw new RuntimeException("xxl-job method-jobhandler return-classtype invalid, for[" + bean.getClass() + "#" + method.getName() + "] , " +
-                    "The correct method format like \" public ReturnT<String> execute(String param) \" .");
-        }*/
-
-        executeMethod.setAccessible(true);
-
-        // init and destroy
-        Method initMethod = null;
-        Method destroyMethod = null;
-
-        if (xxlJob.init().trim().length() > 0) {
-            try {
-                initMethod = clazz.getDeclaredMethod(xxlJob.init());
-                initMethod.setAccessible(true);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("xxl-job method-jobhandler initMethod invalid, for[" + clazz + "#" + methodName + "] .");
-            }
-        }
-        if (xxlJob.destroy().trim().length() > 0) {
-            try {
-                destroyMethod = clazz.getDeclaredMethod(xxlJob.destroy());
-                destroyMethod.setAccessible(true);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("xxl-job method-jobhandler destroyMethod invalid, for[" + clazz + "#" + methodName + "] .");
-            }
-        }
-
-        // registry jobhandler
-        registJobHandler(name, new MethodJobHandler(bean, executeMethod, initMethod, destroyMethod));
-
     }
 
 
@@ -157,9 +97,5 @@ public class XxlJobExecutor  {
             return oldJobThread;
         }
         return null;
-    }
-
-    public static JobThread loadJobThread(int jobId){
-        return jobThreadRepository.get(jobId);
     }
 }
