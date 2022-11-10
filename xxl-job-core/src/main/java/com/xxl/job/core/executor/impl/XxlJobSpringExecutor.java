@@ -39,7 +39,6 @@ public class XxlJobSpringExecutor implements InitializingBean, DisposableBean {
         // refresh GlueFactory
         GlueFactory.refreshInstance(1);
 
-        // super start
         // init logpath
         XxlJobFileAppender.initLogPath(configuration.getLogPath());
 
