@@ -16,7 +16,7 @@ public class JobThreadRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(JobThreadRepository.class);
 
-    private static ConcurrentMap<Integer, JobThread> jobThreadRepository = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Integer, JobThread> jobThreadRepository = new ConcurrentHashMap<>();
 
     /**
      * registry new job thread.

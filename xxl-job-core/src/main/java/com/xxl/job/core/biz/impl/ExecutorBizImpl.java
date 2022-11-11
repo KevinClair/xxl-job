@@ -147,7 +147,6 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
         // replace thread (new or exists invalid)
         if (jobThread == null) {
-
             jobThread = JobThreadRepository.registerJobThread(triggerParam.getJobId(), jobHandler, removeOldReason);
         }
 
