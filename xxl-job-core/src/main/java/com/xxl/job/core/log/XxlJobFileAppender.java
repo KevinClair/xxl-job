@@ -3,6 +3,7 @@ package com.xxl.job.core.log;
 import com.xxl.job.core.biz.model.LogResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -30,9 +31,15 @@ public class XxlJobFileAppender {
 	 */
 	private static String logBasePath = "/data/applogs/xxl-job/jobhandler";
 	private static String glueSrcPath = logBasePath.concat("/gluesource");
+
+	/**
+	 * init path of log.
+	 *
+	 * @param logPath path of log.
+	 */
 	public static void initLogPath(String logPath){
 		// init
-		if (logPath!=null && logPath.trim().length()>0) {
+		if (StringUtils.hasText(logPath)) {
 			logBasePath = logPath;
 		}
 		// mk base dir
@@ -48,12 +55,6 @@ public class XxlJobFileAppender {
 			glueBaseDir.mkdirs();
 		}
 		glueSrcPath = glueBaseDir.getPath();
-	}
-	public static String getLogPath() {
-		return logBasePath;
-	}
-	public static String getGlueSrcPath() {
-		return glueSrcPath;
 	}
 
 	/**
@@ -87,7 +88,7 @@ public class XxlJobFileAppender {
 	 * @param appendLog
 	 */
 	public static void appendLog(String logFileName, String appendLog) {
-
+		// todo 使用队列改成异步
 		// log file
 		if (logFileName==null || logFileName.trim().length()==0) {
 			return;
@@ -215,6 +216,13 @@ public class XxlJobFileAppender {
 			}
 		}
 		return null;
+	}
+
+	public static String getLogPath() {
+		return logBasePath;
+	}
+	public static String getGlueSrcPath() {
+		return glueSrcPath;
 	}
 
 }
