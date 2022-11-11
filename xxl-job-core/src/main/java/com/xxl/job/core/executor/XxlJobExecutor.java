@@ -3,7 +3,7 @@ package com.xxl.job.core.executor;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.handler.JobThreadRepository;
 import com.xxl.job.core.log.XxlJobFileAppender;
-import com.xxl.job.core.thread.JobLogFileCleanThread;
+import com.xxl.job.core.thread.JobLogFileCleanHandler;
 import com.xxl.job.core.thread.TriggerCallbackThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +18,18 @@ public class XxlJobExecutor  {
 
     private final TriggerCallbackThread triggerCallbackThread;
 
+    private final JobLogFileCleanHandler logFileCleanHandler;
+
     public XxlJobExecutor(final XxlJobConfiguration configuration, final TriggerCallbackThread triggerCallbackThread) {
         this.configuration = configuration;
         this.triggerCallbackThread = triggerCallbackThread;
+        this.logFileCleanHandler = new JobLogFileCleanHandler(configuration.getLogRetentionDays(), configuration.getLogPath());
     }
 
     // ---------------------- start + stop ----------------------
     public void start() throws Exception {
         // init logpath
         XxlJobFileAppender.initLogPath(configuration.getLogPath());
-
-        // init JobLogFileCleanThread
-        JobLogFileCleanThread.getInstance().start(configuration.getLogRetentionDays());
 
         // init TriggerCallbackThread
         triggerCallbackThread.start();
@@ -38,6 +38,6 @@ public class XxlJobExecutor  {
     public void destroy(){
         JobThreadRepository.destroy();
         // destroy JobLogFileCleanThread
-        JobLogFileCleanThread.getInstance().toStop();
+        logFileCleanHandler.toStop();
     }
 }

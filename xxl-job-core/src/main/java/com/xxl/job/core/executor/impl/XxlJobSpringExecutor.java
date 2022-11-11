@@ -1,12 +1,10 @@
 package com.xxl.job.core.executor.impl;
 
-import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.glue.GlueFactory;
-import com.xxl.job.core.handler.JobHandlerRepository;
 import com.xxl.job.core.handler.JobThreadRepository;
 import com.xxl.job.core.log.XxlJobFileAppender;
-import com.xxl.job.core.thread.JobLogFileCleanThread;
+import com.xxl.job.core.thread.JobLogFileCleanHandler;
 import com.xxl.job.core.thread.TriggerCallbackThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +25,12 @@ public class XxlJobSpringExecutor implements InitializingBean, DisposableBean {
 
     private final TriggerCallbackThread triggerCallbackThread;
 
+    private final JobLogFileCleanHandler jobLogFileCleanHandler;
+
     public XxlJobSpringExecutor(final XxlJobConfiguration configuration, final TriggerCallbackThread triggerCallbackThread) {
         this.configuration = configuration;
         this.triggerCallbackThread = triggerCallbackThread;
+        this.jobLogFileCleanHandler = new JobLogFileCleanHandler(configuration.getLogRetentionDays(), configuration.getLogPath());
     }
 
     // start
@@ -42,9 +43,6 @@ public class XxlJobSpringExecutor implements InitializingBean, DisposableBean {
         // init logpath
         XxlJobFileAppender.initLogPath(configuration.getLogPath());
 
-        // init JobLogFileCleanThread
-        JobLogFileCleanThread.getInstance().start(configuration.getLogRetentionDays());
-
         // init TriggerCallbackThread
         triggerCallbackThread.start();
     }
@@ -54,6 +52,6 @@ public class XxlJobSpringExecutor implements InitializingBean, DisposableBean {
     public void destroy() {
         JobThreadRepository.destroy();
         // destroy JobLogFileCleanThread
-        JobLogFileCleanThread.getInstance().toStop();
+        jobLogFileCleanHandler.toStop();
     }
 }
