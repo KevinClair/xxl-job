@@ -19,8 +19,6 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class XxlJobSpringExecutor implements InitializingBean, DisposableBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(XxlJobSpringExecutor.class);
-
     private final XxlJobConfiguration configuration;
 
     private final TriggerCallbackThread triggerCallbackThread;
