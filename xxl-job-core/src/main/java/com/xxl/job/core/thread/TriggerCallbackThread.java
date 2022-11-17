@@ -14,11 +14,14 @@ import com.xxl.job.core.util.JdkSerializeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,7 +36,8 @@ public class TriggerCallbackThread implements DisposableBean {
      * callback thread
      */
     private final Thread triggerCallbackThread;
-    private final Thread triggerRetryCallbackThread;
+
+    private final ScheduledThreadPoolExecutor retryCallbackThreadPoolExecutor;
     private volatile boolean toStop = false;
 
     public TriggerCallbackThread(AdminBizClientManager bizClientManager) {
@@ -47,11 +51,13 @@ public class TriggerCallbackThread implements DisposableBean {
 
                     // callback list param
                     List<HandleCallbackParam> callbackParamList = new ArrayList<HandleCallbackParam>();
-                    int drainToNum = HandleCallbackParamRepository.drainTo(callbackParamList);
+                    HandleCallbackParamRepository.drainTo(callbackParamList);
                     callbackParamList.add(callback);
 
                     // callback, will retry if error
-                    doCallback(callbackParamList);
+                    if (!CollectionUtils.isEmpty(callbackParamList)) {
+                        doCallback(callbackParamList);
+                    }
                 } catch (Exception e) {
                     if (!toStop) {
                         logger.error(e.getMessage(), e);
@@ -62,8 +68,8 @@ public class TriggerCallbackThread implements DisposableBean {
             // last callback
             try {
                 List<HandleCallbackParam> callbackParamList = new ArrayList<HandleCallbackParam>();
-                int drainToNum = HandleCallbackParamRepository.drainTo(callbackParamList);
-                if (callbackParamList!=null && callbackParamList.size()>0) {
+                HandleCallbackParamRepository.drainTo(callbackParamList);
+                if (!CollectionUtils.isEmpty(callbackParamList)) {
                     doCallback(callbackParamList);
                 }
             } catch (Exception e) {
@@ -76,41 +82,16 @@ public class TriggerCallbackThread implements DisposableBean {
         });
         this.triggerCallbackThread.setDaemon(true);
         this.triggerCallbackThread.setName("xxl-job, executor TriggerCallbackThread");
+        this.triggerCallbackThread.start();
 
-        this.triggerRetryCallbackThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(!toStop){
-                    try {
-                        retryFailCallbackFile();
-                    } catch (Exception e) {
-                        if (!toStop) {
-                            logger.error(e.getMessage(), e);
-                        }
-
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
-                    } catch (InterruptedException e) {
-                        if (!toStop) {
-                            logger.error(e.getMessage(), e);
-                        }
-                    }
-                }
-                logger.info(">>>>>>>>>>> xxl-job, executor retry callback thread destroy.");
+        this.retryCallbackThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, r -> new Thread(r, "xxl-job trigger retry callback thread"));
+        this.retryCallbackThreadPoolExecutor.scheduleWithFixedDelay(() -> {
+            try {
+                retryFailCallbackFile();
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
-        });
-        this.triggerRetryCallbackThread.setDaemon(true);
-    }
-
-    /**
-     * start thread
-     */
-    public void start() {
-        // callback
-        triggerCallbackThread.start();
-        // retry
-        triggerRetryCallbackThread.start();
+        }, 0, RegistryConfig.BEAT_TIMEOUT, TimeUnit.SECONDS);
     }
 
     /**
@@ -163,10 +144,9 @@ public class TriggerCallbackThread implements DisposableBean {
 
     private void appendFailCallbackFile(List<HandleCallbackParam> callbackParamList){
         // valid
-        if (callbackParamList==null || callbackParamList.size()==0) {
+        if (CollectionUtils.isEmpty(callbackParamList)) {
             return;
         }
-
         // append file
         byte[] callbackParamList_bytes = JdkSerializeTool.serialize(callbackParamList);
 
@@ -227,13 +207,6 @@ public class TriggerCallbackThread implements DisposableBean {
         }
 
         // stop retry, interrupt and wait
-        if (triggerRetryCallbackThread != null) {
-            triggerRetryCallbackThread.interrupt();
-            try {
-                triggerRetryCallbackThread.join();
-            } catch (InterruptedException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
+        this.retryCallbackThreadPoolExecutor.shutdownNow();
     }
 }
