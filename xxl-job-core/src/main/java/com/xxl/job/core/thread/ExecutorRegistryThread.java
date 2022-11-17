@@ -36,7 +36,7 @@ public class ExecutorRegistryThread implements DisposableBean {
      */
     public void startRegistry(){
         this.executorRegistryThreadPool.scheduleAtFixedRate(() -> {
-            RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getAddress());
+            RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
             for (AdminBiz adminBiz : bizClientManager.getAdminBizList()) {
                 try {
                     ReturnT<String> registryResult = adminBiz.registry(registryParam);
@@ -65,7 +65,7 @@ public class ExecutorRegistryThread implements DisposableBean {
         } catch (InterruptedException exception){
             logger.error(">>>>>>>>>>> xxl-job executorRegistryThreadPool shutdown error.", exception);
         }
-        RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getAddress());
+        RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
         for (AdminBiz adminBiz : bizClientManager.getAdminBizList()) {
             try {
                 ReturnT<String> registryResult = adminBiz.registryRemove(registryParam);
