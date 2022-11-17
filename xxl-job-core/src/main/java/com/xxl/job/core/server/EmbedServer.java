@@ -5,6 +5,7 @@ import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.server.handler.EmbedHttpServerHandler;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -17,7 +18,9 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,13 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class EmbedServer {
     private static final Logger logger = LoggerFactory.getLogger(EmbedServer.class);
 
-//    private final ExecutorBiz executorBiz;
-//
-//    private final XxlJobConfiguration configuration;
-
     public EmbedServer(final ExecutorBiz executorBiz, final XxlJobConfiguration configuration, final ExecutorRegistryThread executorRegistryThread) {
-//        this.executorBiz = executorBiz;
-//        this.configuration = configuration;
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -55,21 +52,21 @@ public class EmbedServer {
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             // bind
-            ChannelFuture future = bootstrap.bind(configuration.getPort()).sync();
+            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort()).sync();
 
             logger.info(">>>>>>>>>>> xxl-job remoting server start success, nettype = {}, port = {}", EmbedServer.class, configuration.getPort());
 
             // start registry
             executorRegistryThread.startRegistry();
 
-            future.channel().close().sync();
-            logger.info(">>>>>>>>>>> xxl-job remoting server stop success, nettype = {}, port = {}", EmbedServer.class, configuration.getPort());
+            channelFuture.channel().closeFuture().addListener(future -> {
+                // close server
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
+                logger.info(">>>>>>>>>>> xxl-job remoting server stop success, nettype = {}, port = {}", EmbedServer.class, configuration.getPort());
+            });
         } catch (Exception e) {
             logger.error(">>>>>>>>>>> xxl-job remoting server error.", e);
-        } finally {
-            // close server
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
         }
 
     }
