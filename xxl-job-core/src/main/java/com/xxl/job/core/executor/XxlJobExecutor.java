@@ -16,13 +16,10 @@ public class XxlJobExecutor  {
 
     private final XxlJobConfiguration configuration;
 
-    private final TriggerCallbackThread triggerCallbackThread;
-
     private final JobLogFileCleanHandler logFileCleanHandler;
 
-    public XxlJobExecutor(final XxlJobConfiguration configuration, final TriggerCallbackThread triggerCallbackThread) {
+    public XxlJobExecutor(final XxlJobConfiguration configuration) {
         this.configuration = configuration;
-        this.triggerCallbackThread = triggerCallbackThread;
         this.logFileCleanHandler = new JobLogFileCleanHandler(configuration.getLogRetentionDays(), configuration.getLogPath());
     }
 
@@ -30,9 +27,6 @@ public class XxlJobExecutor  {
     public void start() throws Exception {
         // init logpath
         XxlJobFileAppender.initLogPath(configuration.getLogPath());
-
-        // init TriggerCallbackThread
-        triggerCallbackThread.start();
     }
 
     public void destroy(){

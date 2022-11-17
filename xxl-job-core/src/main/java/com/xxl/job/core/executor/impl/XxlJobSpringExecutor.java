@@ -21,13 +21,10 @@ public class XxlJobSpringExecutor implements InitializingBean, DisposableBean {
 
     private final XxlJobConfiguration configuration;
 
-    private final TriggerCallbackThread triggerCallbackThread;
-
     private final JobLogFileCleanHandler jobLogFileCleanHandler;
 
-    public XxlJobSpringExecutor(final XxlJobConfiguration configuration, final TriggerCallbackThread triggerCallbackThread) {
+    public XxlJobSpringExecutor(final XxlJobConfiguration configuration) {
         this.configuration = configuration;
-        this.triggerCallbackThread = triggerCallbackThread;
         this.jobLogFileCleanHandler = new JobLogFileCleanHandler(configuration.getLogRetentionDays(), configuration.getLogPath());
     }
 
@@ -40,9 +37,6 @@ public class XxlJobSpringExecutor implements InitializingBean, DisposableBean {
 
         // init logpath
         XxlJobFileAppender.initLogPath(configuration.getLogPath());
-
-        // init TriggerCallbackThread
-        triggerCallbackThread.start();
     }
 
     // destroy
