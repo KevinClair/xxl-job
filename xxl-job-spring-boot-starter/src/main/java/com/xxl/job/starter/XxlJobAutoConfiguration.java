@@ -94,6 +94,7 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
             configuration.setIp(executorConfiguration.getIp());
         }
         configuration.setPort(executorConfiguration.getPort() > 0 ? executorConfiguration.getPort() : NetUtil.findAvailablePort(9999));
+        configuration.setExecutorAddress("http://"+configuration.getIp()+":"+configuration.getPort());
         configuration.setLogPath(executorConfiguration.getLogPath());
         configuration.setLogRetentionDays(executorConfiguration.getLogRetentionDays());
         return configuration;
@@ -120,8 +121,8 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
     }
 
     @Bean
-    public XxlJobSpringExecutor xxlJobSpringExecutor(XxlJobConfiguration configuration, TriggerCallbackThread triggerCallbackThread, JobHandlerRepository jobHandlerRepository){
-        return new XxlJobSpringExecutor(configuration, triggerCallbackThread);
+    public XxlJobSpringExecutor xxlJobSpringExecutor(XxlJobConfiguration configuration){
+        return new XxlJobSpringExecutor(configuration);
     }
 
     @Bean

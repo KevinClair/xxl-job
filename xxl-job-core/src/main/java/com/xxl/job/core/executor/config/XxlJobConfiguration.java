@@ -15,6 +15,8 @@ public class XxlJobConfiguration {
 
     private int port;
 
+    private String executorAddress;
+
     private String logPath;
 
     private int logRetentionDays;
@@ -57,6 +59,24 @@ public class XxlJobConfiguration {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    /**
+     * Gets the value of executorAddress.
+     *
+     * @return the value of executorAddress
+     */
+    public String getExecutorAddress() {
+        return executorAddress;
+    }
+
+    /**
+     * Sets the executorAddress.
+     *
+     * @param executorAddress executorAddress
+     */
+    public void setExecutorAddress(final String executorAddress) {
+        this.executorAddress = executorAddress;
     }
 
     public String getLogPath() {
