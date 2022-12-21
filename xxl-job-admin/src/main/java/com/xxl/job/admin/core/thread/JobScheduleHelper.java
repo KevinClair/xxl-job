@@ -22,20 +22,14 @@ public class JobScheduleHelper {
     private static Logger logger = LoggerFactory.getLogger(JobScheduleHelper.class);
 
     private final XxlJobAdminConfig jobAdminConfig;
-    private final DataSource dataSource;
-
-    private final XxlJobInfoDao jobInfoDao;
-
     private final JobTriggerPoolHelper triggerPoolHelper;
 
     private final JobScheduleService jobScheduleService;
 
-    public JobScheduleHelper(final XxlJobAdminConfig jobAdminConfig, final DataSource dataSource, final XxlJobInfoDao jobInfoDao,
+    public JobScheduleHelper(final XxlJobAdminConfig jobAdminConfig,
                              final JobTriggerPoolHelper triggerPoolHelper,
                              final JobScheduleService jobScheduleService) {
         this.jobAdminConfig = jobAdminConfig;
-        this.dataSource = dataSource;
-        this.jobInfoDao = jobInfoDao;
         this.triggerPoolHelper = triggerPoolHelper;
         this.jobScheduleService = jobScheduleService;
     }
