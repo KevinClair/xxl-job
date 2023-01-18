@@ -7,6 +7,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import java.util.List;
 
 /**
+ * TODO 考虑是否将AdminBiz放在Common下面
  * @author xuxueli 2017-07-27 21:52:49
  */
 public interface AdminBiz {
@@ -20,7 +21,7 @@ public interface AdminBiz {
      * @param callbackParamList
      * @return
      */
-    public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList);
+    ReturnT<String> callback(List<HandleCallbackParam> callbackParamList);
 
 
     // ---------------------- registry ----------------------
@@ -31,7 +32,7 @@ public interface AdminBiz {
      * @param registryParam
      * @return
      */
-    public ReturnT<String> registry(RegistryParam registryParam);
+    ReturnT<String> registry(RegistryParam registryParam);
 
     /**
      * registry remove
@@ -39,10 +40,23 @@ public interface AdminBiz {
      * @param registryParam
      * @return
      */
-    public ReturnT<String> registryRemove(RegistryParam registryParam);
+    ReturnT<String> registryRemove(RegistryParam registryParam);
 
 
     // ---------------------- biz (custome) ----------------------
     // group、job ... manage
 
+    /**
+     * 添加Job
+     * TODO 增加实现
+     * @return
+     */
+    ReturnT<String> addJob();
+
+    /**
+     * 删除job
+     * TODO 增加实现
+     * @return
+     */
+    ReturnT<String> deleteJob();
 }

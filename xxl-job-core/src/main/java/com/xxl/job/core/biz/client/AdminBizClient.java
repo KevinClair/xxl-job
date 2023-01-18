@@ -4,6 +4,7 @@ import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.constants.Constants;
 import com.xxl.job.core.util.XxlJobRemotingUtil;
 
 import java.util.List;
@@ -15,36 +16,44 @@ import java.util.List;
  */
 public class AdminBizClient implements AdminBiz {
 
-    public AdminBizClient() {
-    }
+    private String addressUrl ;
+    private String accessToken;
+
+    private static final String ADMIN_CALLBACK = "/api/callback";
+    private static final String ADMIN_REGISTRY = "/api/registry";
+    private static final String ADMIN_REGISTRY_REMOVE = "/api/registryRemove";
+
+    private static final String ADMIN_ADD_JOB = "/api/addJob";
+    private static final String ADMIN_DELETE_JOB = "/api/deleteJob";
+
+
     public AdminBizClient(String addressUrl, String accessToken) {
         this.addressUrl = addressUrl;
         this.accessToken = accessToken;
-
-        // valid
-        if (!this.addressUrl.endsWith("/")) {
-            this.addressUrl = this.addressUrl + "/";
-        }
     }
-
-    private String addressUrl ;
-    private String accessToken;
-    private int timeout = 3;
-
 
     @Override
     public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList) {
-        return XxlJobRemotingUtil.postBody(addressUrl+"api/callback", accessToken, timeout, callbackParamList, String.class);
+        return XxlJobRemotingUtil.postBody(addressUrl+ADMIN_CALLBACK, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, callbackParamList, String.class);
     }
 
     @Override
     public ReturnT<String> registry(RegistryParam registryParam) {
-        return XxlJobRemotingUtil.postBody(addressUrl + "api/registry", accessToken, timeout, registryParam, String.class);
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_REGISTRY, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, registryParam, String.class);
     }
 
     @Override
     public ReturnT<String> registryRemove(RegistryParam registryParam) {
-        return XxlJobRemotingUtil.postBody(addressUrl + "api/registryRemove", accessToken, timeout, registryParam, String.class);
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_REGISTRY_REMOVE, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, registryParam, String.class);
     }
 
+    @Override
+    public ReturnT<String> addJob() {
+        return null;
+    }
+
+    @Override
+    public ReturnT<String> deleteJob() {
+        return null;
+    }
 }

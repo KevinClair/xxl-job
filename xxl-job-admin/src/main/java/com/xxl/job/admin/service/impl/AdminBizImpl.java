@@ -40,4 +40,13 @@ public class AdminBizImpl implements AdminBiz {
         return jobRegistryHelper.registryRemove(registryParam);
     }
 
+    @Override
+    public ReturnT<String> addJob() {
+        return null;
+    }
+
+    @Override
+    public ReturnT<String> deleteJob() {
+        return null;
+    }
 }
