@@ -1,39 +1,24 @@
 package com.xxl.job.core.server.handler;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-
+import com.xxl.job.core.biz.ExecutorBiz;
+import com.xxl.job.core.biz.model.*;
+import com.xxl.job.core.constants.Constants;
+import com.xxl.job.core.util.GsonTool;
+import com.xxl.job.core.util.ThrowableUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpHeaderValues;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpUtil;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.IdleBeatParam;
-import com.xxl.job.core.biz.model.KillParam;
-import com.xxl.job.core.biz.model.LogParam;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.biz.model.TriggerParam;
-import com.xxl.job.core.server.EmbedServer;
-import com.xxl.job.core.util.GsonTool;
-import com.xxl.job.core.util.ThrowableUtil;
-import com.xxl.job.core.util.XxlJobRemotingUtil;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * xxl-job的http服务器处理handler
@@ -71,7 +56,7 @@ public class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
         String uri = msg.uri();
         HttpMethod httpMethod = msg.method();
         boolean keepAlive = HttpUtil.isKeepAlive(msg);
-        String accessTokenReq = msg.headers().get(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN);
+        String accessTokenReq = msg.headers().get(Constants.XXL_JOB_ACCESS_TOKEN);
 
         // invoke
         bizThreadPool.execute(() -> {
