@@ -1,6 +1,7 @@
 package com.xxl.job.core.util;
 
 import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.constants.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +13,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Map;
 
 /**
+ * TODO 使用RestTemplate代替
  * @author xuxueli 2018-11-25 00:55:31
  */
 public class XxlJobRemotingUtil {
     private static Logger logger = LoggerFactory.getLogger(XxlJobRemotingUtil.class);
-    public static final String XXL_JOB_ACCESS_TOKEN = "XXL-JOB-ACCESS-TOKEN";
 
 
     // trust-https start
@@ -92,7 +92,7 @@ public class XxlJobRemotingUtil {
             connection.setRequestProperty("Accept-Charset", "application/json;charset=UTF-8");
 
             if(accessToken!=null && accessToken.trim().length()>0){
-                connection.setRequestProperty(XXL_JOB_ACCESS_TOKEN, accessToken);
+                connection.setRequestProperty(Constants.XXL_JOB_ACCESS_TOKEN, accessToken);
             }
 
             // do connection

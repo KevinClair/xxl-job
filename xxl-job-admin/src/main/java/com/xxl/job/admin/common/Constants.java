@@ -7,4 +7,6 @@ package com.xxl.job.admin.common;
  **/
 public class Constants {
     public static final long PRE_READ_MS = 5000;
+
+    public static final String XXL_JOB_ACCESS_TOKEN = "XXL-JOB-ACCESS-TOKEN";
 }
