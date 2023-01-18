@@ -2,6 +2,7 @@ package com.xxl.job.core.biz.client;
 
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.*;
+import com.xxl.job.core.constants.Constants;
 import com.xxl.job.core.util.XxlJobRemotingUtil;
 
 /**
@@ -11,46 +12,43 @@ import com.xxl.job.core.util.XxlJobRemotingUtil;
  */
 public class ExecutorBizClient implements ExecutorBiz {
 
-    public ExecutorBizClient() {
-    }
+    private String addressUrl;
+    private String accessToken;
+    
+    private static final String ADMIN_URL_BEAT = "/beat";
+    private static final String ADMIN_URL_IDLE_BEAT = "/idleBeat";
+    private static final String ADMIN_URL_RUN = "/run";
+    private static final String ADMIN_URL_KILL = "/kill";
+    private static final String ADMIN_URL_LOG = "/log";
+
     public ExecutorBizClient(String addressUrl, String accessToken) {
         this.addressUrl = addressUrl;
         this.accessToken = accessToken;
-
-        // valid
-        if (!this.addressUrl.endsWith("/")) {
-            this.addressUrl = this.addressUrl + "/";
-        }
     }
-
-    private String addressUrl ;
-    private String accessToken;
-    private int timeout = 3;
-
 
     @Override
     public ReturnT<String> beat() {
-        return XxlJobRemotingUtil.postBody(addressUrl+"beat", accessToken, timeout, "", String.class);
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_URL_BEAT, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, "", String.class);
     }
 
     @Override
-    public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam){
-        return XxlJobRemotingUtil.postBody(addressUrl+"idleBeat", accessToken, timeout, idleBeatParam, String.class);
+    public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam) {
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_URL_IDLE_BEAT, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, idleBeatParam, String.class);
     }
 
     @Override
     public ReturnT<String> run(TriggerParam triggerParam) {
-        return XxlJobRemotingUtil.postBody(addressUrl + "run", accessToken, timeout, triggerParam, String.class);
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_URL_RUN, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, triggerParam, String.class);
     }
 
     @Override
     public ReturnT<String> kill(KillParam killParam) {
-        return XxlJobRemotingUtil.postBody(addressUrl + "kill", accessToken, timeout, killParam, String.class);
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_URL_KILL, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, killParam, String.class);
     }
 
     @Override
     public ReturnT<LogResult> log(LogParam logParam) {
-        return XxlJobRemotingUtil.postBody(addressUrl + "log", accessToken, timeout, logParam, LogResult.class);
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_URL_LOG, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, logParam, LogResult.class);
     }
 
 }
