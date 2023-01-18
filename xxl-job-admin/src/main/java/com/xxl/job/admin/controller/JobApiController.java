@@ -1,18 +1,20 @@
 package com.xxl.job.admin.controller;
 
+import com.xxl.job.admin.common.Constants;
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
+import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.util.GsonTool;
-import com.xxl.job.core.util.XxlJobRemotingUtil;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -41,20 +43,19 @@ public class JobApiController {
      * @return
      */
     @RequestMapping("/{uri}")
-    @ResponseBody
-    @PermissionLimit(limit=false)
+    @PermissionLimit(limit = false)
     public ReturnT<String> api(HttpServletRequest request, @PathVariable("uri") String uri, @RequestBody(required = false) String data) {
 
         // valid
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, HttpMethod not support.");
         }
-        if (uri==null || uri.trim().length()==0) {
+        if (uri == null || uri.trim().length() == 0) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping empty.");
         }
-        if (adminConfig.getAccessToken()!=null
-                && adminConfig.getAccessToken().trim().length()>0
-                && !adminConfig.getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN))) {
+        if (adminConfig.getAccessToken() != null
+                && adminConfig.getAccessToken().trim().length() > 0
+                && !adminConfig.getAccessToken().equals(request.getHeader(Constants.XXL_JOB_ACCESS_TOKEN))) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
         }
 
@@ -69,9 +70,57 @@ public class JobApiController {
             RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
             return adminBiz.registryRemove(registryParam);
         } else {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping("+ uri +") not found.");
+            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
         }
 
+    }
+
+    @PostMapping("/callback")
+    @PermissionLimit(limit = false)
+    public ReturnT<String> callback(HttpServletRequest request, @RequestBody List<HandleCallbackParam> data) {
+        this.checkAccessToken(request);
+        return adminBiz.callback(data);
+    }
+
+    @PostMapping("/registry")
+    @PermissionLimit(limit = false)
+    public ReturnT<String> registry(HttpServletRequest request, @RequestBody RegistryParam data) {
+        this.checkAccessToken(request);
+        return adminBiz.registry(data);
+    }
+
+    @PostMapping("/registryRemove")
+    @PermissionLimit(limit = false)
+    public ReturnT<String> registryRemove(HttpServletRequest request, @RequestBody RegistryParam data) {
+        this.checkAccessToken(request);
+        return adminBiz.registryRemove(data);
+    }
+
+    // TODO 添加job
+    @PostMapping("/addJob")
+    @PermissionLimit(limit = false)
+    public ReturnT<String> addJob(HttpServletRequest request, @RequestBody(required = false) List<HandleCallbackParam> data) {
+        this.checkAccessToken(request);
+        return adminBiz.callback(data);
+    }
+
+    // TODO 删除job
+    @PostMapping("/deleteJob")
+    @PermissionLimit(limit = false)
+    public ReturnT<String> deleteJob(HttpServletRequest request, @RequestBody(required = false) List<HandleCallbackParam> data) {
+        this.checkAccessToken(request);
+        return adminBiz.callback(data);
+    }
+
+    /**
+     * 校验AccessToken合法性
+     *
+     * @param request {@link HttpServletRequest}
+     */
+    private void checkAccessToken(HttpServletRequest request) {
+        if (StringUtils.hasText(adminConfig.getAccessToken()) && !adminConfig.getAccessToken().equals(request.getHeader(Constants.XXL_JOB_ACCESS_TOKEN))) {
+            throw new XxlJobException("The access token is wrong.");
+        }
     }
 
 }
