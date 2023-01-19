@@ -1,6 +1,6 @@
 package com.xxl.job.admin.core.route;
 
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.common.utils.I18nUtil;
 
 /**
  * Created by xuxueli on 17/3/10.

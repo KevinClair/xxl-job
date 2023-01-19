@@ -2,7 +2,7 @@ package com.xxl.job.admin.core.route.strategy;
 
 import com.xxl.job.admin.core.ExecutorBizRepository;
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.common.utils.I18nUtil;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;

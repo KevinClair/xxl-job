@@ -1,6 +1,6 @@
 package com.xxl.job.admin.core.scheduler;
 
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.common.utils.I18nUtil;
 
 /**
  * @author xuxueli 2020-10-29 21:11:23

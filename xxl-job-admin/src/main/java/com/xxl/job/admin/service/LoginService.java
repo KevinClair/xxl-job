@@ -2,7 +2,7 @@ package com.xxl.job.admin.service;
 
 import com.xxl.job.admin.core.model.XxlJobUser;
 import com.xxl.job.admin.core.util.CookieUtil;
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.common.utils.I18nUtil;
 import com.xxl.job.admin.core.util.JacksonUtil;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.core.biz.model.ReturnT;

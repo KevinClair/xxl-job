@@ -1,4 +1,4 @@
-package com.xxl.job.admin.core.util;
+package com.xxl.job.common.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +9,6 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -67,28 +65,4 @@ public class I18nUtil {
     public static String getString(String key) {
         return loadI18nProp().getProperty(key);
     }
-
-    /**
-     * get mult val of i18n mult key, as json
-     *
-     * @param keys
-     * @return
-     */
-    public static String getMultString(String... keys) {
-        Map<String, String> map = new HashMap<String, String>();
-
-        Properties prop = loadI18nProp();
-        if (keys!=null && keys.length>0) {
-            for (String key: keys) {
-                map.put(key, prop.getProperty(key));
-            }
-        } else {
-            for (String key: prop.stringPropertyNames()) {
-                map.put(key, prop.getProperty(key));
-            }
-        }
-
-        return JacksonUtil.writeValueAsString(map);
-    }
-
 }

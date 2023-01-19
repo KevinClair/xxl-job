@@ -1,6 +1,6 @@
 package com.xxl.job.admin.util;
 
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.common.utils.I18nUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +18,6 @@ public class I18nUtilTest {
     @Test
     public void test(){
         logger.info(I18nUtil.getString("admin_name"));
-        logger.info(I18nUtil.getMultString("admin_name", "admin_name_full"));
-        logger.info(I18nUtil.getMultString());
     }
 
 }

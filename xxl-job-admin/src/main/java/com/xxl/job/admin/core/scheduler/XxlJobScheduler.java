@@ -2,7 +2,7 @@ package com.xxl.job.admin.core.scheduler;
 
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.thread.*;
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.common.utils.I18nUtil;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

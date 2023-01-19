@@ -1,7 +1,7 @@
 package com.xxl.job.admin.controller.interceptor;
 
 import com.xxl.job.admin.core.util.FtlUtil;
-import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.common.utils.I18nUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
