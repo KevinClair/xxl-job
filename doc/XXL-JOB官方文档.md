@@ -90,7 +90,9 @@ XXL-JOB是一个分布式任务调度平台，其核心设计目标是开发迅�
 于2021-12-06，XXL-JOB参与"[2021年度OSC中国开源项目评选](https://www.oschina.net/project/top_cn_2021) "评比，在当时已录入的一万多个开源项目中角逐，最终当选"最受欢迎项目"。
 
 > 我司大众点评目前已接入XXL-JOB，内部别名《Ferrari》（Ferrari基于XXL-JOB的V1.1版本定制而成，新接入应用推荐升级最新版本）。
-据最新统计, 自2016-01-21接入至2017-12-01期间，该系统已调度约100万次，表现优异。新接入应用推荐使用最新版本，因为经过数十个版本的更新，系统的任务模型、UI交互模型以及底层调度通讯模型都有了较大的优化和提升，核心功能更加稳定高效。
+> 据最新统计,
+>
+自2016-01-21接入至2017-12-01期间，该系统已调度约100万次，表现优异。新接入应用推荐使用最新版本，因为经过数十个版本的更新，系统的任务模型、UI交互模型以及底层调度通讯模型都有了较大的优化和提升，核心功能更加稳定高效。
 
 至今，XXL-JOB已接入多家公司的线上产品线，接入场景如电商业务，O2O业务和大数据作业等，截止最新统计时间为止，XXL-JOB已接入的公司包括不限于：
 
@@ -1710,11 +1712,11 @@ Header：
         "jobId":1,                                  // 任务ID
         "executorHandler":"demoJobHandler",         // 任务标识
         "executorParams":"demoJobHandler",          // 任务参数
-        "executorBlockStrategy":"COVER_EARLY",      // 任务阻塞策略，可选值参考 com.xxl.job.core.enums.ExecutorBlockStrategyEnum
+        "executorBlockStrategy":"COVER_EARLY",      // 任务阻塞策略，可选值参考 com.xxl.job.common.enums.ExecutorBlockStrategyEnum
         "executorTimeout":0,                        // 任务超时时间，单位秒，大于零时生效
         "logId":1,                                  // 本次调度日志ID
         "logDateTime":1586629003729,                // 本次调度日志时间
-        "glueType":"BEAN",                          // 任务模式，可选值参考 com.xxl.job.core.glue.GlueTypeEnum
+        "glueType":"BEAN",                          // 任务模式，可选值参考 com.xxl.job.common.enums.GlueTypeEnum
         "glueSource":"xxx",                         // GLUE脚本代码
         "glueUpdatetime":1586629003727,             // GLUE脚本更新时间，用于判定脚本是否变更以及是否需要刷新
         "broadcastIndex":0,                         // 分片参数：当前分片
