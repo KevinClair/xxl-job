@@ -1,7 +1,5 @@
 package com.xxl.job.starter;
 
-import java.util.Properties;
-
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.impl.ExecutorBizImpl;
 import com.xxl.job.core.executor.AdminBizClientManager;
@@ -15,12 +13,9 @@ import com.xxl.job.core.util.IpUtil;
 import com.xxl.job.core.util.NetUtil;
 import com.xxl.job.starter.config.XxlJobAdminConfiguration;
 import com.xxl.job.starter.config.XxlJobExecutorConfiguration;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.EnvironmentAware;
@@ -30,6 +25,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
+
+import java.util.Properties;
 
 /**
  * xxl-job属性自动装配
@@ -69,6 +66,13 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
         logger.info(bannerTextBuilder.toString());
     }
 
+    /**
+     * 合并生成{@link XxlJobConfiguration}
+     *
+     * @param adminConfiguration    {@link XxlJobAdminConfiguration}
+     * @param executorConfiguration {@link XxlJobExecutorConfiguration}
+     * @return {@link XxlJobConfiguration}
+     */
     @Bean
     public XxlJobConfiguration xxlJobConfiguration(@NonNull XxlJobAdminConfiguration adminConfiguration, @NonNull XxlJobExecutorConfiguration executorConfiguration) {
         XxlJobConfiguration configuration = new XxlJobConfiguration();
@@ -100,36 +104,80 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
         return configuration;
     }
 
+    /**
+     * 启动注册JobHandler，扫描{@link com.xxl.job.core.handler.annotation.XxlJob}注解，请求Admin接口注册job任务
+     *
+     * @return {@link JobHandlerRepository}
+     */
     @Bean
     public JobHandlerRepository jobHandlerRepository(){
         return new JobHandlerRepository();
     }
 
+    /**
+     * 应用端的执行器管理，会根据admin请求core的不同路径调用不同的实现方法
+     *
+     * @param jobHandlerRepository {@link JobHandlerRepository}
+     * @return {@link ExecutorBiz}
+     */
     @Bean
     public ExecutorBiz executorBiz(JobHandlerRepository jobHandlerRepository){
         return new ExecutorBizImpl(jobHandlerRepository);
     }
 
+    /**
+     * admin客户端管理
+     *
+     * @param configuration {@link XxlJobConfiguration}
+     * @return {@link AdminBizClientManager}
+     */
     @Bean
     public AdminBizClientManager adminBizClientManager(XxlJobConfiguration configuration){
         return new AdminBizClientManager(configuration);
     }
 
+    /**
+     * 调度任务执行结束后的回调，调度结果回调Admin
+     *
+     * @param bizClientManager {@link AdminBizClientManager}
+     * @return {@link TriggerCallbackThread}
+     */
     @Bean
     public TriggerCallbackThread triggerCallbackThread(AdminBizClientManager bizClientManager){
         return new TriggerCallbackThread(bizClientManager);
     }
 
+    /**
+     * 初始化一些东西，例如日志路径
+     *
+     * @param configuration {@link XxlJobConfiguration}
+     * @return {@link XxlJobSpringExecutor}
+     */
     @Bean
     public XxlJobSpringExecutor xxlJobSpringExecutor(XxlJobConfiguration configuration){
         return new XxlJobSpringExecutor(configuration);
     }
 
+    /**
+     * 执行器注册，只负责注册执行器，不负责注册job任务
+     *
+     * @param bizClientManager 客户端管理{@link AdminBizClientManager}
+     * @param configuration {@link XxlJobConfiguration}
+     * @return {@link ExecutorRegistryThread}
+     */
     @Bean
     public ExecutorRegistryThread executorRegistryThread(AdminBizClientManager bizClientManager, XxlJobConfiguration configuration){
         return new ExecutorRegistryThread(bizClientManager, configuration);
     }
 
+    /**
+     * Netty实现的本地http服务器，供admin请求
+     *
+     * @param executorBiz            {@link ExecutorBiz}
+     * @param configuration          {@link XxlJobConfiguration}
+     * @param executorRegistryThread {@link ExecutorRegistryThread}
+     * @return {@link EmbedServer}
+     */
     @Bean
     public EmbedServer embedServer(ExecutorBiz executorBiz, XxlJobConfiguration configuration, ExecutorRegistryThread executorRegistryThread){
         return new EmbedServer(executorBiz, configuration, executorRegistryThread);
