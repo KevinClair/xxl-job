@@ -34,3 +34,10 @@ public class A implements DisposableBean{
 * 增加了属性的配置项，以及属性关联；
 * 增加了启动时xxl-job的启动Logo的打印；
 * 调整了spring模式下的一些bean注入的方式，原先都是通过Instance实例的方式获取，后统一通过Spring管理bean。
+
+## todo
+* 取消admin对core的依赖，提取公共模块
+* 在core中新增添加job和删除job的方法
+* 新增调度类型，固定延迟
+* 增加@XxlJob的属性
+* Controller的参数校验
