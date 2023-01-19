@@ -1,4 +1,4 @@
-package com.xxl.job.core.glue;
+package com.xxl.job.common.enums;
 
 /**
  * Created by xuxueli on 17/4/26.

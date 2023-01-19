@@ -1,10 +1,10 @@
 package com.xxl.job.core.biz.impl;
 
+import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
+import com.xxl.job.common.enums.GlueTypeEnum;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.*;
-import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.core.glue.GlueFactory;
-import com.xxl.job.core.glue.GlueTypeEnum;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.JobHandlerRepository;
 import com.xxl.job.core.handler.JobThreadRepository;

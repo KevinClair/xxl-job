@@ -1,4 +1,4 @@
-package com.xxl.job.admin.core.route;
+package com.xxl.job.common.enums;
 
 import com.xxl.job.common.utils.I18nUtil;
 

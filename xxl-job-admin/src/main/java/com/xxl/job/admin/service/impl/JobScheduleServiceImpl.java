@@ -1,7 +1,6 @@
 package com.xxl.job.admin.service.impl;
 
 import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.TriggerUtil;
@@ -9,6 +8,7 @@ import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLockDao;
 import com.xxl.job.admin.service.JobScheduleService;
 import com.xxl.job.common.constant.Constants;
+import com.xxl.job.common.enums.MisfireStrategyEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
