@@ -73,6 +73,12 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.xuxueli</groupId>
+			<artifactId>xxl-job-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

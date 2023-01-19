@@ -1,15 +1,13 @@
 package com.xxl.job.admin.core.thread;
 
-import com.xxl.job.admin.common.Constants;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
-import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.service.JobScheduleService;
+import com.xxl.job.common.constant.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;

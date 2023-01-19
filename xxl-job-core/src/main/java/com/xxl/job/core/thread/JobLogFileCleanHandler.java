@@ -1,6 +1,5 @@
 package com.xxl.job.core.thread;
 
-import com.xxl.job.core.constants.Constants;
 import com.xxl.job.core.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
