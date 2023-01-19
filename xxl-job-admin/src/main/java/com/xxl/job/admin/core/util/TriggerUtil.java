@@ -2,7 +2,7 @@ package com.xxl.job.admin.core.util;
 
 import com.xxl.job.admin.core.cron.CronExpression;
 import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
+import com.xxl.job.common.enums.ScheduleTypeEnum;
 
 import java.text.ParseException;
 import java.util.Date;
