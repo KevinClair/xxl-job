@@ -41,3 +41,4 @@ public class A implements DisposableBean{
 * 新增调度类型，固定延迟
 * 增加@XxlJob的属性
 * Controller的参数校验
+* 调整maven包依赖管理
