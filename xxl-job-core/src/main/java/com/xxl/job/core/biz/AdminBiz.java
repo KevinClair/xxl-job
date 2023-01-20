@@ -1,5 +1,8 @@
 package com.xxl.job.core.biz;
 
+import com.xxl.job.common.dto.AddXxlJobInfoDto;
+import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
+import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -49,14 +52,27 @@ public interface AdminBiz {
     /**
      * 添加Job
      * TODO 增加实现
+     *
+     * @param request {@link AddXxlJobInfoDto}
      * @return
      */
-    ReturnT<String> addJob();
+    ReturnT<String> addJob(AddXxlJobInfoDto request);
 
     /**
      * 删除job
-     * TODO 增加实现
+     *
+     * @param request {@link DeleteXxlJobInfoDto}
+     *                TODO 增加实现
      * @return
      */
-    ReturnT<String> deleteJob();
+    ReturnT<String> deleteJob(DeleteXxlJobInfoDto request);
+
+    /**
+     * 修改Job
+     * TODO 增加实现
+     *
+     * @param request {@link UpdateXxlJobInfoDto}
+     * @return
+     */
+    ReturnT<String> updateJob(UpdateXxlJobInfoDto request);
 }

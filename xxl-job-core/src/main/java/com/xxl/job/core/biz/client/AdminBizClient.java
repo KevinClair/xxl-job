@@ -1,6 +1,9 @@
 package com.xxl.job.core.biz.client;
 
 import com.xxl.job.common.constant.Constants;
+import com.xxl.job.common.dto.AddXxlJobInfoDto;
+import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
+import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
@@ -48,12 +51,17 @@ public class AdminBizClient implements AdminBiz {
     }
 
     @Override
-    public ReturnT<String> addJob() {
+    public ReturnT<String> addJob(AddXxlJobInfoDto request) {
         return null;
     }
 
     @Override
-    public ReturnT<String> deleteJob() {
+    public ReturnT<String> deleteJob(DeleteXxlJobInfoDto request) {
+        return null;
+    }
+
+    @Override
+    public ReturnT<String> updateJob(UpdateXxlJobInfoDto request) {
         return null;
     }
 }
