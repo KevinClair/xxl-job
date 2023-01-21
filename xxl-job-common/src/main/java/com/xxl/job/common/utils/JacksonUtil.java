@@ -1,4 +1,4 @@
-package com.xxl.job.admin.core.util;
+package com.xxl.job.common.utils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
