@@ -45,12 +45,17 @@ public class ReturnT<T> implements Serializable {
 	public T getContent() {
 		return content;
 	}
+
 	public void setContent(T content) {
 		this.content = content;
 	}
 
-	public static ReturnT fail(String msg){
+	public static ReturnT fail(String msg) {
 		return new ReturnT<String>(ReturnT.FAIL_CODE, msg);
+	}
+
+	public static <T> ReturnT success(T t) {
+		return new ReturnT<T>(t);
 	}
 
 	@Override
