@@ -4,6 +4,9 @@ import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.common.constant.Constants;
+import com.xxl.job.common.dto.AddXxlJobInfoDto;
+import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
+import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
@@ -99,17 +102,25 @@ public class JobApiController {
     // TODO 添加job
     @PostMapping("/addJob")
     @PermissionLimit(limit = false)
-    public ReturnT<String> addJob(HttpServletRequest request, @RequestBody(required = false) List<HandleCallbackParam> data) {
+    public ReturnT<String> addJob(HttpServletRequest request, @RequestBody(required = false) AddXxlJobInfoDto data) {
         this.checkAccessToken(request);
-        return adminBiz.callback(data);
+        return adminBiz.addJob(data);
     }
 
     // TODO 删除job
     @PostMapping("/deleteJob")
     @PermissionLimit(limit = false)
-    public ReturnT<String> deleteJob(HttpServletRequest request, @RequestBody(required = false) List<HandleCallbackParam> data) {
+    public ReturnT<String> deleteJob(HttpServletRequest request, @RequestBody(required = false) DeleteXxlJobInfoDto data) {
         this.checkAccessToken(request);
-        return adminBiz.callback(data);
+        return adminBiz.deleteJob(data);
+    }
+
+    // TODO 更新job
+    @PostMapping("/updateJob")
+    @PermissionLimit(limit = false)
+    public ReturnT<String> updateJob(HttpServletRequest request, @RequestBody(required = false) UpdateXxlJobInfoDto data) {
+        this.checkAccessToken(request);
+        return adminBiz.updateJob(data);
     }
 
     /**
