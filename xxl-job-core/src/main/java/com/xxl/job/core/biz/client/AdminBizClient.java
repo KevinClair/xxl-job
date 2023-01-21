@@ -28,6 +28,7 @@ public class AdminBizClient implements AdminBiz {
 
     private static final String ADMIN_ADD_JOB = "/api/addJob";
     private static final String ADMIN_DELETE_JOB = "/api/deleteJob";
+    private static final String ADMIN_UPDATE_JOB = "/api/updateJob";
 
 
     public AdminBizClient(String addressUrl, String accessToken) {
@@ -52,16 +53,16 @@ public class AdminBizClient implements AdminBiz {
 
     @Override
     public ReturnT<String> addJob(AddXxlJobInfoDto request) {
-        return null;
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_ADD_JOB, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, request, String.class);
     }
 
     @Override
     public ReturnT<String> deleteJob(DeleteXxlJobInfoDto request) {
-        return null;
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_DELETE_JOB, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, request, String.class);
     }
 
     @Override
     public ReturnT<String> updateJob(UpdateXxlJobInfoDto request) {
-        return null;
+        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_UPDATE_JOB, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, request, String.class);
     }
 }
