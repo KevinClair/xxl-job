@@ -5,6 +5,7 @@ import com.xxl.job.common.enums.ExecutorRouteStrategyEnum;
 import com.xxl.job.common.enums.MisfireStrategyEnum;
 import com.xxl.job.common.enums.ScheduleTypeEnum;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -12,14 +13,15 @@ import java.io.Serializable;
  */
 public class UpdateXxlJobInfoDto implements Serializable {
 
-	// 执行器名称
-	private int jobId;
+    // 执行器名称
+    @NotNull
+    private Integer jobId;
 
 	// 调度任务描述
 	private String jobDesc;
 	// 负责人
 	private String author;
-	// 报警邮件
+    // 报警邮件X
 	private String alarmEmail;
 
 	// 调度类型,默认为corn
@@ -50,13 +52,13 @@ public class UpdateXxlJobInfoDto implements Serializable {
 	// 下次调度时间
 	private long triggerNextTime;
 
-	public int getJobId() {
-		return jobId;
-	}
+    public Integer getJobId() {
+        return jobId;
+    }
 
-	public void setJobId(int jobId) {
-		this.jobId = jobId;
-	}
+    public void setJobId(Integer jobId) {
+        this.jobId = jobId;
+    }
 
 	public String getJobDesc() {
 		return jobDesc;
