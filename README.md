@@ -42,3 +42,4 @@ public class A implements DisposableBean{
 * 增加@XxlJob的属性
 * Controller的参数校验
 * 调整maven包依赖管理
+* XxlJobGroup中的app_name字段唯一性
