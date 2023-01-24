@@ -83,7 +83,24 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
 
     @Override
     public String updateJob(UpdateXxlJobInfoDto request) {
-        return null;
+        // 校验jobId合法性
+        XxlJobInfo jobInfo = xxlJobInfoDao.loadById(request.getJobId());
+        if (Objects.isNull(jobInfo)) {
+            throw new XxlJobException("Invalid job id.");
+        }
+        // 校验corn表达式
+        if (Objects.nonNull(request.getScheduleType()) && request.getScheduleType().equals(ScheduleTypeEnum.CRON) && !CronExpression.isValidExpression(request.getScheduleConf())) {
+            throw new XxlJobException("invalid corn");
+        }
+        jobInfo.setScheduleType(request.getScheduleType().getTitle());
+        jobInfo.setScheduleConf(request.getScheduleConf());
+        if (Objects.nonNull(request.getTriggerStatus())) {
+            jobInfo.setTriggerStatus(request.getTriggerStatus());
+        }
+        jobInfo.setUpdateTime(new Date());
+        // todo 考虑是否可以提供修改下次执行时间选项
+        xxlJobInfoDao.update(jobInfo);
+        return "success";
     }
 
     @Override
