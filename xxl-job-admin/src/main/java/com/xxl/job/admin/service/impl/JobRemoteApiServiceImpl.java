@@ -88,6 +88,20 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
 
     @Override
     public String deleteJob(DeleteXxlJobInfoDto request) {
-        return null;
+        // 如果jobId不为空以jobId为准删除数据
+        if (Objects.nonNull(request.getJobId())) {
+            int delete = xxlJobInfoDao.delete(request.getJobId());
+            if (delete > 0) {
+                return "success";
+            } else {
+                return "invalid job id, delete error.";
+            }
+        }
+        int delete = xxlJobInfoDao.deleteByJobHandler(request.getJobHandlerName());
+        if (delete > 0) {
+            return "success";
+        } else {
+            return "invalid job handler, delete error.";
+        }
     }
 }

@@ -228,13 +228,18 @@
 		LIMIT #{pagesize}
 	</select>
 
-	<update id="scheduleUpdate" parameterType="com.xxl.job.admin.core.model.XxlJobInfo"  >
+	<update id="scheduleUpdate" parameterType="com.xxl.job.admin.core.model.XxlJobInfo">
 		UPDATE xxl_job_info
-		SET
-			trigger_last_time = #{triggerLastTime},
+		SET trigger_last_time = #{triggerLastTime},
 			trigger_next_time = #{triggerNextTime},
-			trigger_status = #{triggerStatus}
+			trigger_status    = #{triggerStatus}
 		WHERE id = #{id}
 	</update>
+
+	<delete id="deleteByJobHandler">
+		DELETE
+		FROM xxl_job_info
+		WHERE executor_handler = #{jobHandler}
+	</delete>
 
 </mapper>
