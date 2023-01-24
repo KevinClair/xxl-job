@@ -169,10 +169,20 @@ public class AddXxlJobInfoDto implements Serializable {
         this.executorFailRetryCount = executorFailRetryCount;
     }
 
-    @AssertTrue(message = "调度配置不能为空！")
+    @AssertTrue(message = "非法的调度类型和调度配置！")
     public Boolean checkJob() {
         if (!scheduleType.equals(ScheduleTypeEnum.NONE) && !StringUtils.hasLength(scheduleConf)) {
             return false;
+        }
+        if (scheduleType.equals(ScheduleTypeEnum.FIX_RATE)) {
+            try {
+                int fixSecond = Integer.valueOf(scheduleConf);
+                if (fixSecond < 1) {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
         }
         return true;
     }
