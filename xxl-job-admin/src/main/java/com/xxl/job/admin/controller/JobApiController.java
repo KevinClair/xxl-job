@@ -11,10 +11,8 @@ import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.util.GsonTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,45 +36,45 @@ public class JobApiController {
         this.adminConfig = adminConfig;
     }
 
-    /**
-     * api
-     *
-     * @param uri
-     * @param data
-     * @return
-     */
-    @RequestMapping("/{uri}")
-    @PermissionLimit(limit = false)
-    public ReturnT<String> api(HttpServletRequest request, @PathVariable("uri") String uri, @RequestBody(required = false) String data) {
-
-        // valid
-        if (!"POST".equalsIgnoreCase(request.getMethod())) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, HttpMethod not support.");
-        }
-        if (uri == null || uri.trim().length() == 0) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping empty.");
-        }
-        if (adminConfig.getAccessToken() != null
-                && adminConfig.getAccessToken().trim().length() > 0
-                && !adminConfig.getAccessToken().equals(request.getHeader(Constants.XXL_JOB_ACCESS_TOKEN))) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
-        }
-
-        // services mapping
-        if ("callback".equals(uri)) {
-            List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
-            return adminBiz.callback(callbackParamList);
-        } else if ("registry".equals(uri)) {
-            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
-            return adminBiz.registry(registryParam);
-        } else if ("registryRemove".equals(uri)) {
-            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
-            return adminBiz.registryRemove(registryParam);
-        } else {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
-        }
-
-    }
+//    /**
+//     * api
+//     *
+//     * @param uri
+//     * @param data
+//     * @return
+//     */
+//    @RequestMapping("/{uri}")
+//    @PermissionLimit(limit = false)
+//    public ReturnT<String> api(HttpServletRequest request, @PathVariable("uri") String uri, @RequestBody(required = false) String data) {
+//
+//        // valid
+//        if (!"POST".equalsIgnoreCase(request.getMethod())) {
+//            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, HttpMethod not support.");
+//        }
+//        if (uri == null || uri.trim().length() == 0) {
+//            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping empty.");
+//        }
+//        if (adminConfig.getAccessToken() != null
+//                && adminConfig.getAccessToken().trim().length() > 0
+//                && !adminConfig.getAccessToken().equals(request.getHeader(Constants.XXL_JOB_ACCESS_TOKEN))) {
+//            return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
+//        }
+//
+//        // services mapping
+//        if ("callback".equals(uri)) {
+//            List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
+//            return adminBiz.callback(callbackParamList);
+//        } else if ("registry".equals(uri)) {
+//            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
+//            return adminBiz.registry(registryParam);
+//        } else if ("registryRemove".equals(uri)) {
+//            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
+//            return adminBiz.registryRemove(registryParam);
+//        } else {
+//            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
+//        }
+//
+//    }
 
     @PostMapping("/callback")
     @PermissionLimit(limit = false)
@@ -107,7 +105,6 @@ public class JobApiController {
         return adminBiz.addJob(data);
     }
 
-    // TODO 删除job
     @PostMapping("/deleteJob")
     @PermissionLimit(limit = false)
     public ReturnT<String> deleteJob(HttpServletRequest request, @RequestBody(required = false) DeleteXxlJobInfoDto data) {
