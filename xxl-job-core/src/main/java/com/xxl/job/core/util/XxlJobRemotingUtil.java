@@ -1,7 +1,7 @@
 package com.xxl.job.core.util;
 
 import com.xxl.job.common.constant.Constants;
-import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.common.model.ReturnT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

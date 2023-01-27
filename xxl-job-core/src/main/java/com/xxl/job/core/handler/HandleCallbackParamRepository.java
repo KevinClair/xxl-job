@@ -1,6 +1,6 @@
 package com.xxl.job.core.handler;
 
-import com.xxl.job.core.biz.model.HandleCallbackParam;
+import com.xxl.job.common.model.HandleCallbackParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

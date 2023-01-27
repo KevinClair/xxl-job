@@ -1,19 +1,20 @@
-package com.xxl.job.core.biz;
+package com.xxl.job.common.service;
 
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.RegistryParam;
-import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.RegistryParam;
+import com.xxl.job.common.model.ReturnT;
 
 import java.util.List;
 
 /**
- * TODO 考虑是否将AdminBiz放在Common下面
+ * Admin的开放接口管理
+ *
  * @author xuxueli 2017-07-27 21:52:49
  */
-public interface AdminBiz {
+public interface AdminManager {
 
 
     // ---------------------- callback ----------------------
@@ -51,7 +52,6 @@ public interface AdminBiz {
 
     /**
      * 添加Job
-     * TODO 增加实现
      *
      * @param request {@link AddXxlJobInfoDto}
      * @return
@@ -62,14 +62,12 @@ public interface AdminBiz {
      * 删除job
      *
      * @param request {@link DeleteXxlJobInfoDto}
-     *                TODO 增加实现
      * @return
      */
     ReturnT<String> deleteJob(DeleteXxlJobInfoDto request);
 
     /**
      * 修改Job
-     * TODO 增加实现
      *
      * @param request {@link UpdateXxlJobInfoDto}
      * @return

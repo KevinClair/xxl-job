@@ -2,6 +2,7 @@ package com.xxl.job.executorbiz;
 
 import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.common.enums.GlueTypeEnum;
+import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.client.ExecutorBizClient;
 import com.xxl.job.core.biz.model.*;

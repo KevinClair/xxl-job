@@ -1,7 +1,7 @@
 package com.xxl.job.core.executor;
 
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.client.AdminBizClient;
+import com.xxl.job.common.service.AdminManager;
+import com.xxl.job.core.biz.client.AdminManagerClient;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import org.springframework.util.StringUtils;
 
@@ -13,18 +13,18 @@ import java.util.List;
  */
 public class AdminBizClientManager {
 
-    private final List<AdminBiz> adminBizList = new ArrayList<AdminBiz>();
+    private final List<AdminManager> adminManagerList = new ArrayList<AdminManager>();
 
     public AdminBizClientManager(XxlJobConfiguration configuration) {
         for (String address : configuration.getAddress().trim().split(",")) {
             if (StringUtils.hasLength(address)) {
-                AdminBiz adminBiz = new AdminBizClient(address.trim(), configuration.getAccessToken());
-                adminBizList.add(adminBiz);
+                AdminManager adminManager = new AdminManagerClient(address.trim(), configuration.getAccessToken());
+                adminManagerList.add(adminManager);
             }
         }
     }
 
-    public List<AdminBiz> getAdminBizList() {
-        return adminBizList;
+    public List<AdminManager> getAdminBizList() {
+        return adminManagerList;
     }
 }

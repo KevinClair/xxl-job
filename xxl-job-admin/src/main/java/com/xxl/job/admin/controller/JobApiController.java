@@ -7,10 +7,10 @@ import com.xxl.job.common.constant.Constants;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.RegistryParam;
-import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.RegistryParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.service.AdminManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,74 +27,34 @@ import java.util.List;
 @RequestMapping("/api")
 public class JobApiController {
 
-    private final AdminBiz adminBiz;
+    private final AdminManager adminManager;
 
     private final XxlJobAdminConfig adminConfig;
 
-    public JobApiController(AdminBiz adminBiz, XxlJobAdminConfig adminConfig) {
-        this.adminBiz = adminBiz;
+    public JobApiController(AdminManager adminManager, XxlJobAdminConfig adminConfig) {
+        this.adminManager = adminManager;
         this.adminConfig = adminConfig;
     }
-
-//    /**
-//     * api
-//     *
-//     * @param uri
-//     * @param data
-//     * @return
-//     */
-//    @RequestMapping("/{uri}")
-//    @PermissionLimit(limit = false)
-//    public ReturnT<String> api(HttpServletRequest request, @PathVariable("uri") String uri, @RequestBody(required = false) String data) {
-//
-//        // valid
-//        if (!"POST".equalsIgnoreCase(request.getMethod())) {
-//            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, HttpMethod not support.");
-//        }
-//        if (uri == null || uri.trim().length() == 0) {
-//            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping empty.");
-//        }
-//        if (adminConfig.getAccessToken() != null
-//                && adminConfig.getAccessToken().trim().length() > 0
-//                && !adminConfig.getAccessToken().equals(request.getHeader(Constants.XXL_JOB_ACCESS_TOKEN))) {
-//            return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
-//        }
-//
-//        // services mapping
-//        if ("callback".equals(uri)) {
-//            List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
-//            return adminBiz.callback(callbackParamList);
-//        } else if ("registry".equals(uri)) {
-//            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
-//            return adminBiz.registry(registryParam);
-//        } else if ("registryRemove".equals(uri)) {
-//            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
-//            return adminBiz.registryRemove(registryParam);
-//        } else {
-//            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
-//        }
-//
-//    }
 
     @PostMapping("/callback")
     @PermissionLimit(limit = false)
     public ReturnT<String> callback(HttpServletRequest request, @RequestBody List<HandleCallbackParam> data) {
         this.checkAccessToken(request);
-        return adminBiz.callback(data);
+        return adminManager.callback(data);
     }
 
     @PostMapping("/registry")
     @PermissionLimit(limit = false)
     public ReturnT<String> registry(HttpServletRequest request, @RequestBody RegistryParam data) {
         this.checkAccessToken(request);
-        return adminBiz.registry(data);
+        return adminManager.registry(data);
     }
 
     @PostMapping("/registryRemove")
     @PermissionLimit(limit = false)
     public ReturnT<String> registryRemove(HttpServletRequest request, @RequestBody RegistryParam data) {
         this.checkAccessToken(request);
-        return adminBiz.registryRemove(data);
+        return adminManager.registryRemove(data);
     }
 
     // TODO 添加job
@@ -102,14 +62,14 @@ public class JobApiController {
     @PermissionLimit(limit = false)
     public ReturnT<String> addJob(HttpServletRequest request, @RequestBody(required = false) AddXxlJobInfoDto data) {
         this.checkAccessToken(request);
-        return adminBiz.addJob(data);
+        return adminManager.addJob(data);
     }
 
     @PostMapping("/deleteJob")
     @PermissionLimit(limit = false)
     public ReturnT<String> deleteJob(HttpServletRequest request, @RequestBody(required = false) DeleteXxlJobInfoDto data) {
         this.checkAccessToken(request);
-        return adminBiz.deleteJob(data);
+        return adminManager.deleteJob(data);
     }
 
     // TODO 更新job
@@ -117,7 +77,7 @@ public class JobApiController {
     @PermissionLimit(limit = false)
     public ReturnT<String> updateJob(HttpServletRequest request, @RequestBody(required = false) UpdateXxlJobInfoDto data) {
         this.checkAccessToken(request);
-        return adminBiz.updateJob(data);
+        return adminManager.updateJob(data);
     }
 
     /**

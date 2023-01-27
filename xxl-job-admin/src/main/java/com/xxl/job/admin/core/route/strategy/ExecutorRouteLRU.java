@@ -1,7 +1,7 @@
 package com.xxl.job.admin.core.route.strategy;
 
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
-import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
 import org.springframework.stereotype.Component;
 

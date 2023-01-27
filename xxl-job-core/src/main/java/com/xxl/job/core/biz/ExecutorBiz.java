@@ -1,5 +1,6 @@
 package com.xxl.job.core.biz;
 
+import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.core.biz.model.*;
 
 /**

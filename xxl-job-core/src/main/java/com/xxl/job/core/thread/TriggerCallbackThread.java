@@ -1,8 +1,8 @@
 package com.xxl.job.core.thread;
 
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.service.AdminManager;
 import com.xxl.job.core.context.XxlJobContext;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.enums.RegistryConfig;
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -101,10 +100,10 @@ public class TriggerCallbackThread implements DisposableBean {
     private void doCallback(List<HandleCallbackParam> callbackParamList){
         boolean callbackRet = false;
         // callback, will retry if error
-        for (AdminBiz adminBiz: bizClientManager.getAdminBizList()) {
+        for (AdminManager adminManager : bizClientManager.getAdminBizList()) {
             try {
-                ReturnT<String> callbackResult = adminBiz.callback(callbackParamList);
-                if (callbackResult!=null && ReturnT.SUCCESS_CODE == callbackResult.getCode()) {
+                ReturnT<String> callbackResult = adminManager.callback(callbackParamList);
+                if (callbackResult != null && ReturnT.SUCCESS_CODE == callbackResult.getCode()) {
                     callbackLog(callbackParamList, "<br>----------- xxl-job job callback finish.");
                     callbackRet = true;
                     break;

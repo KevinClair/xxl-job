@@ -1,6 +1,7 @@
 package com.xxl.job.core.biz.client;
 
 import com.xxl.job.common.constant.Constants;
+import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.*;
 import com.xxl.job.core.util.XxlJobRemotingUtil;

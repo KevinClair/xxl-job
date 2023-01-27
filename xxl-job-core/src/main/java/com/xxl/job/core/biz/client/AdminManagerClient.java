@@ -4,22 +4,23 @@ import com.xxl.job.common.constant.Constants;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.RegistryParam;
-import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.RegistryParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.service.AdminManager;
 import com.xxl.job.core.util.XxlJobRemotingUtil;
 
 import java.util.List;
 
 /**
  * admin api test
+ * 客户端(应用端)请求Admin的实现
  *
  * @author xuxueli 2017-07-28 22:14:52
  */
-public class AdminBizClient implements AdminBiz {
+public class AdminManagerClient implements AdminManager {
 
-    private String addressUrl ;
+    private String addressUrl;
     private String accessToken;
 
     private static final String ADMIN_CALLBACK = "/api/callback";
@@ -31,7 +32,7 @@ public class AdminBizClient implements AdminBiz {
     private static final String ADMIN_UPDATE_JOB = "/api/updateJob";
 
 
-    public AdminBizClient(String addressUrl, String accessToken) {
+    public AdminManagerClient(String addressUrl, String accessToken) {
         this.addressUrl = addressUrl;
         this.accessToken = accessToken;
     }

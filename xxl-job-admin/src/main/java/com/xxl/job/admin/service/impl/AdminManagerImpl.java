@@ -6,19 +6,21 @@ import com.xxl.job.admin.service.JobRemoteApiService;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.RegistryParam;
-import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.RegistryParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.service.AdminManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
+ * Admin端接受到客户端(应用端)后的本地实现
+ *
  * @author xuxueli 2017-07-27 21:54:20
  */
 @Service
-public class AdminBizImpl implements AdminBiz {
+public class AdminManagerImpl implements AdminManager {
 
     private final JobCompleteHelper jobCompleteHelper;
 
@@ -26,7 +28,7 @@ public class AdminBizImpl implements AdminBiz {
 
     private final JobRemoteApiService remoteApiService;
 
-    public AdminBizImpl(JobCompleteHelper jobCompleteHelper, JobRegistryHelper jobRegistryHelper, JobRemoteApiService remoteApiService) {
+    public AdminManagerImpl(JobCompleteHelper jobCompleteHelper, JobRegistryHelper jobRegistryHelper, JobRemoteApiService remoteApiService) {
         this.jobCompleteHelper = jobCompleteHelper;
         this.jobRegistryHelper = jobRegistryHelper;
         this.remoteApiService = remoteApiService;
