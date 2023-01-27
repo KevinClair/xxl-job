@@ -53,8 +53,12 @@ In 2015 - November, XXL-JOB finally RELEASE the first big version of V1.0, then 
 In 2015 - December, I will XXL-JOB published to our internal knowledge base, and get internal colleagues recognized.
 In 2016 - 01 months, my company started XXL-JOB internal access and custom work, in this thank Yuan and Yin two colleagues contribution, but also to thank the internal other attention and support colleagues.
 In 2017-05-13, the link of "let the code run" in "[the 62nd source of open source China Genesis](https://www.oschina.net/event/2236961)" held in Shanghai,, I stepped on and made a speech about the XXL-JOB, five hundred spectators in the audience reacted enthusiastically ([pictorial review](https://www.oschina.net/question/2686220_2242120)).
-> Our company have access to XXL-JOB, internal alias "Ferrari" (Ferrari based on XXL-JOB V1.1 version customization, new access application recommended to upgrade the latest version).
-According to the latest statistics, from 2016-01-21 to 2017-07-07 period, the system has been scheduled about 600,000 times, outstanding performance. New access applications recommend the latest version, because after several major updates, the system's task model, UI interaction model and the underlying scheduling communication model has a greater optimization and upgrading, the core function more stable and efficient.
+> Our company have access to XXL-JOB, internal alias "Ferrari" (Ferrari based on XXL-JOB V1.1 version customization, new
+> access application recommended to upgrade the latest version).
+> According to the latest statistics, from 2016-01-21 to 2017-07-07 period, the system has been scheduled about 600,000
+> times, outstanding performance. New access applications recommend the latest version, because after several major
+> updates, the system's task model, UI interaction model and the underlying scheduling communication model has a greater
+> optimization and upgrading, the core function more stable and efficient.
 
 So far, XXL-JOB has access to a number of companies online product line, access to scenes such as electronic commerce, O2O business and large data operations, as of 2016-07-19, XXL-JOB has access to the company But not limited to:
 
@@ -350,10 +354,10 @@ Welcome everyone's attention and use, XXL-JOB will also embrace changes, sustain
 
 #### Source repository address (The latest code will be released in the two git warehouse in the same time)
 
-Source repository address | Release Download
---- | ---
-[https://github.com/xuxueli/xxl-job](https://github.com/xuxueli/xxl-job) | [Download](https://github.com/xuxueli/xxl-job/releases)  
-[http://gitee.com/xuxueli0323/xxl-job](http://gitee.com/xuxueli0323/xxl-job) | [Download](http://gitee.com/xuxueli0323/xxl-job/releases)
+| Source repository address                                                    | Release Download                                          |
+|------------------------------------------------------------------------------|-----------------------------------------------------------|
+| [https://github.com/xuxueli/xxl-job](https://github.com/xuxueli/xxl-job)     | [Download](https://github.com/xuxueli/xxl-job/releases)   |
+| [http://gitee.com/xuxueli0323/xxl-job](http://gitee.com/xuxueli0323/xxl-job) | [Download](http://gitee.com/xuxueli0323/xxl-job/releases) |
 
 #### Center repository address (The latest Release version：1.8.1)
 ```
@@ -1003,9 +1007,9 @@ The scheduling center provides API services for executors and business parties t
     3. Executor registration remove services;
     4. Triggers a single execution service, and support the task to be triggered according to the business event;
 
-The scheduling center API service location: com.xxl.job.core.biz.AdminBiz.java
+The scheduling center API service location: com.xxl.job.common.service.AdminManager.java
 
-The scheduling center API service requests reference code：com.xxl.job.adminbiz.AdminBizTest.java
+The scheduling center API service requests reference code：com.xxl.job.adminbiz.AdminManagerTest.java
 
 
 ## 6 Version update log
