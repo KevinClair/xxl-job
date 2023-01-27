@@ -8,5 +8,5 @@ public class Constants {
     public static final String XXL_JOB_ACCESS_TOKEN = "XXL-JOB-ACCESS-TOKEN";
 
     // 请求admin接口的超时时间
-    public static final int ADMIN_REQUEST_TIME_OUT = 3;
+    public static final int REQUEST_TIME_OUT = 3;
 }

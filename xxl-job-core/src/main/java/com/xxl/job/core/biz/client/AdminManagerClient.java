@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class AdminManagerClient implements AdminManager {
 
-    private String addressUrl;
+    private String adminUrl;
     private String accessToken;
 
     private static final String ADMIN_CALLBACK = "/api/callback";
@@ -32,38 +32,38 @@ public class AdminManagerClient implements AdminManager {
     private static final String ADMIN_UPDATE_JOB = "/api/updateJob";
 
 
-    public AdminManagerClient(String addressUrl, String accessToken) {
-        this.addressUrl = addressUrl;
+    public AdminManagerClient(String adminUrl, String accessToken) {
+        this.adminUrl = adminUrl;
         this.accessToken = accessToken;
     }
 
     @Override
     public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList) {
-        return XxlJobRemotingUtil.postBody(addressUrl+ADMIN_CALLBACK, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, callbackParamList, String.class);
+        return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_CALLBACK, accessToken, Constants.REQUEST_TIME_OUT, callbackParamList, String.class);
     }
 
     @Override
     public ReturnT<String> registry(RegistryParam registryParam) {
-        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_REGISTRY, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, registryParam, String.class);
+        return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_REGISTRY, accessToken, Constants.REQUEST_TIME_OUT, registryParam, String.class);
     }
 
     @Override
     public ReturnT<String> registryRemove(RegistryParam registryParam) {
-        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_REGISTRY_REMOVE, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, registryParam, String.class);
+        return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_REGISTRY_REMOVE, accessToken, Constants.REQUEST_TIME_OUT, registryParam, String.class);
     }
 
     @Override
     public ReturnT<String> addJob(AddXxlJobInfoDto request) {
-        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_ADD_JOB, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, request, String.class);
+        return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_ADD_JOB, accessToken, Constants.REQUEST_TIME_OUT, request, String.class);
     }
 
     @Override
     public ReturnT<String> deleteJob(DeleteXxlJobInfoDto request) {
-        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_DELETE_JOB, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, request, String.class);
+        return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_DELETE_JOB, accessToken, Constants.REQUEST_TIME_OUT, request, String.class);
     }
 
     @Override
     public ReturnT<String> updateJob(UpdateXxlJobInfoDto request) {
-        return XxlJobRemotingUtil.postBody(addressUrl + ADMIN_UPDATE_JOB, accessToken, Constants.ADMIN_REQUEST_TIME_OUT, request, String.class);
+        return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_UPDATE_JOB, accessToken, Constants.REQUEST_TIME_OUT, request, String.class);
     }
 }
