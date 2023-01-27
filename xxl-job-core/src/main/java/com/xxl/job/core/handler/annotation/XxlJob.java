@@ -27,4 +27,12 @@ public @interface XxlJob {
      */
     String destroy() default "";
 
+    /**
+     * 是否需要自动创建任务
+     * TODO 自动生成任务
+     *
+     * @return
+     */
+    boolean autoCreated() default false;
+
 }
