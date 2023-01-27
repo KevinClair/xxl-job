@@ -1,28 +1,28 @@
 package com.xxl.job.core.biz.client;
 
 import com.xxl.job.common.constant.Constants;
-import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.*;
+import com.xxl.job.common.model.*;
+import com.xxl.job.common.service.ExecutorManager;
+import com.xxl.job.core.biz.impl.ExecutorManagerImpl;
 import com.xxl.job.core.util.XxlJobRemotingUtil;
 
 /**
- * admin api test
+ * 执行器管理的Admin端实现，请求的是core包中通过Netty实现的http服务器，core的http服务器会根据不用的路径，响应操作，由{@link ExecutorManagerImpl}负责实现
  *
  * @author xuxueli 2017-07-28 22:14:52
  */
-public class ExecutorBizClient implements ExecutorBiz {
+public class ExecutorManagerClient implements ExecutorManager {
 
     private String addressUrl;
     private String accessToken;
-    
+
     private static final String ADMIN_URL_BEAT = "/beat";
     private static final String ADMIN_URL_IDLE_BEAT = "/idleBeat";
     private static final String ADMIN_URL_RUN = "/run";
     private static final String ADMIN_URL_KILL = "/kill";
     private static final String ADMIN_URL_LOG = "/log";
 
-    public ExecutorBizClient(String addressUrl, String accessToken) {
+    public ExecutorManagerClient(String addressUrl, String accessToken) {
         this.addressUrl = addressUrl;
         this.accessToken = accessToken;
     }

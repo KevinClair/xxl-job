@@ -9,12 +9,12 @@ import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLogDao;
+import com.xxl.job.common.model.KillParam;
+import com.xxl.job.common.model.LogParam;
+import com.xxl.job.common.model.LogResult;
 import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.service.ExecutorManager;
 import com.xxl.job.common.utils.I18nUtil;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.KillParam;
-import com.xxl.job.core.biz.model.LogParam;
-import com.xxl.job.core.biz.model.LogResult;
 import com.xxl.job.core.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,16 +149,16 @@ public class JobLogController {
 	@ResponseBody
 	public ReturnT<LogResult> logDetailCat(String executorAddress, long triggerTime, long logId, int fromLineNum){
 		try {
-			ExecutorBiz executorBiz = executorBizRepository.getExecutorBiz(executorAddress);
-			ReturnT<LogResult> logResult = executorBiz.log(new LogParam(triggerTime, logId, fromLineNum));
+			ExecutorManager executorManager = executorBizRepository.getExecutorBiz(executorAddress);
+			ReturnT<LogResult> logResult = executorManager.log(new LogParam(triggerTime, logId, fromLineNum));
 
 			// is end
-            if (logResult.getContent()!=null && logResult.getContent().getFromLineNum() > logResult.getContent().getToLineNum()) {
-                XxlJobLog jobLog = xxlJobLogDao.load(logId);
-                if (jobLog.getHandleCode() > 0) {
-                    logResult.getContent().setEnd(true);
-                }
-            }
+			if (logResult.getContent() != null && logResult.getContent().getFromLineNum() > logResult.getContent().getToLineNum()) {
+				XxlJobLog jobLog = xxlJobLogDao.load(logId);
+				if (jobLog.getHandleCode() > 0) {
+					logResult.getContent().setEnd(true);
+				}
+			}
 
 			return logResult;
 		} catch (Exception e) {
@@ -183,8 +183,8 @@ public class JobLogController {
 		// request of kill
 		ReturnT<String> runResult = null;
 		try {
-			ExecutorBiz executorBiz = executorBizRepository.getExecutorBiz(log.getExecutorAddress());
-			runResult = executorBiz.kill(new KillParam(jobInfo.getId()));
+			ExecutorManager executorManager = executorBizRepository.getExecutorBiz(log.getExecutorAddress());
+			runResult = executorManager.kill(new KillParam(jobInfo.getId()));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			runResult = new ReturnT<String>(500, e.getMessage());

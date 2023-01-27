@@ -2,11 +2,11 @@ package com.xxl.job.admin.core.route.strategy;
 
 import com.xxl.job.admin.core.ExecutorBizRepository;
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
+import com.xxl.job.common.model.IdleBeatParam;
 import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.model.TriggerParam;
+import com.xxl.job.common.service.ExecutorManager;
 import com.xxl.job.common.utils.I18nUtil;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.IdleBeatParam;
-import com.xxl.job.core.biz.model.TriggerParam;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,8 +30,8 @@ public class ExecutorRouteBusyover extends AbstractExecutorRouter {
             // beat
             ReturnT<String> idleBeatResult = null;
             try {
-                ExecutorBiz executorBiz = executorBizRepository.getExecutorBiz(address);
-                idleBeatResult = executorBiz.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
+                ExecutorManager executorManager = executorBizRepository.getExecutorBiz(address);
+                idleBeatResult = executorManager.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 idleBeatResult = new ReturnT<String>(ReturnT.FAIL_CODE, ""+e );

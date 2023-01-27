@@ -1,7 +1,7 @@
 package com.xxl.job.starter;
 
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.impl.ExecutorBizImpl;
+import com.xxl.job.common.service.ExecutorManager;
+import com.xxl.job.core.biz.impl.ExecutorManagerImpl;
 import com.xxl.job.core.executor.AdminBizClientManager;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
@@ -118,11 +118,11 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
      * 应用端的执行器管理，会根据admin请求core的不同路径调用不同的实现方法
      *
      * @param jobHandlerRepository {@link JobHandlerRepository}
-     * @return {@link ExecutorBiz}
+     * @return {@link ExecutorManager}
      */
     @Bean
-    public ExecutorBiz executorBiz(JobHandlerRepository jobHandlerRepository){
-        return new ExecutorBizImpl(jobHandlerRepository);
+    public ExecutorManager executorBiz(JobHandlerRepository jobHandlerRepository) {
+        return new ExecutorManagerImpl(jobHandlerRepository);
     }
 
     /**
@@ -173,14 +173,14 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
     /**
      * Netty实现的本地http服务器，供admin请求
      *
-     * @param executorBiz            {@link ExecutorBiz}
+     * @param executorManager        {@link ExecutorManager}
      * @param configuration          {@link XxlJobConfiguration}
      * @param executorRegistryThread {@link ExecutorRegistryThread}
      * @return {@link EmbedServer}
      */
     @Bean
-    public EmbedServer embedServer(ExecutorBiz executorBiz, XxlJobConfiguration configuration, ExecutorRegistryThread executorRegistryThread){
-        return new EmbedServer(executorBiz, configuration, executorRegistryThread);
+    public EmbedServer embedServer(ExecutorManager executorManager, XxlJobConfiguration configuration, ExecutorRegistryThread executorRegistryThread) {
+        return new EmbedServer(executorManager, configuration, executorRegistryThread);
     }
 
     @Override

@@ -1,12 +1,13 @@
-package com.xxl.job.core.biz;
+package com.xxl.job.common.service;
 
-import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.core.biz.model.*;
+import com.xxl.job.common.model.*;
 
 /**
+ * 执行器管理接口
+ * <p>
  * Created by xuxueli on 17/3/1.
  */
-public interface ExecutorBiz {
+public interface ExecutorManager {
 
     /**
      * beat

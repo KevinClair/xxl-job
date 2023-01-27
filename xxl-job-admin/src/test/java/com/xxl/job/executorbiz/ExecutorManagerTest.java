@@ -2,19 +2,18 @@ package com.xxl.job.executorbiz;
 
 import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.common.enums.GlueTypeEnum;
-import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.client.ExecutorBizClient;
-import com.xxl.job.core.biz.model.*;
+import com.xxl.job.common.model.*;
+import com.xxl.job.common.service.ExecutorManager;
+import com.xxl.job.core.biz.client.ExecutorManagerClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
  * executor api test
- *
+ * <p>
  * Created by xuxueli on 17/5/12.
  */
-public class ExecutorBizTest {
+public class ExecutorManagerTest {
 
     // admin-client
     private static String addressUrl = "http://127.0.0.1:9999/";
@@ -22,9 +21,9 @@ public class ExecutorBizTest {
 
     @Test
     public void beat() throws Exception {
-        ExecutorBiz executorBiz = new ExecutorBizClient(addressUrl, accessToken);
+        ExecutorManager executorManager = new ExecutorManagerClient(addressUrl, accessToken);
         // Act
-        final ReturnT<String> retval = executorBiz.beat();
+        final ReturnT<String> retval = executorManager.beat();
 
         // Assert result
         Assertions.assertNotNull(retval);
@@ -35,12 +34,12 @@ public class ExecutorBizTest {
 
     @Test
     public void idleBeat(){
-        ExecutorBiz executorBiz = new ExecutorBizClient(addressUrl, accessToken);
+        ExecutorManager executorManager = new ExecutorManagerClient(addressUrl, accessToken);
 
         final int jobId = 0;
 
         // Act
-        final ReturnT<String> retval = executorBiz.idleBeat(new IdleBeatParam(jobId));
+        final ReturnT<String> retval = executorManager.idleBeat(new IdleBeatParam(jobId));
 
         // Assert result
         Assertions.assertNotNull(retval);
@@ -51,7 +50,7 @@ public class ExecutorBizTest {
 
     @Test
     public void run(){
-        ExecutorBiz executorBiz = new ExecutorBizClient(addressUrl, accessToken);
+        ExecutorManager executorManager = new ExecutorManagerClient(addressUrl, accessToken);
 
         // trigger data
         final TriggerParam triggerParam = new TriggerParam();
@@ -66,7 +65,7 @@ public class ExecutorBizTest {
         triggerParam.setLogDateTime(System.currentTimeMillis());
 
         // Act
-        final ReturnT<String> retval = executorBiz.run(triggerParam);
+        final ReturnT<String> retval = executorManager.run(triggerParam);
 
         // Assert result
         Assertions.assertNotNull(retval);
@@ -74,12 +73,12 @@ public class ExecutorBizTest {
 
     @Test
     public void kill(){
-        ExecutorBiz executorBiz = new ExecutorBizClient(addressUrl, accessToken);
+        ExecutorManager executorManager = new ExecutorManagerClient(addressUrl, accessToken);
 
         final int jobId = 0;
 
         // Act
-        final ReturnT<String> retval = executorBiz.kill(new KillParam(jobId));
+        final ReturnT<String> retval = executorManager.kill(new KillParam(jobId));
 
         // Assert result
         Assertions.assertNotNull(retval);
@@ -90,14 +89,14 @@ public class ExecutorBizTest {
 
     @Test
     public void log(){
-        ExecutorBiz executorBiz = new ExecutorBizClient(addressUrl, accessToken);
+        ExecutorManager executorManager = new ExecutorManagerClient(addressUrl, accessToken);
 
         final long logDateTim = 0L;
         final long logId = 0;
         final int fromLineNum = 0;
 
         // Act
-        final ReturnT<LogResult> retval = executorBiz.log(new LogParam(logDateTim, logId, fromLineNum));
+        final ReturnT<LogResult> retval = executorManager.log(new LogParam(logDateTim, logId, fromLineNum));
 
         // Assert result
         Assertions.assertNotNull(retval);

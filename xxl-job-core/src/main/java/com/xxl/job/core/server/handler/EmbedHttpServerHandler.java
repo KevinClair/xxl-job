@@ -1,12 +1,8 @@
 package com.xxl.job.core.server.handler;
 
 import com.xxl.job.common.constant.Constants;
-import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.IdleBeatParam;
-import com.xxl.job.core.biz.model.KillParam;
-import com.xxl.job.core.biz.model.LogParam;
-import com.xxl.job.core.biz.model.TriggerParam;
+import com.xxl.job.common.model.*;
+import com.xxl.job.common.service.ExecutorManager;
 import com.xxl.job.core.util.GsonTool;
 import com.xxl.job.core.util.ThrowableUtil;
 import io.netty.buffer.Unpooled;
@@ -34,22 +30,22 @@ public class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
 
     private static final Logger logger = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
 
-    private final ExecutorBiz executorBiz;
+    private final ExecutorManager executorManager;
     private final String accessToken;
     private final ThreadPoolExecutor bizThreadPool;
 
-    public EmbedHttpServerHandler(ExecutorBiz executorBiz, String accessToken) {
-        this.executorBiz = executorBiz;
+    public EmbedHttpServerHandler(ExecutorManager executorManager, String accessToken) {
+        this.executorManager = executorManager;
         this.accessToken = accessToken;
         this.bizThreadPool = new ThreadPoolExecutor(
-            0,
-            200,
-            60L,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>(2000),
-            r -> new Thread(r, "xxl-job, EmbedServer bizThreadPool-" + r.hashCode()),
-            (r, executor) -> {
-                throw new RuntimeException("xxl-job, EmbedServer bizThreadPool is EXHAUSTED!");
+                0,
+                200,
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(2000),
+                r -> new Thread(r, "xxl-job, EmbedServer bizThreadPool-" + r.hashCode()),
+                (r, executor) -> {
+                    throw new RuntimeException("xxl-job, EmbedServer bizThreadPool is EXHAUSTED!");
             });
     }
 
@@ -92,19 +88,19 @@ public class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
         try {
             switch (uri) {
                 case "/beat":
-                    return executorBiz.beat();
+                    return executorManager.beat();
                 case "/idleBeat":
                     IdleBeatParam idleBeatParam = GsonTool.fromJson(requestData, IdleBeatParam.class);
-                    return executorBiz.idleBeat(idleBeatParam);
+                    return executorManager.idleBeat(idleBeatParam);
                 case "/run":
                     TriggerParam triggerParam = GsonTool.fromJson(requestData, TriggerParam.class);
-                    return executorBiz.run(triggerParam);
+                    return executorManager.run(triggerParam);
                 case "/kill":
                     KillParam killParam = GsonTool.fromJson(requestData, KillParam.class);
-                    return executorBiz.kill(killParam);
+                    return executorManager.kill(killParam);
                 case "/log":
                     LogParam logParam = GsonTool.fromJson(requestData, LogParam.class);
-                    return executorBiz.log(logParam);
+                    return executorManager.log(logParam);
                 default:
                     return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
             }

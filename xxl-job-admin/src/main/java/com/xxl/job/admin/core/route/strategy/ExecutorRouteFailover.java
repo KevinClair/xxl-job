@@ -3,9 +3,9 @@ package com.xxl.job.admin.core.route.strategy;
 import com.xxl.job.admin.core.ExecutorBizRepository;
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
 import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.model.TriggerParam;
+import com.xxl.job.common.service.ExecutorManager;
 import com.xxl.job.common.utils.I18nUtil;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.TriggerParam;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,8 +30,8 @@ public class ExecutorRouteFailover extends AbstractExecutorRouter {
             // beat
             ReturnT<String> beatResult = null;
             try {
-                ExecutorBiz executorBiz = executorBizRepository.getExecutorBiz(address);
-                beatResult = executorBiz.beat();
+                ExecutorManager executorManager = executorBizRepository.getExecutorBiz(address);
+                beatResult = executorManager.beat();
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 beatResult = new ReturnT<String>(ReturnT.FAIL_CODE, ""+e );

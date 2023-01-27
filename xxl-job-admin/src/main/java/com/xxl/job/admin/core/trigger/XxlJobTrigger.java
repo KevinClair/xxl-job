@@ -11,9 +11,9 @@ import com.xxl.job.admin.dao.XxlJobLogDao;
 import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.common.enums.ExecutorRouteStrategyEnum;
 import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.model.TriggerParam;
+import com.xxl.job.common.service.ExecutorManager;
 import com.xxl.job.common.utils.I18nUtil;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.TriggerParam;
 import com.xxl.job.core.util.IpUtil;
 import com.xxl.job.core.util.ThrowableUtil;
 import org.slf4j.Logger;
@@ -232,8 +232,8 @@ public class XxlJobTrigger {
     public ReturnT<String> runExecutor(TriggerParam triggerParam, String address){
         ReturnT<String> runResult = null;
         try {
-            ExecutorBiz executorBiz = executorBizRepository.getExecutorBiz(address);
-            runResult = executorBiz.run(triggerParam);
+            ExecutorManager executorManager = executorBizRepository.getExecutorBiz(address);
+            runResult = executorManager.run(triggerParam);
         } catch (Exception e) {
             logger.error(">>>>>>>>>>> xxl-job trigger error, please check if the executor[{}] is running.", address, e);
             runResult = new ReturnT<String>(ReturnT.FAIL_CODE, ThrowableUtil.toString(e));

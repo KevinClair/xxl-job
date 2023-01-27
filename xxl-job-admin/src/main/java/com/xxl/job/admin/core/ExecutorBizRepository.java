@@ -1,8 +1,8 @@
 package com.xxl.job.admin.core;
 
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.client.ExecutorBizClient;
+import com.xxl.job.common.service.ExecutorManager;
+import com.xxl.job.core.biz.client.ExecutorManagerClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -23,9 +23,9 @@ public class ExecutorBizRepository {
         this.jobAdminConfig = jobAdminConfig;
     }
 
-    private static ConcurrentMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, ExecutorManager> executorBizRepository = new ConcurrentHashMap<>();
 
-    public ExecutorBiz getExecutorBiz(String address) throws Exception {
+    public ExecutorManager getExecutorBiz(String address) throws Exception {
         // valid
         if (!StringUtils.hasLength(address)) {
             return null;
@@ -33,6 +33,6 @@ public class ExecutorBizRepository {
 
         // load-cache
         address = address.trim();
-        return executorBizRepository.computeIfAbsent(address, k -> new ExecutorBizClient(k, jobAdminConfig.getAccessToken()));
+        return executorBizRepository.computeIfAbsent(address, k -> new ExecutorManagerClient(k, jobAdminConfig.getAccessToken()));
     }
 }

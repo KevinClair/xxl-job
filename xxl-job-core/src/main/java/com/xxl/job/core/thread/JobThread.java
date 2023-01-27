@@ -2,7 +2,7 @@ package com.xxl.job.core.thread;
 
 import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.core.biz.model.TriggerParam;
+import com.xxl.job.common.model.TriggerParam;
 import com.xxl.job.core.context.XxlJobContext;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.HandleCallbackParamRepository;

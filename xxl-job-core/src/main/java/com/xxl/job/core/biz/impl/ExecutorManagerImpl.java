@@ -2,9 +2,8 @@ package com.xxl.job.core.biz.impl;
 
 import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.common.enums.GlueTypeEnum;
-import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.*;
+import com.xxl.job.common.model.*;
+import com.xxl.job.common.service.ExecutorManager;
 import com.xxl.job.core.glue.GlueFactory;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.JobHandlerRepository;
@@ -19,14 +18,16 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 /**
+ * Admin请求客户端(应用端)实现，由客户端操作
+ * <p>
  * Created by xuxueli on 17/3/1.
  */
-public class ExecutorBizImpl implements ExecutorBiz {
-    private static Logger logger = LoggerFactory.getLogger(ExecutorBizImpl.class);
+public class ExecutorManagerImpl implements ExecutorManager {
+    private static Logger logger = LoggerFactory.getLogger(ExecutorManagerImpl.class);
 
     private final JobHandlerRepository jobHandlerRepository;
 
-    public ExecutorBizImpl(JobHandlerRepository jobHandlerRepository) {
+    public ExecutorManagerImpl(JobHandlerRepository jobHandlerRepository) {
         this.jobHandlerRepository = jobHandlerRepository;
     }
 
