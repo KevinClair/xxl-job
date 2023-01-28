@@ -2,7 +2,6 @@ package com.xxl.job.core.thread;
 
 import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.common.service.AdminManager;
 import com.xxl.job.core.context.XxlJobContext;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.enums.RegistryConfig;
@@ -95,24 +94,22 @@ public class TriggerCallbackThread implements DisposableBean {
 
     /**
      * do callback, will retry if error
+     *
      * @param callbackParamList
      */
-    private void doCallback(List<HandleCallbackParam> callbackParamList){
+    private void doCallback(List<HandleCallbackParam> callbackParamList) {
         boolean callbackRet = false;
         // callback, will retry if error
-        for (AdminManager adminManager : adminManagerClientWrapper.getAdminBizList()) {
-            try {
-                ReturnT<String> callbackResult = adminManager.callback(callbackParamList);
-                if (callbackResult != null && ReturnT.SUCCESS_CODE == callbackResult.getCode()) {
-                    callbackLog(callbackParamList, "<br>----------- xxl-job job callback finish.");
-                    callbackRet = true;
-                    break;
-                } else {
-                    callbackLog(callbackParamList, "<br>----------- xxl-job job callback fail, callbackResult:" + callbackResult);
-                }
-            } catch (Exception e) {
-                callbackLog(callbackParamList, "<br>----------- xxl-job job callback error, errorMsg:" + e.getMessage());
+        try {
+            ReturnT<String> callbackResult = adminManagerClientWrapper.getAdminManager().callback(callbackParamList);
+            if (callbackResult != null && ReturnT.SUCCESS_CODE == callbackResult.getCode()) {
+                callbackLog(callbackParamList, "<br>----------- xxl-job job callback finish.");
+                callbackRet = true;
+            } else {
+                callbackLog(callbackParamList, "<br>----------- xxl-job job callback fail, callbackResult:" + callbackResult);
             }
+        } catch (Exception e) {
+            callbackLog(callbackParamList, "<br>----------- xxl-job job callback error, errorMsg:" + e.getMessage());
         }
         if (!callbackRet) {
             appendFailCallbackFile(callbackParamList);
@@ -122,8 +119,8 @@ public class TriggerCallbackThread implements DisposableBean {
     /**
      * callback log
      */
-    private void callbackLog(List<HandleCallbackParam> callbackParamList, String logContent){
-        for (HandleCallbackParam callbackParam: callbackParamList) {
+    private void callbackLog(List<HandleCallbackParam> callbackParamList, String logContent) {
+        for (HandleCallbackParam callbackParam : callbackParamList) {
             String logFileName = XxlJobFileAppender.makeLogFileName(new Date(callbackParam.getLogDateTim()), callbackParam.getLogId());
             XxlJobContext.setXxlJobContext(new XxlJobContext(
                     -1,
@@ -141,7 +138,7 @@ public class TriggerCallbackThread implements DisposableBean {
     private static String failCallbackFilePath = XxlJobFileAppender.getLogPath().concat(File.separator).concat("callbacklog").concat(File.separator);
     private static String failCallbackFileName = failCallbackFilePath.concat("xxl-job-callback-{x}").concat(".log");
 
-    private void appendFailCallbackFile(List<HandleCallbackParam> callbackParamList){
+    private void appendFailCallbackFile(List<HandleCallbackParam> callbackParamList) {
         // valid
         if (CollectionUtils.isEmpty(callbackParamList)) {
             return;
@@ -152,7 +149,7 @@ public class TriggerCallbackThread implements DisposableBean {
         File callbackLogFile = new File(failCallbackFileName.replace("{x}", String.valueOf(System.currentTimeMillis())));
         if (callbackLogFile.exists()) {
             for (int i = 0; i < 100; i++) {
-                callbackLogFile = new File(failCallbackFileName.replace("{x}", String.valueOf(System.currentTimeMillis()).concat("-").concat(String.valueOf(i)) ));
+                callbackLogFile = new File(failCallbackFileName.replace("{x}", String.valueOf(System.currentTimeMillis()).concat("-").concat(String.valueOf(i))));
                 if (!callbackLogFile.exists()) {
                     break;
                 }
@@ -161,7 +158,7 @@ public class TriggerCallbackThread implements DisposableBean {
         FileUtil.writeFileContent(callbackLogFile, callbackParamList_bytes);
     }
 
-    private void retryFailCallbackFile(){
+    private void retryFailCallbackFile() {
 
         // valid
         File callbackLogPath = new File(failCallbackFilePath);
@@ -171,16 +168,16 @@ public class TriggerCallbackThread implements DisposableBean {
         if (callbackLogPath.isFile()) {
             callbackLogPath.delete();
         }
-        if (!(callbackLogPath.isDirectory() && callbackLogPath.list()!=null && callbackLogPath.list().length>0)) {
+        if (!(callbackLogPath.isDirectory() && callbackLogPath.list() != null && callbackLogPath.list().length > 0)) {
             return;
         }
 
         // load and clear file, retry
-        for (File callbaclLogFile: callbackLogPath.listFiles()) {
+        for (File callbaclLogFile : callbackLogPath.listFiles()) {
             byte[] callbackParamList_bytes = FileUtil.readFileContent(callbaclLogFile);
 
             // avoid empty file
-            if(callbackParamList_bytes == null || callbackParamList_bytes.length < 1){
+            if (callbackParamList_bytes == null || callbackParamList_bytes.length < 1) {
                 callbaclLogFile.delete();
                 continue;
             }

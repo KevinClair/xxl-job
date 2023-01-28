@@ -2,7 +2,6 @@ package com.xxl.job.core.thread;
 
 import com.xxl.job.common.model.RegistryParam;
 import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.common.service.AdminManager;
 import com.xxl.job.core.enums.RegistryConfig;
 import com.xxl.job.core.executor.AdminManagerClientWrapper;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
@@ -37,21 +36,19 @@ public class ExecutorRegistryThread implements DisposableBean {
     public void startRegistry() {
         this.executorRegistryThreadPool.scheduleAtFixedRate(() -> {
             RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
-            for (AdminManager adminManager : adminManagerClientWrapper.getAdminBizList()) {
-                try {
-                    ReturnT<String> registryResult = adminManager.registry(registryParam);
-                    if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
-                        logger.debug(">>>>>>>>>>> xxl-job registry success, registryParam:{}, registryResult:{}", new Object[]{registryParam, ReturnT.SUCCESS});
-                        break;
-                    } else {
-                        logger.info(">>>>>>>>>>> xxl-job registry fail, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
-                    }
-                } catch (Exception e) {
-                    logger.error(">>>>>>>>>>> xxl-job registry error, registryParam:{}", registryParam, e);
+            try {
+                ReturnT<String> registryResult = adminManagerClientWrapper.getAdminManager().registry(registryParam);
+                if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
+                    logger.debug(">>>>>>>>>>> xxl-job registry success, registryParam:{}, registryResult:{}", new Object[]{registryParam, ReturnT.SUCCESS});
+                } else {
+                    logger.info(">>>>>>>>>>> xxl-job registry fail, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
                 }
-
+            } catch (Exception e) {
+                logger.error(">>>>>>>>>>> xxl-job registry error, registryParam:{}", registryParam, e);
             }
+
         }, 0, RegistryConfig.BEAT_TIMEOUT, TimeUnit.SECONDS);
+
     }
 
     @Override
@@ -59,25 +56,22 @@ public class ExecutorRegistryThread implements DisposableBean {
         // stop thread pool
         executorRegistryThreadPool.shutdownNow();
         try {
-            if (executorRegistryThreadPool.awaitTermination(5, TimeUnit.SECONDS)){
+            if (executorRegistryThreadPool.awaitTermination(5, TimeUnit.SECONDS)) {
                 logger.info(">>>>>>>>>>> xxl-job executorRegistryThreadPool shutdown success.");
             }
-        } catch (InterruptedException exception){
+        } catch (InterruptedException exception) {
             logger.error(">>>>>>>>>>> xxl-job executorRegistryThreadPool shutdown error.", exception);
         }
         RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
-        for (AdminManager adminManager : adminManagerClientWrapper.getAdminBizList()) {
-            try {
-                ReturnT<String> registryResult = adminManager.registryRemove(registryParam);
-                if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
-                    logger.info(">>>>>>>>>>> xxl-job registry-remove success, registryParam:{}, registryResult:{}", new Object[]{registryParam, ReturnT.SUCCESS});
-                    break;
-                } else {
-                    logger.info(">>>>>>>>>>> xxl-job registry-remove fail, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
-                }
-            } catch (Exception e) {
-                logger.error(">>>>>>>>>>> xxl-job registry-remove error, registryParam:{}", registryParam, e);
+        try {
+            ReturnT<String> registryResult = adminManagerClientWrapper.getAdminManager().registryRemove(registryParam);
+            if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
+                logger.info(">>>>>>>>>>> xxl-job registry-remove success, registryParam:{}, registryResult:{}", new Object[]{registryParam, ReturnT.SUCCESS});
+            } else {
+                logger.info(">>>>>>>>>>> xxl-job registry-remove fail, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
             }
+        } catch (Exception e) {
+            logger.error(">>>>>>>>>>> xxl-job registry-remove error, registryParam:{}", registryParam, e);
         }
     }
 }
