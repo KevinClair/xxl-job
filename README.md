@@ -38,23 +38,23 @@ public class A implements DisposableBean {
 
 ```java
 public class Test {
-    
+
     @Resources
-    private AdminManager adminManager;
+    private AdminManagerClientWrapper wrapper;
 
     public void addJob() {
         AddXxlJobInfoDto infoDto = new AddXxlJobInfoDto();
-        adminManager.addJob(infoDto);
+        wrapper.getAdminManager().addJob(infoDto);
     }
 
     public void deleteJob() {
         DeleteXxlJobInfoDto infoDto = new DeleteXxlJobInfoDto();
-        adminManager.deleteJob(infoDto);
+        wrapper.getAdminManager().deleteJob(infoDto);
     }
 
     public void updateJob() {
         UpdateXxlJobInfoDto infoDto = new UpdateXxlJobInfoDto();
-        adminManager.updateJob(infoDto);
+        wrapper.getAdminManager().updateJob(infoDto);
     }
 }
 ```
