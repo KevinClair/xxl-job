@@ -11,7 +11,6 @@ public interface JobRemoteApiService {
 
     /**
      * 添加Job
-     * TODO 增加实现
      *
      * @param request {@link AddXxlJobInfoDto}
      * @return
@@ -20,7 +19,6 @@ public interface JobRemoteApiService {
 
     /**
      * 修改Job
-     * TODO 增加实现
      *
      * @param request {@link UpdateXxlJobInfoDto}
      * @return
@@ -29,7 +27,6 @@ public interface JobRemoteApiService {
 
     /**
      * 删除job
-     * TODO 增加实现
      *
      * @param request {@link DeleteXxlJobInfoDto}
      * @return

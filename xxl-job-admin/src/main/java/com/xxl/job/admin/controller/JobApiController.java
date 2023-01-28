@@ -57,7 +57,6 @@ public class JobApiController {
         return adminManager.registryRemove(data);
     }
 
-    // TODO 添加job
     @PostMapping("/addJob")
     @PermissionLimit(limit = false)
     public ReturnT<String> addJob(HttpServletRequest request, @RequestBody(required = false) AddXxlJobInfoDto data) {
@@ -72,7 +71,6 @@ public class JobApiController {
         return adminManager.deleteJob(data);
     }
 
-    // TODO 更新job
     @PostMapping("/updateJob")
     @PermissionLimit(limit = false)
     public ReturnT<String> updateJob(HttpServletRequest request, @RequestBody(required = false) UpdateXxlJobInfoDto data) {

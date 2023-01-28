@@ -80,7 +80,7 @@ public class JobScheduleServiceImpl implements JobScheduleService {
 
                 // next-trigger-time in 5s, pre-read again
                 // 如果此时当前调度任务的下一次执行时间依然是小于nowTime + PRE_READ_MS
-                // todo
+                // todo 补充注释
                 if (jobInfo.getTriggerStatus()==1 && nowTime + Constants.PRE_READ_MS > jobInfo.getTriggerNextTime()) {
 
                     // 1、make ring second
