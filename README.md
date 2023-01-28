@@ -59,6 +59,9 @@ public class Test {
 }
 ```
 
+* 完善了@XxlJob注解功能，提供自动注册job任务
+  * 暂时会根据job_desc判断是否重复，不重复则新增
+
 ## xxl-job-spring-boot-starter
 
 * 新增的spring-boot-starter模块;
@@ -71,7 +74,8 @@ public class Test {
 * 取消admin对core的依赖，提取公共模块
 * 在core中新增添加job,删除job,更新job方法(done)
 * 新增调度类型，固定延迟
-* 增加@XxlJob的属性
+* 增加@XxlJob的属性(done)
 * Controller的参数校验
 * 调整maven包依赖管理
 * XxlJobGroup中的app_name字段唯一性
+* XxlJobInfo中的job_desc字段唯一性
