@@ -1649,8 +1649,8 @@ Header：
 
 ### 6.2 执行器 RESTful API
 
-API服务位置：com.xxl.job.core.biz.ExecutorBiz
-API服务请求参考代码：com.xxl.job.executorbiz.ExecutorBizTest
+API服务位置：com.xxl.job.common.service.ExecutorManager
+API服务请求参考代码：com.xxl.job.executorbiz.ExecutorManagerTest
 
 #### a、心跳检测
 ```

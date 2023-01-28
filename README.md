@@ -20,24 +20,56 @@ public class A {
 * 删除了非Spring模式下的启动模式；
 * 调整了Http服务器的启动方式，改为主线程生成；
 * 在部分类中存在线程关闭的场景，也通过Spring的bean生命周期的一些方式，关闭线程或者线程池；
+
 ```java
 // 例如
-public class A implements DisposableBean{
+public class A implements DisposableBean {
     @Override
-    public void destroy() throws Exception{
+    public void destroy() throws Exception {
         // 关闭线程或者线程池
     }
 }
 ```
+
+*
+优化了部分代码，包括AdminManager的生成方式等，具体见[AdminManagerClientWrapper](src/main/java/com/xxl/job/core/executor/AdminManagerClientWrapper.java)
+;
+* 在客户端(应用端)增加了添加job,删除job,更新job方法[AdminManager](src/main/java/com/xxl/job/common/service/AdminManager.java);
+
+```java
+public class Test {
+    
+    @Resources
+    private AdminManager adminManager;
+
+    public void addJob() {
+        AddXxlJobInfoDto infoDto = new AddXxlJobInfoDto();
+        adminManager.addJob(infoDto);
+    }
+
+    public void deleteJob() {
+        DeleteXxlJobInfoDto infoDto = new DeleteXxlJobInfoDto();
+        adminManager.deleteJob(infoDto);
+    }
+
+    public void updateJob() {
+        UpdateXxlJobInfoDto infoDto = new UpdateXxlJobInfoDto();
+        adminManager.updateJob(infoDto);
+    }
+}
+```
+
 ## xxl-job-spring-boot-starter
+
 * 新增的spring-boot-starter模块;
 * 增加了属性的配置项，以及属性关联；
 * 增加了启动时xxl-job的启动Logo的打印；
 * 调整了spring模式下的一些bean注入的方式，原先都是通过Instance实例的方式获取，后统一通过Spring管理bean。
 
 ## todo
+
 * 取消admin对core的依赖，提取公共模块
-* 在core中新增添加job和删除job的方法
+* 在core中新增添加job,删除job,更新job方法(done)
 * 新增调度类型，固定延迟
 * 增加@XxlJob的属性
 * Controller的参数校验
