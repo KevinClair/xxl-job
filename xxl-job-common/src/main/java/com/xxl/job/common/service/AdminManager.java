@@ -2,6 +2,7 @@ package com.xxl.job.common.service;
 
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
+import com.xxl.job.common.dto.SaveXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.RegistryParam;
@@ -73,4 +74,12 @@ public interface AdminManager {
      * @return
      */
     ReturnT<String> updateJob(UpdateXxlJobInfoDto request);
+
+    /**
+     * 保存一个job，会根据jobDesc判断是否存在，存在且covered为true时更新，不存在时新增
+     *
+     * @param request {@link SaveXxlJobInfoDto}
+     * @return
+     */
+    ReturnT<String> saveJob(SaveXxlJobInfoDto request);
 }

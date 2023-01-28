@@ -242,4 +242,11 @@
 		WHERE executor_handler = #{jobHandler}
 	</delete>
 
+	<select id="findByJobDesc" resultMap="XxlJobInfo">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM xxl_job_info AS t
+		WHERE t.job_desc = #{jobDesc}
+	</select>
+
 </mapper>

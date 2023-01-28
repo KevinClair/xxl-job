@@ -47,5 +47,5 @@ public interface XxlJobInfoDao {
 
 	int deleteByJobHandler(@Param("jobHandler") String jobHandler);
 
-
+	XxlJobInfo findByJobDesc(@Param("jobDesc") String jobDesc);
 }

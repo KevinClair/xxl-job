@@ -5,6 +5,7 @@ import com.xxl.job.admin.core.thread.JobRegistryHelper;
 import com.xxl.job.admin.service.JobRemoteApiService;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
+import com.xxl.job.common.dto.SaveXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.RegistryParam;
@@ -62,5 +63,10 @@ public class AdminManagerImpl implements AdminManager {
     @Override
     public ReturnT<String> updateJob(UpdateXxlJobInfoDto request) {
         return ReturnT.success(remoteApiService.updateJob(request));
+    }
+
+    @Override
+    public ReturnT<String> saveJob(SaveXxlJobInfoDto request) {
+        return ReturnT.success(remoteApiService.saveJob(request));
     }
 }

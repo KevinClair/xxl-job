@@ -9,6 +9,7 @@ import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.service.JobRemoteApiService;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
+import com.xxl.job.common.dto.SaveXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.common.enums.GlueTypeEnum;
 import com.xxl.job.common.enums.ScheduleTypeEnum;
@@ -63,16 +64,17 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
         xxlJobInfo.setUpdateTime(now);
         xxlJobInfo.setAuthor(request.getAuthor());
         xxlJobInfo.setAlarmEmail(request.getAlarmEmail());
-        xxlJobInfo.setScheduleType(request.getScheduleType().getTitle());
+        xxlJobInfo.setScheduleType(request.getScheduleType().name());
         xxlJobInfo.setScheduleConf(request.getScheduleConf());
-        xxlJobInfo.setMisfireStrategy(request.getMisfireStrategy().getTitle());
-        xxlJobInfo.setExecutorRouteStrategy(request.getExecutorRouteStrategy().getTitle());
+        xxlJobInfo.setMisfireStrategy(request.getMisfireStrategy().name());
+        xxlJobInfo.setExecutorRouteStrategy(request.getExecutorRouteStrategy().name());
         xxlJobInfo.setExecutorHandler(request.getExecutorHandler());
         xxlJobInfo.setExecutorParam(request.getExecutorParam());
-        xxlJobInfo.setExecutorBlockStrategy(request.getExecutorBlockStrategy().getTitle());
+        xxlJobInfo.setExecutorBlockStrategy(request.getExecutorBlockStrategy().name());
         xxlJobInfo.setExecutorTimeout(request.getExecutorTimeout());
         xxlJobInfo.setExecutorFailRetryCount(request.getExecutorFailRetryCount());
         xxlJobInfo.setGlueType(GlueTypeEnum.BEAN.getDesc());
+        xxlJobInfo.setGlueUpdatetime(now);
         if (!CollectionUtils.isEmpty(childJobValidList)) {
             xxlJobInfo.setChildJobId(childJobValidList.stream().collect(Collectors.joining(",")));
         }
@@ -97,7 +99,9 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
         if (Objects.nonNull(request.getTriggerStatus())) {
             jobInfo.setTriggerStatus(request.getTriggerStatus());
         }
-        jobInfo.setUpdateTime(new Date());
+        Date now = new Date();
+        jobInfo.setUpdateTime(now);
+        jobInfo.setGlueUpdatetime(now);
         // todo 考虑是否可以提供修改下次执行时间选项
         xxlJobInfoDao.update(jobInfo);
         return "success";
@@ -120,5 +124,45 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
         } else {
             return "invalid job handler, delete error.";
         }
+    }
+
+    @Override
+    public String saveJob(SaveXxlJobInfoDto request) {
+        // 根据jobDesc查询，不存在就新增
+        XxlJobInfo xxlJobInfo = xxlJobInfoDao.findByJobDesc(request.getJobDesc());
+        if (Objects.isNull(xxlJobInfo)) {
+            AddXxlJobInfoDto addXxlJobInfoDto = new AddXxlJobInfoDto();
+            addXxlJobInfoDto.setAppName(request.getAppName());
+            addXxlJobInfoDto.setJobDesc(request.getJobDesc());
+            addXxlJobInfoDto.setAuthor(request.getAuthor());
+            addXxlJobInfoDto.setAlarmEmail(request.getAlarmEmail());
+            addXxlJobInfoDto.setScheduleType(request.getScheduleType());
+            addXxlJobInfoDto.setScheduleConf(request.getScheduleConf());
+            addXxlJobInfoDto.setExecutorHandler(request.getExecutorHandler());
+            addXxlJobInfoDto.setExecutorParam(request.getExecutorParam());
+            addXxlJobInfoDto.setExecutorRouteStrategy(request.getExecutorRouteStrategy());
+            addXxlJobInfoDto.setChildJobId(request.getChildJobId());
+            addXxlJobInfoDto.setMisfireStrategy(request.getMisfireStrategy());
+            addXxlJobInfoDto.setExecutorBlockStrategy(request.getExecutorBlockStrategy());
+            addXxlJobInfoDto.setExecutorTimeout(request.getExecutorTimeout());
+            addXxlJobInfoDto.setExecutorFailRetryCount(request.getExecutorFailRetryCount());
+            return this.addJob(addXxlJobInfoDto);
+        }
+        // 更新时，如果covered为true就更新
+        if (request.getCovered()) {
+            // 校验corn表达式
+            if (Objects.nonNull(request.getScheduleType()) && request.getScheduleType().equals(ScheduleTypeEnum.CRON) && !CronExpression.isValidExpression(request.getScheduleConf())) {
+                throw new XxlJobException("invalid corn");
+            }
+            xxlJobInfo.setScheduleType(request.getScheduleType().getTitle());
+            xxlJobInfo.setScheduleConf(request.getScheduleConf());
+            Date now = new Date();
+            xxlJobInfo.setUpdateTime(now);
+            xxlJobInfo.setGlueUpdatetime(now);
+            // todo 考虑是否可以提供修改下次执行时间选项
+            xxlJobInfoDao.update(xxlJobInfo);
+            return "success";
+        }
+        return "success";
     }
 }

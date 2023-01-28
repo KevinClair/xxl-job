@@ -3,6 +3,7 @@ package com.xxl.job.core.biz.client;
 import com.xxl.job.common.constant.Constants;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
+import com.xxl.job.common.dto.SaveXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.RegistryParam;
@@ -30,6 +31,7 @@ public class AdminManagerClient implements AdminManager {
     private static final String ADMIN_ADD_JOB = "/api/addJob";
     private static final String ADMIN_DELETE_JOB = "/api/deleteJob";
     private static final String ADMIN_UPDATE_JOB = "/api/updateJob";
+    private static final String ADMIN_SAVE_JOB = "/api/saveJob";
 
 
     public AdminManagerClient(String adminUrl, String accessToken) {
@@ -65,5 +67,10 @@ public class AdminManagerClient implements AdminManager {
     @Override
     public ReturnT<String> updateJob(UpdateXxlJobInfoDto request) {
         return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_UPDATE_JOB, accessToken, Constants.REQUEST_TIME_OUT, request, String.class);
+    }
+
+    @Override
+    public ReturnT<String> saveJob(SaveXxlJobInfoDto request) {
+        return XxlJobRemotingUtil.postBody(adminUrl + ADMIN_SAVE_JOB, accessToken, Constants.REQUEST_TIME_OUT, request, String.class);
     }
 }

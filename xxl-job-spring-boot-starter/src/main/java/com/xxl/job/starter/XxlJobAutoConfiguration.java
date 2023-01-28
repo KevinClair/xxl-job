@@ -107,11 +107,13 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
     /**
      * 启动注册JobHandler，扫描{@link com.xxl.job.core.handler.annotation.XxlJob}注解，请求Admin接口注册job任务
      *
+     * @param adminManagerClientWrapper {@link AdminManagerClientWrapper}
+     * @param configuration             {@link XxlJobConfiguration}
      * @return {@link JobHandlerRepository}
      */
     @Bean
-    public JobHandlerRepository jobHandlerRepository(){
-        return new JobHandlerRepository();
+    public JobHandlerRepository jobHandlerRepository(AdminManagerClientWrapper adminManagerClientWrapper, XxlJobConfiguration configuration) {
+        return new JobHandlerRepository(adminManagerClientWrapper, configuration);
     }
 
     /**

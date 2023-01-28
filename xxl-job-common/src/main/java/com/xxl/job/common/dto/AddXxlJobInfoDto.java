@@ -31,6 +31,7 @@ public class AddXxlJobInfoDto implements Serializable {
     private String alarmEmail;
 
     // 调度类型,默认为corn
+    @NotNull
     private ScheduleTypeEnum scheduleType = ScheduleTypeEnum.CRON;
     // 调度配置，值含义取决于调度类型。如果是corn类型，此处填写corn表达式
     private String scheduleConf;

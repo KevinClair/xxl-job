@@ -11,6 +11,7 @@ public interface ExecutorManager {
 
     /**
      * beat
+     *
      * @return
      */
     ReturnT<String> beat();
@@ -19,7 +20,7 @@ public interface ExecutorManager {
      * idle beat
      *
      * @param idleBeatParam
-     * @return
+     * @retur
      */
     ReturnT<String> idleBeat(IdleBeatParam idleBeatParam);
 
