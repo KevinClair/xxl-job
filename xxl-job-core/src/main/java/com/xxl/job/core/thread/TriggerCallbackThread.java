@@ -6,7 +6,7 @@ import com.xxl.job.common.service.AdminManager;
 import com.xxl.job.core.context.XxlJobContext;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.enums.RegistryConfig;
-import com.xxl.job.core.executor.AdminBizClientManager;
+import com.xxl.job.core.executor.AdminManagerClientWrapper;
 import com.xxl.job.core.handler.HandleCallbackParamRepository;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.util.FileUtil;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class TriggerCallbackThread implements DisposableBean {
     private static Logger logger = LoggerFactory.getLogger(TriggerCallbackThread.class);
 
-    private final AdminBizClientManager bizClientManager;
+    private final AdminManagerClientWrapper adminManagerClientWrapper;
 
     /**
      * callback thread
@@ -39,12 +39,12 @@ public class TriggerCallbackThread implements DisposableBean {
     private final ScheduledThreadPoolExecutor retryCallbackThreadPoolExecutor;
     private volatile boolean toStop = false;
 
-    public TriggerCallbackThread(AdminBizClientManager bizClientManager) {
-        this.bizClientManager = bizClientManager;
+    public TriggerCallbackThread(AdminManagerClientWrapper adminManagerClientWrapper) {
+        this.adminManagerClientWrapper = adminManagerClientWrapper;
         this.triggerCallbackThread = new Thread(() -> {
 
             // normal callback
-            while(!toStop){
+            while (!toStop) {
                 try {
                     HandleCallbackParam callback = HandleCallbackParamRepository.take();
 
@@ -100,7 +100,7 @@ public class TriggerCallbackThread implements DisposableBean {
     private void doCallback(List<HandleCallbackParam> callbackParamList){
         boolean callbackRet = false;
         // callback, will retry if error
-        for (AdminManager adminManager : bizClientManager.getAdminBizList()) {
+        for (AdminManager adminManager : adminManagerClientWrapper.getAdminBizList()) {
             try {
                 ReturnT<String> callbackResult = adminManager.callback(callbackParamList);
                 if (callbackResult != null && ReturnT.SUCCESS_CODE == callbackResult.getCode()) {

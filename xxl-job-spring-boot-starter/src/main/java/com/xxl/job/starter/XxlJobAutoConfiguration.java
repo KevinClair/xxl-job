@@ -2,7 +2,7 @@ package com.xxl.job.starter;
 
 import com.xxl.job.common.service.ExecutorManager;
 import com.xxl.job.core.biz.impl.ExecutorManagerImpl;
-import com.xxl.job.core.executor.AdminBizClientManager;
+import com.xxl.job.core.executor.AdminManagerClientWrapper;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import com.xxl.job.core.handler.JobHandlerRepository;
@@ -129,22 +129,22 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
      * admin客户端管理
      *
      * @param configuration {@link XxlJobConfiguration}
-     * @return {@link AdminBizClientManager}
+     * @return {@link AdminManagerClientWrapper}
      */
     @Bean
-    public AdminBizClientManager adminBizClientManager(XxlJobConfiguration configuration){
-        return new AdminBizClientManager(configuration);
+    public AdminManagerClientWrapper adminManagerClientWrapper(XxlJobConfiguration configuration) {
+        return new AdminManagerClientWrapper(configuration);
     }
 
     /**
      * 调度任务执行结束后的回调，调度结果回调Admin
      *
-     * @param bizClientManager {@link AdminBizClientManager}
+     * @param adminManagerClientWrapper {@link AdminManagerClientWrapper}
      * @return {@link TriggerCallbackThread}
      */
     @Bean
-    public TriggerCallbackThread triggerCallbackThread(AdminBizClientManager bizClientManager){
-        return new TriggerCallbackThread(bizClientManager);
+    public TriggerCallbackThread triggerCallbackThread(AdminManagerClientWrapper adminManagerClientWrapper) {
+        return new TriggerCallbackThread(adminManagerClientWrapper);
     }
 
     /**
@@ -161,13 +161,13 @@ public class XxlJobAutoConfiguration implements EnvironmentAware, InitializingBe
     /**
      * 执行器注册，只负责注册执行器，不负责注册job任务
      *
-     * @param bizClientManager 客户端管理{@link AdminBizClientManager}
-     * @param configuration {@link XxlJobConfiguration}
+     * @param adminManagerClientWrapper 客户端管理{@link AdminManagerClientWrapper}
+     * @param configuration             {@link XxlJobConfiguration}
      * @return {@link ExecutorRegistryThread}
      */
     @Bean
-    public ExecutorRegistryThread executorRegistryThread(AdminBizClientManager bizClientManager, XxlJobConfiguration configuration){
-        return new ExecutorRegistryThread(bizClientManager, configuration);
+    public ExecutorRegistryThread executorRegistryThread(AdminManagerClientWrapper adminManagerClientWrapper, XxlJobConfiguration configuration) {
+        return new ExecutorRegistryThread(adminManagerClientWrapper, configuration);
     }
 
     /**

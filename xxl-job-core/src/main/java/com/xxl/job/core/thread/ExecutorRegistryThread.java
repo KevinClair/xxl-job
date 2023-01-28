@@ -4,7 +4,7 @@ import com.xxl.job.common.model.RegistryParam;
 import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.common.service.AdminManager;
 import com.xxl.job.core.enums.RegistryConfig;
-import com.xxl.job.core.executor.AdminBizClientManager;
+import com.xxl.job.core.executor.AdminManagerClientWrapper;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +19,14 @@ import java.util.concurrent.TimeUnit;
 public class ExecutorRegistryThread implements DisposableBean {
     private static Logger logger = LoggerFactory.getLogger(ExecutorRegistryThread.class);
 
-    private final AdminBizClientManager bizClientManager;
+    private final AdminManagerClientWrapper adminManagerClientWrapper;
 
     private final XxlJobConfiguration configuration;
 
     private final ScheduledThreadPoolExecutor executorRegistryThreadPool;
 
-    public ExecutorRegistryThread(AdminBizClientManager bizClientManager, XxlJobConfiguration configuration) {
-        this.bizClientManager = bizClientManager;
+    public ExecutorRegistryThread(AdminManagerClientWrapper adminManagerClientWrapper, XxlJobConfiguration configuration) {
+        this.adminManagerClientWrapper = adminManagerClientWrapper;
         this.configuration = configuration;
         this.executorRegistryThreadPool = new ScheduledThreadPoolExecutor(1, r -> new Thread(r, "xxl-job, executor ExecutorRegistryThread"));
     }
@@ -34,10 +34,10 @@ public class ExecutorRegistryThread implements DisposableBean {
     /**
      * start registry job info.
      */
-    public void startRegistry(){
+    public void startRegistry() {
         this.executorRegistryThreadPool.scheduleAtFixedRate(() -> {
             RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
-            for (AdminManager adminManager : bizClientManager.getAdminBizList()) {
+            for (AdminManager adminManager : adminManagerClientWrapper.getAdminBizList()) {
                 try {
                     ReturnT<String> registryResult = adminManager.registry(registryParam);
                     if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
@@ -66,7 +66,7 @@ public class ExecutorRegistryThread implements DisposableBean {
             logger.error(">>>>>>>>>>> xxl-job executorRegistryThreadPool shutdown error.", exception);
         }
         RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
-        for (AdminManager adminManager : bizClientManager.getAdminBizList()) {
+        for (AdminManager adminManager : adminManagerClientWrapper.getAdminBizList()) {
             try {
                 ReturnT<String> registryResult = adminManager.registryRemove(registryParam);
                 if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
