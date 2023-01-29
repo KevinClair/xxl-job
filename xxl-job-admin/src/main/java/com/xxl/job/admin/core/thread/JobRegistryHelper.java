@@ -10,7 +10,6 @@ import com.xxl.job.common.model.ReturnT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -148,13 +147,6 @@ public class JobRegistryHelper {
 
 	public ReturnT<String> registry(RegistryParam registryParam) {
 
-		// valid
-		if (!StringUtils.hasText(registryParam.getRegistryGroup())
-				|| !StringUtils.hasText(registryParam.getRegistryKey())
-				|| !StringUtils.hasText(registryParam.getRegistryValue())) {
-			return new ReturnT<String>(ReturnT.FAIL_CODE, "Illegal Argument.");
-		}
-
 		// async execute
 		registryOrRemoveThreadPool.execute(new Runnable() {
 			@Override
@@ -173,13 +165,6 @@ public class JobRegistryHelper {
 	}
 
 	public ReturnT<String> registryRemove(RegistryParam registryParam) {
-
-		// valid
-		if (!StringUtils.hasText(registryParam.getRegistryGroup())
-				|| !StringUtils.hasText(registryParam.getRegistryKey())
-				|| !StringUtils.hasText(registryParam.getRegistryValue())) {
-			return new ReturnT<String>(ReturnT.FAIL_CODE, "Illegal Argument.");
-		}
 
 		// async execute
 		registryOrRemoveThreadPool.execute(new Runnable() {

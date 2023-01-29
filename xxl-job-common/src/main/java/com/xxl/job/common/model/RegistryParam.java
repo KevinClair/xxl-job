@@ -1,5 +1,6 @@
 package com.xxl.job.common.model;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -8,8 +9,11 @@ import java.io.Serializable;
 public class RegistryParam implements Serializable {
     private static final long serialVersionUID = 42L;
 
+    @NotBlank
     private String registryGroup;
+    @NotBlank
     private String registryKey;
+    @NotBlank
     private String registryValue;
 
     public RegistryParam(){}
