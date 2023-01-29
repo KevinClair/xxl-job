@@ -86,6 +86,7 @@ public class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
 
         // services mapping
         try {
+            // TODO 重构
             switch (uri) {
                 case "/beat":
                     return executorManager.beat();

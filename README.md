@@ -116,3 +116,4 @@ public class Test {
 * 调整maven包依赖管理(done)
 * XxlJobGroup中的app_name字段唯一性(done)
 * XxlJobInfo中的job_desc字段唯一性(done)
+* core的Http服务对路由处理，使用策略模式重构
