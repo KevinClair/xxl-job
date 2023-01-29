@@ -1,9 +1,6 @@
 package com.xxl.job.admin.controller;
 
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
-import com.xxl.job.admin.core.exception.XxlJobException;
-import com.xxl.job.common.constant.Constants;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
 import com.xxl.job.common.dto.SaveXxlJobInfoDto;
@@ -13,7 +10,6 @@ import com.xxl.job.common.model.RegistryParam;
 import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.common.service.AdminManager;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,18 +29,14 @@ public class JobApiController {
 
     private final AdminManager adminManager;
 
-    private final XxlJobAdminConfig adminConfig;
-
-    public JobApiController(AdminManager adminManager, XxlJobAdminConfig adminConfig) {
+    public JobApiController(AdminManager adminManager) {
         this.adminManager = adminManager;
-        this.adminConfig = adminConfig;
     }
 
     @PostMapping("/callback")
     @PermissionLimit(limit = false)
     @ResponseBody
     public ReturnT<String> callback(HttpServletRequest request, @RequestBody @NotEmpty List<HandleCallbackParam> data) {
-        this.checkAccessToken(request);
         return adminManager.callback(data);
     }
 
@@ -52,7 +44,6 @@ public class JobApiController {
     @PermissionLimit(limit = false)
     @ResponseBody
     public ReturnT<String> registry(HttpServletRequest request, @RequestBody @Valid RegistryParam data) {
-        this.checkAccessToken(request);
         return adminManager.registry(data);
     }
 
@@ -60,15 +51,13 @@ public class JobApiController {
     @PermissionLimit(limit = false)
     @ResponseBody
     public ReturnT<String> registryRemove(HttpServletRequest request, @RequestBody @Valid RegistryParam data) {
-        this.checkAccessToken(request);
         return adminManager.registryRemove(data);
     }
 
     @PostMapping("/addJob")
     @PermissionLimit(limit = false)
     @ResponseBody
-    public ReturnT<String> addJob(HttpServletRequest request, @RequestBody @Valid AddXxlJobInfoDto data) {
-        this.checkAccessToken(request);
+    public ReturnT<String> addJob(HttpServletRequest request, @RequestBody AddXxlJobInfoDto data) {
         return adminManager.addJob(data);
     }
 
@@ -76,7 +65,6 @@ public class JobApiController {
     @PermissionLimit(limit = false)
     @ResponseBody
     public ReturnT<String> deleteJob(HttpServletRequest request, @RequestBody @Valid DeleteXxlJobInfoDto data) {
-        this.checkAccessToken(request);
         return adminManager.deleteJob(data);
     }
 
@@ -84,7 +72,6 @@ public class JobApiController {
     @PermissionLimit(limit = false)
     @ResponseBody
     public ReturnT<String> updateJob(HttpServletRequest request, @RequestBody @Valid UpdateXxlJobInfoDto data) {
-        this.checkAccessToken(request);
         return adminManager.updateJob(data);
     }
 
@@ -92,19 +79,6 @@ public class JobApiController {
     @PermissionLimit(limit = false)
     @ResponseBody
     public ReturnT<String> saveJob(HttpServletRequest request, @RequestBody @Valid SaveXxlJobInfoDto data) {
-        this.checkAccessToken(request);
         return adminManager.saveJob(data);
     }
-
-    /**
-     * 校验AccessToken合法性
-     *
-     * @param request {@link HttpServletRequest}
-     */
-    private void checkAccessToken(HttpServletRequest request) {
-        if (StringUtils.hasText(adminConfig.getAccessToken()) && !adminConfig.getAccessToken().equals(request.getHeader(Constants.XXL_JOB_ACCESS_TOKEN))) {
-            throw new XxlJobException("The access token is wrong.");
-        }
-    }
-
 }
