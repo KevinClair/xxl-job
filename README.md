@@ -77,5 +77,5 @@ public class Test {
 * 增加@XxlJob的属性(done)
 * Controller的参数校验
 * 调整maven包依赖管理
-* XxlJobGroup中的app_name字段唯一性
-* XxlJobInfo中的job_desc字段唯一性
+* XxlJobGroup中的app_name字段唯一性(done)
+* XxlJobInfo中的job_desc字段唯一性(done)
