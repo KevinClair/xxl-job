@@ -1,13 +1,12 @@
-package com.xxl.job.core.biz.client;
+package com.xxl.job.admin.core;
 
 import com.xxl.job.common.constant.Constants;
 import com.xxl.job.common.model.*;
 import com.xxl.job.common.service.ExecutorManager;
-import com.xxl.job.core.biz.impl.ExecutorManagerImpl;
-import com.xxl.job.core.util.XxlJobRemotingUtil;
+import com.xxl.job.common.utils.XxlJobRemotingUtil;
 
 /**
- * 执行器管理的Admin端实现，请求的是core包中通过Netty实现的http服务器，core的http服务器会根据不用的路径，响应操作，由{@link ExecutorManagerImpl}负责实现
+ * 执行器管理的Admin端实现，请求的是core包中通过Netty实现的http服务器，core的http服务器会根据不用的路径，响应操作
  *
  * @author xuxueli 2017-07-28 22:14:52
  */

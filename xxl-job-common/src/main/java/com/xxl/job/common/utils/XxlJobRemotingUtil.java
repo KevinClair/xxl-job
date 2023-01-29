@@ -1,4 +1,4 @@
-package com.xxl.job.core.util;
+package com.xxl.job.common.utils;
 
 import com.xxl.job.common.constant.Constants;
 import com.xxl.job.common.model.ReturnT;

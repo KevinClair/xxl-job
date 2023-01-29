@@ -1,7 +1,8 @@
 package com.xxl.job.core.context;
 
+import com.xxl.job.common.context.XxlJobContext;
+import com.xxl.job.common.utils.DateUtil;
 import com.xxl.job.core.log.XxlJobFileAppender;
-import com.xxl.job.core.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.FormattingTuple;

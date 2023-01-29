@@ -1,4 +1,4 @@
-package com.xxl.job.core.context;
+package com.xxl.job.common.context;
 
 /**
  * xxl-job context

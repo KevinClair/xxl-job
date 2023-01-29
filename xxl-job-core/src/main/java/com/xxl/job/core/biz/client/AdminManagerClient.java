@@ -9,7 +9,7 @@ import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.RegistryParam;
 import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.common.service.AdminManager;
-import com.xxl.job.core.util.XxlJobRemotingUtil;
+import com.xxl.job.common.utils.XxlJobRemotingUtil;
 
 import java.util.List;
 

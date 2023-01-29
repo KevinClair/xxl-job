@@ -1,6 +1,7 @@
 package com.xxl.job.starter;
 
 import com.xxl.job.common.service.ExecutorManager;
+import com.xxl.job.common.utils.IpUtil;
 import com.xxl.job.core.biz.impl.ExecutorManagerImpl;
 import com.xxl.job.core.executor.AdminManagerClientWrapper;
 import com.xxl.job.core.executor.config.XxlJobConfiguration;
@@ -9,7 +10,6 @@ import com.xxl.job.core.handler.JobHandlerRepository;
 import com.xxl.job.core.server.EmbedServer;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
 import com.xxl.job.core.thread.TriggerCallbackThread;
-import com.xxl.job.core.util.IpUtil;
 import com.xxl.job.core.util.NetUtil;
 import com.xxl.job.starter.config.XxlJobAdminConfiguration;
 import com.xxl.job.starter.config.XxlJobExecutorConfiguration;

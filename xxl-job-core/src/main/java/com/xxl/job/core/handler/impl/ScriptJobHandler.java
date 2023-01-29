@@ -1,7 +1,7 @@
 package com.xxl.job.core.handler.impl;
 
+import com.xxl.job.common.context.XxlJobContext;
 import com.xxl.job.common.enums.GlueTypeEnum;
-import com.xxl.job.core.context.XxlJobContext;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;

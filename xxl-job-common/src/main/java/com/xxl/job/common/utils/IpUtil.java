@@ -1,4 +1,4 @@
-package com.xxl.job.core.util;
+package com.xxl.job.common.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

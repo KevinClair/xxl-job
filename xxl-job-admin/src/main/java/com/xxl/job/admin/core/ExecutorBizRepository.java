@@ -2,7 +2,6 @@ package com.xxl.job.admin.core;
 
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.common.service.ExecutorManager;
-import com.xxl.job.core.biz.client.ExecutorManagerClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

@@ -1,10 +1,10 @@
 package com.xxl.job.core.thread;
 
+import com.xxl.job.common.context.XxlJobContext;
+import com.xxl.job.common.enums.RegistryConfig;
 import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.ReturnT;
-import com.xxl.job.core.context.XxlJobContext;
 import com.xxl.job.core.context.XxlJobHelper;
-import com.xxl.job.core.enums.RegistryConfig;
 import com.xxl.job.core.executor.AdminManagerClientWrapper;
 import com.xxl.job.core.handler.HandleCallbackParamRepository;
 import com.xxl.job.core.log.XxlJobFileAppender;
