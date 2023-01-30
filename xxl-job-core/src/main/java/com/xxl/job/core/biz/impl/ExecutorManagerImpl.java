@@ -54,6 +54,7 @@ public class ExecutorManagerImpl implements ExecutorManager {
 
     @Override
     public ReturnT<String> run(TriggerParam triggerParam) {
+        // TODO 逻辑优化
         // load old：jobHandler + jobThread
         JobThread jobThread = JobThreadRepository.loadJobThread(triggerParam.getJobId());
         IJobHandler jobHandler = jobThread!=null?jobThread.getHandler():null;

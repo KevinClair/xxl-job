@@ -54,7 +54,6 @@ public class JobHandlerRepository implements ApplicationListener<ContextRefreshe
 
     /**
      * init job handler.
-     * todo 优化注册逻辑
      */
     public void initJobHandlerMethodRepository(ApplicationContext applicationContext) {
         // init job handler from method
@@ -102,10 +101,6 @@ public class JobHandlerRepository implements ApplicationListener<ContextRefreshe
      * @param executeMethod current method.
      */
     private void registerJobHandler(XxlJob xxlJob, Object bean, Method executeMethod) {
-        if (Objects.isNull(xxlJob)) {
-            return;
-        }
-
         String name = xxlJob.value();
         //make and simplify the variables since they'll be called several times later
         Class<?> clazz = bean.getClass();
@@ -121,7 +116,7 @@ public class JobHandlerRepository implements ApplicationListener<ContextRefreshe
         Method initMethod = null;
         Method destroyMethod = null;
 
-        if (xxlJob.init().trim().length() > 0) {
+        if (StringUtils.hasText(xxlJob.init())) {
             try {
                 initMethod = clazz.getDeclaredMethod(xxlJob.init());
                 initMethod.setAccessible(true);
@@ -129,7 +124,7 @@ public class JobHandlerRepository implements ApplicationListener<ContextRefreshe
                 throw new RuntimeException("xxl-job method-jobHandler initMethod invalid, for[" + clazz + "#" + methodName + "] .");
             }
         }
-        if (xxlJob.destroy().trim().length() > 0) {
+        if (StringUtils.hasText(xxlJob.destroy())) {
             try {
                 destroyMethod = clazz.getDeclaredMethod(xxlJob.destroy());
                 destroyMethod.setAccessible(true);

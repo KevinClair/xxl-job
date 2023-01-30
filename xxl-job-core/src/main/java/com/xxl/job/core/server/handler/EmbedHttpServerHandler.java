@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +57,7 @@ public class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
         String uri = msg.uri();
         HttpMethod httpMethod = msg.method();
         boolean keepAlive = HttpUtil.isKeepAlive(msg);
-        String accessTokenReq = msg.headers().get(Constants.XXL_JOB_ACCESS_TOKEN);
+        String accessTokenReq = Optional.ofNullable(msg.headers().get(Constants.XXL_JOB_ACCESS_TOKEN)).orElseGet(() -> "");
 
         // invoke
         bizThreadPool.execute(() -> {
@@ -75,12 +76,11 @@ public class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
         // valid
         if (HttpMethod.POST != httpMethod) {
             return ReturnT.fail("invalid request, HttpMethod not support.");
-
         }
         if (!StringUtils.hasLength(uri)) {
             return ReturnT.fail("invalid request, uri-mapping empty.");
         }
-        if (!StringUtils.hasLength(accessTokenReq) && !accessToken.equals(accessTokenReq)) {
+        if (!accessTokenReq.equals(accessToken)) {
             return ReturnT.fail("The access token is wrong.");
         }
 
