@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Admin请求客户端(应用端)实现，由客户端操作
@@ -39,14 +40,8 @@ public class ExecutorManagerImpl implements ExecutorManager {
     @Override
     public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam) {
 
-        // isRunningOrHasQueue
-        boolean isRunningOrHasQueue = false;
         JobThread jobThread = JobThreadRepository.loadJobThread(idleBeatParam.getJobId());
-        if (jobThread != null && jobThread.isRunningOrHasQueue()) {
-            isRunningOrHasQueue = true;
-        }
-
-        if (isRunningOrHasQueue) {
+        if (Objects.nonNull(jobThread) && jobThread.isRunningOrHasQueue()) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "job thread is running or has trigger queue.");
         }
         return ReturnT.SUCCESS;
