@@ -1,7 +1,7 @@
 package com.xxl.job.core.thread;
 
 import com.xxl.job.common.context.XxlJobContext;
-import com.xxl.job.common.enums.RegistryConfig;
+import com.xxl.job.common.enums.RegistryConstants;
 import com.xxl.job.common.model.HandleCallbackParam;
 import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.core.context.XxlJobHelper;
@@ -89,7 +89,7 @@ public class TriggerCallbackThread implements DisposableBean {
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-        }, 0, RegistryConfig.BEAT_TIMEOUT, TimeUnit.SECONDS);
+        }, 0, RegistryConstants.BEAT_TIMEOUT, TimeUnit.SECONDS);
     }
 
     /**

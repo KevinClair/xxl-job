@@ -1,6 +1,6 @@
 package com.xxl.job.core.thread;
 
-import com.xxl.job.common.enums.RegistryConfig;
+import com.xxl.job.common.enums.RegistryConstants;
 import com.xxl.job.common.model.RegistryParam;
 import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.core.executor.AdminManagerClientWrapper;
@@ -35,7 +35,7 @@ public class ExecutorRegistryThread implements DisposableBean {
      */
     public void startRegistry() {
         this.executorRegistryThreadPool.scheduleAtFixedRate(() -> {
-            RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
+            RegistryParam registryParam = new RegistryParam(RegistryConstants.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
             try {
                 ReturnT<String> registryResult = adminManagerClientWrapper.getAdminManager().registry(registryParam);
                 if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
@@ -47,7 +47,7 @@ public class ExecutorRegistryThread implements DisposableBean {
                 logger.error(">>>>>>>>>>> xxl-job registry error, registryParam:{}", registryParam, e);
             }
 
-        }, 0, RegistryConfig.BEAT_TIMEOUT, TimeUnit.SECONDS);
+        }, 0, RegistryConstants.BEAT_TIMEOUT, TimeUnit.SECONDS);
 
     }
 
@@ -62,7 +62,7 @@ public class ExecutorRegistryThread implements DisposableBean {
         } catch (InterruptedException exception) {
             logger.error(">>>>>>>>>>> xxl-job executorRegistryThreadPool shutdown error.", exception);
         }
-        RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
+        RegistryParam registryParam = new RegistryParam(RegistryConstants.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
         try {
             ReturnT<String> registryResult = adminManagerClientWrapper.getAdminManager().registryRemove(registryParam);
             if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {

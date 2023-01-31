@@ -5,7 +5,7 @@ import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobRegistryDao;
-import com.xxl.job.common.enums.RegistryConfig;
+import com.xxl.job.common.enums.RegistryConstants;
 import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.common.utils.I18nUtil;
 import org.springframework.stereotype.Controller;
@@ -150,10 +150,10 @@ public class JobGroupController {
 
 	private List<String> findRegistryByAppName(String appnameParam){
 		HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
-		List<XxlJobRegistry> list = xxlJobRegistryDao.findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
+		List<XxlJobRegistry> list = xxlJobRegistryDao.findAll(RegistryConstants.DEAD_TIMEOUT, new Date());
 		if (list != null) {
 			for (XxlJobRegistry item: list) {
-				if (RegistryConfig.RegistryType.EXECUTOR.name().equals(item.getRegistryGroup())) {
+				if (RegistryConstants.RegistryType.EXECUTOR.name().equals(item.getRegistryGroup())) {
 					String appname = item.getRegistryKey();
 					List<String> registryList = appAddressMap.get(appname);
 					if (registryList == null) {

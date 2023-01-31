@@ -4,7 +4,7 @@ import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobRegistryDao;
-import com.xxl.job.common.enums.RegistryConfig;
+import com.xxl.job.common.enums.RegistryConstants;
 import com.xxl.job.common.model.RegistryParam;
 import com.xxl.job.common.model.ReturnT;
 import org.slf4j.Logger;
@@ -63,17 +63,17 @@ public class JobRegistryHelper {
 					if (groupList!=null && !groupList.isEmpty()) {
 
 						// remove dead address (admin/executor)
-						List<Integer> ids = jobRegistryDao.findDead(RegistryConfig.DEAD_TIMEOUT, new Date());
+						List<Integer> ids = jobRegistryDao.findDead(RegistryConstants.DEAD_TIMEOUT, new Date());
 						if (ids!=null && ids.size()>0) {
 							jobRegistryDao.removeDead(ids);
 						}
 
 						// fresh online address (admin/executor)
 						HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
-						List<XxlJobRegistry> list = jobRegistryDao.findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
+						List<XxlJobRegistry> list = jobRegistryDao.findAll(RegistryConstants.DEAD_TIMEOUT, new Date());
 						if (list != null) {
 							for (XxlJobRegistry item: list) {
-								if (RegistryConfig.RegistryType.EXECUTOR.name().equals(item.getRegistryGroup())) {
+								if (RegistryConstants.RegistryType.EXECUTOR.name().equals(item.getRegistryGroup())) {
 									String appname = item.getRegistryKey();
 									List<String> registryList = appAddressMap.get(appname);
 									if (registryList == null) {
@@ -113,7 +113,7 @@ public class JobRegistryHelper {
 					}
 				}
 				try {
-					TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
+					TimeUnit.SECONDS.sleep(RegistryConstants.BEAT_TIMEOUT);
 				} catch (InterruptedException e) {
 					if (!toStop) {
 						logger.error(">>>>>>>>>>> xxl-job, job registry monitor thread error:{}", e);
