@@ -55,6 +55,7 @@ public class JobRegistryHelper {
 
     public void start() {
         // for monitor
+        // TODO 改为定时任务线程池
         this.registryMonitorThread = new Thread(() -> {
             while (!toStop) {
                 try {
@@ -63,6 +64,7 @@ public class JobRegistryHelper {
                     if (groupList != null && !groupList.isEmpty()) {
 
                         // remove dead address (admin/executor)
+                        // 删除最后活跃时间大于90秒的节点
                         List<Integer> ids = jobRegistryDao.findDead(RegistryConstants.DEAD_TIMEOUT, new Date());
                         if (ids != null && ids.size() > 0) {
                             jobRegistryDao.removeDead(ids);
@@ -70,6 +72,7 @@ public class JobRegistryHelper {
 
                         // fresh online address (admin/executor)
                         HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
+                        // 查询所有存活的节点
                         List<XxlJobRegistry> list = jobRegistryDao.findAll(RegistryConstants.DEAD_TIMEOUT, new Date());
                         for (XxlJobRegistry item : list) {
                             if (RegistryConstants.RegistryType.EXECUTOR.name().equals(item.getRegistryGroup())) {
@@ -87,6 +90,7 @@ public class JobRegistryHelper {
                         }
 
                         // fresh group address
+                        // TODO 代码逻辑完善
                         for (XxlJobGroup group : groupList) {
                             List<String> registryList = appAddressMap.get(group.getAppname());
                             String addressListStr = null;

@@ -118,3 +118,4 @@ public class Test {
 * XxlJobInfo中的job_desc字段唯一性(done)
 * core的Http服务对路由处理，使用策略模式重构
 * 取消客户端的重复注册逻辑，改为只在启动时注册，后续通过Admin进行探活
+* 增加对手动注册的执行器的探活
