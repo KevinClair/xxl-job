@@ -10,7 +10,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,15 +128,5 @@ public class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         logger.error(">>>>>>>>>>> xxl-job provider netty_http server caught exception", cause);
         ctx.close();
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent) {
-            ctx.channel().close();      // beat 3N, close if idle
-            logger.debug(">>>>>>>>>>> xxl-job provider netty_http server close an idle channel.");
-        } else {
-            super.userEventTriggered(ctx, evt);
-        }
     }
 }
