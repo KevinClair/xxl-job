@@ -46,6 +46,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
         // init i18n
         initI18n();
 
+        // TODO 启动逻辑
         // admin registry monitor run
         registryHelper.start();
 
@@ -67,6 +68,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
     @Override
     public void destroy() throws Exception {
 
+        // TODO 关闭逻辑
         // stop-schedule
         scheduleHelper.toStop();
 
