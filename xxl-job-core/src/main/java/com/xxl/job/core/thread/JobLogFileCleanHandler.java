@@ -71,6 +71,13 @@ public class JobLogFileCleanHandler {
      */
     public void toStop() {
         threadPoolExecutor.shutdown();
+        try {
+            if (threadPoolExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                logger.info(">>>>>>>>>>> xxl-job threadPoolExecutor shutdown success.");
+            }
+        } catch (InterruptedException exception) {
+            logger.error(">>>>>>>>>>> xxl-job threadPoolExecutor shutdown error.", exception);
+        }
     }
 
 }

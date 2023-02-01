@@ -1,11 +1,12 @@
 package com.xxl.job.executor.test;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class XxlJobExecutorExampleBootApplicationTests {
 
@@ -68,25 +69,28 @@ public class XxlJobExecutorExampleBootApplicationTests {
 
     @Test
     public void test3() throws InterruptedException {
-        ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        threadPoolExecutor.scheduleWithFixedDelay(() -> {
-            while (true) {
-                logger.info("当前线程状态1："+Thread.currentThread().getState().name());
+        ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(5);
+        AtomicBoolean atomicBoolean = new AtomicBoolean(true);
+        threadPoolExecutor.scheduleAtFixedRate(() -> {
+            if (atomicBoolean.get()) {
+                logger.info("当前线程状态1：" + Thread.currentThread().getState().name());
                 try {
                     Thread.sleep(1000);
                     logger.info("内部线程睡眠结束了");
                 } catch (InterruptedException e) {
-                    logger.info("当前线程状态2："+Thread.currentThread().getState().name());
+                    logger.info("当前线程状态2：" + Thread.currentThread().getState().name());
                     logger.info("线程被停止了");
                 }
             }
-        }, 0, 100, TimeUnit.MILLISECONDS);
+        }, 0, 200, TimeUnit.MILLISECONDS);
 
         Thread.sleep(5000);
         threadPoolExecutor.shutdownNow();
-        logger.info("当前线程池状态3："+threadPoolExecutor.isTerminating());
-        logger.info("当前线程池状态4："+threadPoolExecutor.isTerminated());
-        logger.info("当前线程池状态5："+threadPoolExecutor.isShutdown());
+//        atomicBoolean.set(false);
+        Thread.sleep(5000);
+        logger.info("当前线程池状态3：" + threadPoolExecutor.isTerminating());
+        logger.info("当前线程池状态4：" + threadPoolExecutor.isTerminated());
+        logger.info("当前线程池状态5：" + threadPoolExecutor.isShutdown());
 
         Thread.sleep(20000);
         logger.info("线程结束了");
@@ -94,8 +98,8 @@ public class XxlJobExecutorExampleBootApplicationTests {
 
     @Test
     public void test4() throws InterruptedException {
-        ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        threadPoolExecutor.scheduleWithFixedDelay(() -> {
+        ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(5);
+        threadPoolExecutor.scheduleAtFixedRate(() -> {
             logger.info("当前线程状态1：" + Thread.currentThread().getState().name());
             try {
                 Thread.sleep(1000);
@@ -108,9 +112,35 @@ public class XxlJobExecutorExampleBootApplicationTests {
 
         Thread.sleep(5000);
         threadPoolExecutor.shutdownNow();
-        logger.info("当前线程池状态3："+threadPoolExecutor.isTerminating());
-        logger.info("当前线程池状态4："+threadPoolExecutor.isTerminated());
-        logger.info("当前线程池状态5："+threadPoolExecutor.isShutdown());
+        logger.info("当前线程池状态3：" + threadPoolExecutor.isTerminating());
+        logger.info("当前线程池状态4：" + threadPoolExecutor.isTerminated());
+        logger.info("当前线程池状态5：" + threadPoolExecutor.isShutdown());
+
+        Thread.sleep(20000);
+        logger.info("线程结束了");
+    }
+
+    @Test
+    public void test5() throws InterruptedException {
+        ScheduledThreadPoolExecutor threadPoolExecutor = new ScheduledThreadPoolExecutor(5);
+        threadPoolExecutor.scheduleAtFixedRate(() -> {
+            logger.info("当前线程状态1：" + Thread.currentThread().getState().name());
+            try {
+                Thread.sleep(1000);
+                logger.info("内部线程睡眠结束了");
+            } catch (InterruptedException e) {
+                logger.info("当前线程状态2：" + Thread.currentThread().getState().name());
+                logger.info("线程被停止了");
+            }
+        }, 2000, 1000, TimeUnit.MILLISECONDS);
+
+        Thread.sleep(1000);
+        // 如果线程池被关闭，设置为true，已有的任务依然会执行
+        threadPoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(true);
+        threadPoolExecutor.shutdown();
+        logger.info("当前线程池状态3：" + threadPoolExecutor.isTerminating());
+        logger.info("当前线程池状态4：" + threadPoolExecutor.isTerminated());
+        logger.info("当前线程池状态5：" + threadPoolExecutor.isShutdown());
 
         Thread.sleep(20000);
         logger.info("线程结束了");

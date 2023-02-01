@@ -203,6 +203,13 @@ public class TriggerCallbackThread implements DisposableBean {
         }
 
         // stop retry, interrupt and wait
-        this.retryCallbackThreadPoolExecutor.shutdownNow();
+        this.retryCallbackThreadPoolExecutor.shutdown();
+        try {
+            if (retryCallbackThreadPoolExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                logger.info(">>>>>>>>>>> xxl-job retryCallbackThreadPoolExecutor shutdown success.");
+            }
+        } catch (InterruptedException exception) {
+            logger.error(">>>>>>>>>>> xxl-job retryCallbackThreadPoolExecutor shutdown error.", exception);
+        }
     }
 }
