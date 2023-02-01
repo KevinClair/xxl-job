@@ -7,17 +7,23 @@ import com.xxl.job.admin.dao.XxlJobRegistryDao;
 import com.xxl.job.common.enums.RegistryConstants;
 import com.xxl.job.common.model.RegistryParam;
 import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.utils.NamedThreadFactory;
+import com.xxl.job.common.utils.ThreadPoolExecutorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * job registry instance
+ *
  * @author xuxueli 2016-10-02 19:10:24
  */
 @Component
@@ -30,7 +36,11 @@ public class JobRegistryHelper {
 
     private final ThreadPoolExecutor registryOrRemoveThreadPool;
 
-    private Thread registryMonitorThread;
+    private final ScheduledThreadPoolExecutor heartBeatThreadPool;
+
+    private static final String ADMIN_HEARTBEAT_CHECK = "admin-heartBeat-check";
+
+    private static final String ADMIN_REGISTRY_OR_REMOVE = "admin-registryOrRemove";
 
     public JobRegistryHelper(XxlJobGroupDao jobGroupDao, XxlJobRegistryDao jobRegistryDao) {
         this.jobGroupDao = jobGroupDao;
@@ -42,106 +52,73 @@ public class JobRegistryHelper {
                 30L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(2000),
-                r -> new Thread(r, "xxl-job, admin JobRegistryMonitorHelper-registryOrRemoveThreadPool-" + r.hashCode()),
+                new NamedThreadFactory(ADMIN_REGISTRY_OR_REMOVE),
                 (r, executor) -> {
                     r.run();
                     logger.warn(">>>>>>>>>>> xxl-job, registry or remove too fast, match threadpool rejected handler(run now).");
                 });
-
-
+        this.heartBeatThreadPool = new ScheduledThreadPoolExecutor(2, new NamedThreadFactory(ADMIN_HEARTBEAT_CHECK));
     }
-
-    private volatile boolean toStop = false;
 
     public void start() {
         // for monitor
-        // TODO 改为定时任务线程池
-        this.registryMonitorThread = new Thread(() -> {
-            while (!toStop) {
-                try {
-                    // auto registry group
-                    List<XxlJobGroup> groupList = jobGroupDao.findByAddressType(0);
-                    if (groupList != null && !groupList.isEmpty()) {
+        heartBeatThreadPool.scheduleAtFixedRate(() -> {
+            try {
+                // auto registry group
+                List<XxlJobGroup> groupList = jobGroupDao.findByAddressType(0);
+                if (!CollectionUtils.isEmpty(groupList)) {
 
-                        // remove dead address (admin/executor)
-                        // 删除最后活跃时间大于90秒的节点
-                        List<Integer> ids = jobRegistryDao.findDead(RegistryConstants.DEAD_TIMEOUT, new Date());
-                        if (ids != null && ids.size() > 0) {
-                            jobRegistryDao.removeDead(ids);
-                        }
-
-                        // fresh online address (admin/executor)
-                        HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
-                        // 查询所有存活的节点
-                        List<XxlJobRegistry> list = jobRegistryDao.findAll(RegistryConstants.DEAD_TIMEOUT, new Date());
-                        for (XxlJobRegistry item : list) {
-                            if (RegistryConstants.RegistryType.EXECUTOR.name().equals(item.getRegistryGroup())) {
-                                String appname = item.getRegistryKey();
-                                List<String> registryList = appAddressMap.get(appname);
-                                if (registryList == null) {
-                                    registryList = new ArrayList<String>();
-                                }
-
-                                if (!registryList.contains(item.getRegistryValue())) {
-                                    registryList.add(item.getRegistryValue());
-                                }
-                                appAddressMap.put(appname, registryList);
-                            }
-                        }
-
-                        // fresh group address
-                        // TODO 代码逻辑完善
-                        for (XxlJobGroup group : groupList) {
-                            List<String> registryList = appAddressMap.get(group.getAppname());
-                            String addressListStr = null;
-                            if (registryList != null && !registryList.isEmpty()) {
-                                Collections.sort(registryList);
-                                StringBuilder addressListSB = new StringBuilder();
-                                for (String item : registryList) {
-                                    addressListSB.append(item).append(",");
-                                }
-                                addressListStr = addressListSB.toString();
-                                addressListStr = addressListStr.substring(0, addressListStr.length() - 1);
-                            }
-                            group.setAddressList(addressListStr);
-                            group.setUpdateTime(new Date());
-
-                            jobGroupDao.update(group);
-                        }
+                    // remove dead address (admin/executor)
+                    // 删除最后活跃时间大于90秒的节点
+                    List<Integer> ids = jobRegistryDao.findDead(RegistryConstants.DEAD_TIMEOUT, new Date());
+                    if (!CollectionUtils.isEmpty(ids)) {
+                        // TODO 移入僵尸列表
+//                            jobRegistryDao.removeDead(ids);
                     }
-                } catch (Exception e) {
-                    if (!toStop) {
-                        logger.error(">>>>>>>>>>> xxl-job, job registry monitor thread error:{}", e);
+
+                    // fresh online address (admin/executor)
+                    // 存储所有自动注册的，目前仍存活的节点
+                    HashMap<String, List<String>> appAddressMap = new HashMap<>();
+                    // 查询所有存活的节点
+                    List<XxlJobRegistry> list = jobRegistryDao.findAll(RegistryConstants.DEAD_TIMEOUT, new Date());
+                    list.stream()
+                            .filter(each -> RegistryConstants.RegistryType.EXECUTOR.name().equals(each.getRegistryGroup()))
+                            .forEach(each -> {
+                                String appName = each.getRegistryKey();
+                                List<String> registryList = appAddressMap.getOrDefault(appName, new ArrayList<>());
+                                if (!registryList.contains(each.getRegistryValue())) {
+                                    registryList.add(each.getRegistryValue());
+                                }
+                                appAddressMap.put(appName, registryList);
+                            });
+
+                    // fresh group address
+                    // TODO 代码逻辑完善 心跳检测
+                    for (XxlJobGroup group : groupList) {
+                        List<String> registryList = appAddressMap.get(group.getAppname());
+                        String addressListStr = null;
+                        if (CollectionUtils.isEmpty(registryList)) {
+                            // TODO 这里为啥需要排序 这里理论上应该按照最后一次心跳时间排序，把最近的一次心跳的address放在最前面，这样确保负载均衡时的成功几率
+                            Collections.sort(registryList);
+                            addressListStr = registryList.stream().collect(Collectors.joining(","));
+                        }
+                        group.setAddressList(addressListStr);
+                        group.setUpdateTime(new Date());
+                        jobGroupDao.update(group);
                     }
                 }
-                try {
-                    TimeUnit.SECONDS.sleep(RegistryConstants.BEAT_TIMEOUT);
-                } catch (InterruptedException e) {
-                    if (!toStop) {
-                        logger.error(">>>>>>>>>>> xxl-job, job registry monitor thread error:{}", e);
-                    }
-                }
+            } catch (Exception e) {
+
             }
-            logger.info(">>>>>>>>>>> xxl-job, job registry monitor thread stop");
-        });
-        registryMonitorThread.setDaemon(true);
-        registryMonitorThread.setName("xxl-job, admin JobRegistryMonitorHelper-registryMonitorThread");
-        registryMonitorThread.start();
+        }, 0, RegistryConstants.BEAT_TIMEOUT, TimeUnit.SECONDS);
     }
 
     public void toStop() {
-        toStop = true;
-
         // stop registryOrRemoveThreadPool
-        registryOrRemoveThreadPool.shutdownNow();
+        ThreadPoolExecutorUtil.gracefulShutdown(registryOrRemoveThreadPool, 1000, ADMIN_REGISTRY_OR_REMOVE);
 
-        // stop monitir (interrupt and wait)
-        registryMonitorThread.interrupt();
-        try {
-            registryMonitorThread.join();
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-        }
+        // stop heartBeatThreadPool
+        ThreadPoolExecutorUtil.gracefulShutdown(heartBeatThreadPool, 3000, ADMIN_HEARTBEAT_CHECK);
     }
 
 
@@ -153,13 +130,10 @@ public class JobRegistryHelper {
         registryOrRemoveThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                int ret = jobRegistryDao.registryUpdate(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue(), new Date());
-                if (ret < 1) {
-                    jobRegistryDao.registrySave(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue(), new Date());
-
-                    // fresh
-                    freshGroupRegistryInfo(registryParam);
-                }
+                // 应用端改为只在启动时注册，所以这里应该只会有新增
+                jobRegistryDao.registrySave(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue(), new Date());
+                // fresh
+                freshGroupRegistryInfo(registryParam);
             }
         });
 
