@@ -1,10 +1,10 @@
 package com.xxl.job.executorbiz;
 
+import com.xxl.job.admin.core.ExecutorManagerClient;
 import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.common.enums.GlueTypeEnum;
 import com.xxl.job.common.model.*;
 import com.xxl.job.common.service.ExecutorManager;
-import com.xxl.job.core.biz.client.ExecutorManagerClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
