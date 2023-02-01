@@ -157,9 +157,5 @@ public class JobRegistryHelper {
         return ReturnT.SUCCESS;
     }
 
-    private void freshGroupRegistryInfo(RegistryParam registryParam) {
-        // Under consideration, prevent affecting core tables
-    }
-
 
 }

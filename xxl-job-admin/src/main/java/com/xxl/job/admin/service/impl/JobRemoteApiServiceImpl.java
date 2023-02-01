@@ -6,6 +6,7 @@ import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
+import com.xxl.job.admin.dao.XxlJobRegistryDao;
 import com.xxl.job.admin.service.JobRemoteApiService;
 import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
@@ -13,6 +14,7 @@ import com.xxl.job.common.dto.SaveXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
 import com.xxl.job.common.enums.GlueTypeEnum;
 import com.xxl.job.common.enums.ScheduleTypeEnum;
+import com.xxl.job.common.model.RegistryParam;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -27,9 +29,12 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
 
     private final XxlJobGroupDao xxlJobGroupDao;
 
-    public JobRemoteApiServiceImpl(XxlJobInfoDao xxlJobInfoDao, XxlJobGroupDao xxlJobGroupDao) {
+    private final XxlJobRegistryDao xxlJobRegistryDao;
+
+    public JobRemoteApiServiceImpl(XxlJobInfoDao xxlJobInfoDao, XxlJobGroupDao xxlJobGroupDao, XxlJobRegistryDao xxlJobRegistryDao) {
         this.xxlJobInfoDao = xxlJobInfoDao;
         this.xxlJobGroupDao = xxlJobGroupDao;
+        this.xxlJobRegistryDao = xxlJobRegistryDao;
     }
 
     @Override
@@ -164,5 +169,26 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
             return "success";
         }
         return "success";
+    }
+
+    public String registry(RegistryParam registryParam) {
+        // TODO 应用端改为只在启动时注册，存在时更新，不存在是新增
+        xxlJobRegistryDao.registrySave(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue(), new Date());
+        // fresh
+        freshGroupRegistryInfo(registryParam);
+        return "success";
+    }
+
+    public String registryRemove(RegistryParam registryParam) {
+        int ret = xxlJobRegistryDao.registryDelete(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+        if (ret > 0) {
+            // fresh
+            freshGroupRegistryInfo(registryParam);
+        }
+        return "success";
+    }
+
+    private void freshGroupRegistryInfo(RegistryParam registryParam) {
+        // TODO 更新group
     }
 }

@@ -4,6 +4,7 @@ import com.xxl.job.common.dto.AddXxlJobInfoDto;
 import com.xxl.job.common.dto.DeleteXxlJobInfoDto;
 import com.xxl.job.common.dto.SaveXxlJobInfoDto;
 import com.xxl.job.common.dto.UpdateXxlJobInfoDto;
+import com.xxl.job.common.model.RegistryParam;
 
 /**
  * 远程api接口
@@ -41,4 +42,20 @@ public interface JobRemoteApiService {
      * @return
      */
     String saveJob(SaveXxlJobInfoDto request);
+
+    /**
+     * 客户端接口注册
+     *
+     * @param registryParam {@link RegistryParam}
+     * @return
+     */
+    String registry(RegistryParam registryParam);
+
+    /**
+     * 客户端移除注册的地址
+     *
+     * @param registryParam {@link RegistryParam}
+     * @return
+     */
+    String registryRemove(RegistryParam registryParam);
 }
