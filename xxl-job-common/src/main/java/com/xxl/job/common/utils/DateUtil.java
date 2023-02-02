@@ -153,4 +153,18 @@ public class DateUtil {
         return c.getTime();
     }
 
+    // -----------------------计算时间-------------------------
+
+    /**
+     * 计算两个时间点的间隔是否超过timeout
+     *
+     * @param before  前面的时间
+     * @param after   后面的时间
+     * @param timeout 时间间隔(ms)
+     * @return
+     */
+    public static Boolean exceed(Date before, Date after, int timeout) {
+        return after.getTime() - before.getTime() > timeout;
+    }
+
 }
