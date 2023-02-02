@@ -36,4 +36,6 @@ public interface XxlJobGroupDao {
 
     XxlJobGroup selectByAppName(@Param("appName") String appName);
 
+    int updateByAppName(XxlJobGroup xxlJobGroup);
+
 }
