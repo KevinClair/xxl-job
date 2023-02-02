@@ -30,7 +30,7 @@ public class ExecutorRouteFailover extends AbstractExecutorRouter {
             // beat
             ReturnT<String> beatResult = null;
             try {
-                ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(address);
+                ExecutorManager executorManager = executorManagerClientRepository.getExecutorManagerClient(address);
                 beatResult = executorManager.beat();
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

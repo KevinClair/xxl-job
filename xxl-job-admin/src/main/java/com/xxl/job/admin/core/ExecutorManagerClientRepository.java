@@ -22,7 +22,7 @@ public class ExecutorManagerClientRepository {
 
     private static ConcurrentMap<String, ExecutorManager> executorBizRepository = new ConcurrentHashMap<>();
 
-    public ExecutorManager getExecutorBiz(String address) throws Exception {
+    public ExecutorManager getExecutorManagerClient(String address) {
         // valid
         if (!StringUtils.hasLength(address)) {
             return null;
@@ -31,5 +31,14 @@ public class ExecutorManagerClientRepository {
         // load-cache
         address = address.trim();
         return executorBizRepository.computeIfAbsent(address, k -> new ExecutorManagerClient(k, jobAdminConfig.getAccessToken()));
+    }
+
+    /**
+     * 根据地址删除ExecutorManager
+     *
+     * @param address 执行器地址
+     */
+    public void remove(String address) {
+        executorBizRepository.remove(address);
     }
 }

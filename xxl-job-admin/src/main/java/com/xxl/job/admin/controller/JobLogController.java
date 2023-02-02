@@ -149,7 +149,7 @@ public class JobLogController {
 	@ResponseBody
 	public ReturnT<LogResult> logDetailCat(String executorAddress, long triggerTime, long logId, int fromLineNum){
 		try {
-			ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(executorAddress);
+			ExecutorManager executorManager = executorManagerClientRepository.getExecutorManagerClient(executorAddress);
 			ReturnT<LogResult> logResult = executorManager.log(new LogParam(triggerTime, logId, fromLineNum));
 
 			// is end
@@ -183,7 +183,7 @@ public class JobLogController {
 		// request of kill
 		ReturnT<String> runResult = null;
 		try {
-			ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(log.getExecutorAddress());
+			ExecutorManager executorManager = executorManagerClientRepository.getExecutorManagerClient(log.getExecutorAddress());
 			runResult = executorManager.kill(new KillParam(jobInfo.getId()));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

@@ -30,7 +30,7 @@ public class ExecutorRouteBusyover extends AbstractExecutorRouter {
             // beat
             ReturnT<String> idleBeatResult = null;
             try {
-                ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(address);
+                ExecutorManager executorManager = executorManagerClientRepository.getExecutorManagerClient(address);
                 idleBeatResult = executorManager.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
