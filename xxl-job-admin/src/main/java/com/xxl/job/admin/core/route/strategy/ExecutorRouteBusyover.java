@@ -1,6 +1,6 @@
 package com.xxl.job.admin.core.route.strategy;
 
-import com.xxl.job.admin.core.ExecutorBizRepository;
+import com.xxl.job.admin.core.ExecutorManagerClientRepository;
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
 import com.xxl.job.common.model.IdleBeatParam;
 import com.xxl.job.common.model.ReturnT;
@@ -17,10 +17,10 @@ import java.util.List;
 @Component("executorRouteBusyover")
 public class ExecutorRouteBusyover extends AbstractExecutorRouter {
 
-    private final ExecutorBizRepository executorBizRepository;
+    private final ExecutorManagerClientRepository executorManagerClientRepository;
 
-    public ExecutorRouteBusyover(ExecutorBizRepository executorBizRepository) {
-        this.executorBizRepository = executorBizRepository;
+    public ExecutorRouteBusyover(ExecutorManagerClientRepository executorManagerClientRepository) {
+        this.executorManagerClientRepository = executorManagerClientRepository;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ExecutorRouteBusyover extends AbstractExecutorRouter {
             // beat
             ReturnT<String> idleBeatResult = null;
             try {
-                ExecutorManager executorManager = executorBizRepository.getExecutorBiz(address);
+                ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(address);
                 idleBeatResult = executorManager.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

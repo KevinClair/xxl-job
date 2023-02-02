@@ -1,6 +1,6 @@
 package com.xxl.job.admin.core.route.strategy;
 
-import com.xxl.job.admin.core.ExecutorBizRepository;
+import com.xxl.job.admin.core.ExecutorManagerClientRepository;
 import com.xxl.job.admin.core.route.AbstractExecutorRouter;
 import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.common.model.TriggerParam;
@@ -16,10 +16,10 @@ import java.util.List;
 @Component("executorRouteFailover")
 public class ExecutorRouteFailover extends AbstractExecutorRouter {
 
-    private final ExecutorBizRepository executorBizRepository;
+    private final ExecutorManagerClientRepository executorManagerClientRepository;
 
-    public ExecutorRouteFailover(ExecutorBizRepository executorBizRepository) {
-        this.executorBizRepository = executorBizRepository;
+    public ExecutorRouteFailover(ExecutorManagerClientRepository executorManagerClientRepository) {
+        this.executorManagerClientRepository = executorManagerClientRepository;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ExecutorRouteFailover extends AbstractExecutorRouter {
             // beat
             ReturnT<String> beatResult = null;
             try {
-                ExecutorManager executorManager = executorBizRepository.getExecutorBiz(address);
+                ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(address);
                 beatResult = executorManager.beat();
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

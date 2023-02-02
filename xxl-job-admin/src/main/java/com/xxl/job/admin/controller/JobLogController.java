@@ -1,6 +1,6 @@
 package com.xxl.job.admin.controller;
 
-import com.xxl.job.admin.core.ExecutorBizRepository;
+import com.xxl.job.admin.core.ExecutorManagerClientRepository;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.model.XxlJobGroup;
@@ -45,15 +45,15 @@ public class JobLogController {
 
 	public final XxlJobLogDao xxlJobLogDao;
 
-	private final ExecutorBizRepository executorBizRepository;
+	private final ExecutorManagerClientRepository executorManagerClientRepository;
 
 	private final XxlJobCompleter jobCompleter;
 
-	public JobLogController(XxlJobGroupDao xxlJobGroupDao, XxlJobInfoDao xxlJobInfoDao, XxlJobLogDao xxlJobLogDao, ExecutorBizRepository executorBizRepository, XxlJobCompleter jobCompleter) {
+	public JobLogController(XxlJobGroupDao xxlJobGroupDao, XxlJobInfoDao xxlJobInfoDao, XxlJobLogDao xxlJobLogDao, ExecutorManagerClientRepository executorManagerClientRepository, XxlJobCompleter jobCompleter) {
 		this.xxlJobGroupDao = xxlJobGroupDao;
 		this.xxlJobInfoDao = xxlJobInfoDao;
 		this.xxlJobLogDao = xxlJobLogDao;
-		this.executorBizRepository = executorBizRepository;
+		this.executorManagerClientRepository = executorManagerClientRepository;
 		this.jobCompleter = jobCompleter;
 	}
 
@@ -149,7 +149,7 @@ public class JobLogController {
 	@ResponseBody
 	public ReturnT<LogResult> logDetailCat(String executorAddress, long triggerTime, long logId, int fromLineNum){
 		try {
-			ExecutorManager executorManager = executorBizRepository.getExecutorBiz(executorAddress);
+			ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(executorAddress);
 			ReturnT<LogResult> logResult = executorManager.log(new LogParam(triggerTime, logId, fromLineNum));
 
 			// is end
@@ -183,7 +183,7 @@ public class JobLogController {
 		// request of kill
 		ReturnT<String> runResult = null;
 		try {
-			ExecutorManager executorManager = executorBizRepository.getExecutorBiz(log.getExecutorAddress());
+			ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(log.getExecutorAddress());
 			runResult = executorManager.kill(new KillParam(jobInfo.getId()));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

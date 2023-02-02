@@ -12,11 +12,11 @@ import java.util.concurrent.ConcurrentMap;
  * @author KevinClair
  **/
 @Component
-public class ExecutorBizRepository {
+public class ExecutorManagerClientRepository {
 
     private final XxlJobAdminConfig jobAdminConfig;
 
-    public ExecutorBizRepository(XxlJobAdminConfig jobAdminConfig) {
+    public ExecutorManagerClientRepository(XxlJobAdminConfig jobAdminConfig) {
         this.jobAdminConfig = jobAdminConfig;
     }
 

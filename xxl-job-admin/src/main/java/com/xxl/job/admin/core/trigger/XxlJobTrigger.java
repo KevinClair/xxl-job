@@ -1,6 +1,6 @@
 package com.xxl.job.admin.core.trigger;
 
-import com.xxl.job.admin.core.ExecutorBizRepository;
+import com.xxl.job.admin.core.ExecutorManagerClientRepository;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
@@ -38,15 +38,15 @@ public class XxlJobTrigger {
 
     private final XxlJobLogDao jobLogDao;
 
-    private final ExecutorBizRepository executorBizRepository;
+    private final ExecutorManagerClientRepository executorManagerClientRepository;
 
     private final Map<String, ExecutorRouter> executorRouterMap;
 
-    public XxlJobTrigger(XxlJobInfoDao jobInfoDao, XxlJobGroupDao jobGroupDao, XxlJobLogDao jobLogDao, ExecutorBizRepository executorBizRepository, Map<String, ExecutorRouter> executorRouterMap) {
+    public XxlJobTrigger(XxlJobInfoDao jobInfoDao, XxlJobGroupDao jobGroupDao, XxlJobLogDao jobLogDao, ExecutorManagerClientRepository executorManagerClientRepository, Map<String, ExecutorRouter> executorRouterMap) {
         this.jobInfoDao = jobInfoDao;
         this.jobGroupDao = jobGroupDao;
         this.jobLogDao = jobLogDao;
-        this.executorBizRepository = executorBizRepository;
+        this.executorManagerClientRepository = executorManagerClientRepository;
         this.executorRouterMap = executorRouterMap;
     }
 
@@ -232,7 +232,7 @@ public class XxlJobTrigger {
     public ReturnT<String> runExecutor(TriggerParam triggerParam, String address){
         ReturnT<String> runResult = null;
         try {
-            ExecutorManager executorManager = executorBizRepository.getExecutorBiz(address);
+            ExecutorManager executorManager = executorManagerClientRepository.getExecutorBiz(address);
             runResult = executorManager.run(triggerParam);
         } catch (Exception e) {
             logger.error(">>>>>>>>>>> xxl-job trigger error, please check if the executor[{}] is running.", address, e);
