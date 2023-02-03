@@ -4,6 +4,7 @@ import com.xxl.job.admin.core.cron.CronExpression;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
+import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobRegistryDao;
@@ -172,8 +173,12 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
     }
 
     public String registry(RegistryParam registryParam) {
-        // TODO 应用端改为只在启动时注册，存在时更新，不存在是新增
-        xxlJobRegistryDao.registrySave(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue(), new Date());
+        XxlJobRegistry xxlJobRegistry = xxlJobRegistryDao.selectByKey(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+        if (Objects.isNull(xxlJobRegistry)) {
+            xxlJobRegistryDao.registrySave(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue(), new Date());
+        } else {
+            xxlJobRegistryDao.updateById(xxlJobRegistry.getId(), new Date());
+        }
         // fresh
         freshGroupRegistryInfo(registryParam);
         return "success";
@@ -189,6 +194,15 @@ public class JobRemoteApiServiceImpl implements JobRemoteApiService {
     }
 
     private void freshGroupRegistryInfo(RegistryParam registryParam) {
-        // TODO 更新group
+        List<XxlJobRegistry> jobRegistries = xxlJobRegistryDao.selectByAppName(registryParam.getRegistryKey());
+        String address = jobRegistries.stream().map(XxlJobRegistry::getRegistryValue).collect(Collectors.joining(","));
+        if (StringUtils.hasText(address)) {
+            XxlJobGroup xxlJobGroup = new XxlJobGroup();
+            xxlJobGroup.setAddressList(address);
+            xxlJobGroup.setAppname(registryParam.getRegistryKey());
+            xxlJobGroup.setUpdateTime(new Date());
+            xxlJobGroupDao.updateByAppName(xxlJobGroup);
+        }
+
     }
 }

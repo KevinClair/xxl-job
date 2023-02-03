@@ -32,8 +32,17 @@ public interface XxlJobRegistryDao {
                             @Param("updateTime") Date updateTime);
 
     public int registryDelete(@Param("registryGroup") String registryGroup,
-                          @Param("registryKey") String registryKey,
-                          @Param("registryValue") String registryValue);
+                              @Param("registryKey") String registryKey,
+                              @Param("registryValue") String registryValue);
 
     int beatUpdate(@Param("ids") List<Integer> ids, @Param("date") Date date);
+
+    List<XxlJobRegistry> selectByAppName(@Param("appName") String appName);
+
+    XxlJobRegistry selectByKey(@Param("registryGroup") String registryGroup,
+                               @Param("registryKey") String registryKey,
+                               @Param("registryValue") String registryValue);
+
+    int updateById(@Param("id") Integer id,
+                   @Param("date") Date date);
 }
