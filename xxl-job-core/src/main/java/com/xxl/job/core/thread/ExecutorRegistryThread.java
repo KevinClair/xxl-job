@@ -8,6 +8,7 @@ import com.xxl.job.core.executor.config.XxlJobConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by xuxueli on 17/3/2.
@@ -44,7 +45,9 @@ public class ExecutorRegistryThread implements DisposableBean {
     public void startRegistry() {
 //        this.executorRegistryThreadPool.scheduleAtFixedRate(() -> {
 //        }, 0, RegistryConstants.BEAT_TIMEOUT, TimeUnit.SECONDS);
-
+        if (StringUtils.hasText(configuration.getAddress())) {
+            return;
+        }
         RegistryParam registryParam = new RegistryParam(RegistryConstants.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
         try {
             ReturnT<String> registryResult = adminManagerClientWrapper.getAdminManager().registry(registryParam);
@@ -69,6 +72,9 @@ public class ExecutorRegistryThread implements DisposableBean {
 //        } catch (InterruptedException exception) {
 //            logger.error(">>>>>>>>>>> xxl-job executorRegistryThreadPool shutdown error.", exception);
 //        }
+        if (StringUtils.hasText(configuration.getAddress())) {
+            return;
+        }
         RegistryParam registryParam = new RegistryParam(RegistryConstants.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
         try {
             ReturnT<String> registryResult = adminManagerClientWrapper.getAdminManager().registryRemove(registryParam);
