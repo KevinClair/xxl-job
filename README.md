@@ -120,5 +120,6 @@ public class Test {
 * 取消客户端的重复注册逻辑，改为只在启动时注册，后续通过Admin进行探活
 * 增加对手动注册的执行器的探活
 * 线程池关闭优化，全局线程工厂统一命名
-* 允许用户在Admin进行手动添加job，客户端的服务器正常启动，但是客户端不填写地址时，取消注册逻辑；
-* Admin上添加执行器时，操作xxl_job_registry表
+* 允许用户在Admin进行手动添加job，客户端的服务器正常启动，但是客户端不填写地址时，取消注册逻辑(done)
+* Admin上添加执行器时，操作xxl_job_registry表(done)
+* xxl_job_registry表三个字段唯一
