@@ -4,11 +4,10 @@ import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.common.enums.RegistryConstants;
 import com.xxl.job.common.utils.JacksonUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.xxl.job.common.utils.JacksonUtil.writeValueAsString;
@@ -92,5 +91,47 @@ public class JacksonUtilTest {
                     v1.addAll(v2);
                     return v1;
                 }));
+    }
+
+    private static final ConcurrentHashMap<String, List<XxlJobRegistry>> ZOMBIE_REGISTRY_MAP = new ConcurrentHashMap<>();
+
+    @Test
+    public void testConcurrentHashMap() {
+
+        List<XxlJobRegistry> list = new ArrayList<>();
+        XxlJobRegistry registry1 = new XxlJobRegistry();
+        registry1.setRegistryKey("123");
+        list.add(registry1);
+
+        XxlJobRegistry registry2 = new XxlJobRegistry();
+        registry2.setRegistryKey("111");
+        list.add(registry2);
+
+        ZOMBIE_REGISTRY_MAP.put("1", list);
+
+        ZOMBIE_REGISTRY_MAP.put("2", list);
+
+        List<XxlJobRegistry> list1 = new ArrayList<>();
+        list1.add(registry2);
+        ZOMBIE_REGISTRY_MAP.put("3", list1);
+
+        for (Map.Entry<String, List<XxlJobRegistry>> entry : ZOMBIE_REGISTRY_MAP.entrySet()) {
+            if (entry.getKey().equals("1")) {
+                ZOMBIE_REGISTRY_MAP.remove("1");
+                continue;
+            }
+            List<XxlJobRegistry> entryValue = entry.getValue();
+            Iterator<XxlJobRegistry> iterator = entryValue.iterator();
+            while (iterator.hasNext()) {
+                XxlJobRegistry registry = iterator.next();
+                if (registry.getRegistryKey().equals("111")) {
+                    iterator.remove();
+                }
+            }
+            if (CollectionUtils.isEmpty(entryValue)) {
+                ZOMBIE_REGISTRY_MAP.remove(entry.getKey());
+            }
+        }
+
     }
 }
