@@ -45,4 +45,6 @@ public interface XxlJobRegistryDao {
 
     int updateById(@Param("id") Integer id,
                    @Param("date") Date date);
+
+    int saveBatch(@Param("list") List<XxlJobRegistry> list);
 }
