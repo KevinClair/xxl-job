@@ -103,4 +103,10 @@
 		</foreach>
 	</insert>
 
+	<delete id="deleteByAppName">
+		DELETE
+		FROM xxl_job_registry
+		where registry_key = #{appName}
+	</delete>
+
 </mapper>

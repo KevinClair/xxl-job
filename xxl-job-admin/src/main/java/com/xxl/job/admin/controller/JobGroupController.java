@@ -1,5 +1,8 @@
 package com.xxl.job.admin.controller;
 
+import com.xxl.job.admin.controller.vo.AddXxlJobGroupRequest;
+import com.xxl.job.admin.controller.vo.UpdateXxlJobGroupRequest;
+import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
@@ -10,12 +13,16 @@ import com.xxl.job.common.model.ReturnT;
 import com.xxl.job.common.utils.I18nUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * job group controller
@@ -61,42 +68,46 @@ public class JobGroupController {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ReturnT<String> save(XxlJobGroup xxlJobGroup){
+	public ReturnT<String> save(@RequestBody @Valid AddXxlJobGroupRequest request) {
 
 		// valid
-		if (xxlJobGroup.getAppname()==null || xxlJobGroup.getAppname().trim().length()==0) {
-			return new ReturnT<String>(500, (I18nUtil.getString("system_please_input")+"AppName") );
+		if (request.getAppname().contains(">") || request.getAppname().contains("<")) {
+			return new ReturnT<String>(500, "AppName" + I18nUtil.getString("system_unvalid"));
 		}
-		if (xxlJobGroup.getAppname().length()<4 || xxlJobGroup.getAppname().length()>64) {
-			return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_appname_length") );
+		if (request.getTitle().contains(">") || request.getTitle().contains("<")) {
+			return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_title") + I18nUtil.getString("system_unvalid"));
 		}
-		if (xxlJobGroup.getAppname().contains(">") || xxlJobGroup.getAppname().contains("<")) {
-			return new ReturnT<String>(500, "AppName"+I18nUtil.getString("system_unvalid") );
-		}
-		if (xxlJobGroup.getTitle()==null || xxlJobGroup.getTitle().trim().length()==0) {
-			return new ReturnT<String>(500, (I18nUtil.getString("system_please_input") + I18nUtil.getString("jobgroup_field_title")) );
-		}
-		if (xxlJobGroup.getTitle().contains(">") || xxlJobGroup.getTitle().contains("<")) {
-			return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_title")+I18nUtil.getString("system_unvalid") );
-		}
-		if (xxlJobGroup.getAddressType()!=0) {
-			if (xxlJobGroup.getAddressList()==null || xxlJobGroup.getAddressList().trim().length()==0) {
-				return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_addressType_limit") );
+		XxlJobGroup xxlJobGroup = new XxlJobGroup();
+		Date current = new Date();
+		xxlJobGroup.setAppname(request.getAppname());
+		xxlJobGroup.setAddressType(request.getAddressType());
+		xxlJobGroup.setTitle(request.getTitle());
+		xxlJobGroup.setUpdateTime(current);
+		if (request.getAddressType() == 1) {
+			if (request.getAddressList().contains(">") || request.getAddressList().contains("<")) {
+				return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_registryList") + I18nUtil.getString("system_unvalid"));
 			}
-			if (xxlJobGroup.getAddressList().contains(">") || xxlJobGroup.getAddressList().contains("<")) {
-				return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_registryList")+I18nUtil.getString("system_unvalid") );
+			// 根据appName删除所有的registry信息
+			xxlJobRegistryDao.deleteByAppName(request.getAppname());
+			List<XxlJobRegistry> xxlJobRegistryList = new ArrayList<>();
+			String addressString = Arrays.asList(request.getAddressList().split(",")).stream().filter(StringUtils::hasText).map(each -> {
+				// 更新registry信息
+				XxlJobRegistry xxlJobRegistry = new XxlJobRegistry();
+				xxlJobRegistry.setRegistryGroup(RegistryConstants.RegistryType.ADMIN.name());
+				xxlJobRegistry.setRegistryKey(request.getAppname());
+				xxlJobRegistry.setRegistryValue(each);
+				xxlJobRegistry.setUpdateTime(current);
+				xxlJobRegistryList.add(xxlJobRegistry);
+				return each;
+			}).collect(Collectors.joining(","));
+			if (!StringUtils.hasText(addressString)) {
+				return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_registryList_unvalid"));
 			}
-
-			String[] addresss = xxlJobGroup.getAddressList().split(",");
-			for (String item: addresss) {
-				if (item==null || item.trim().length()==0) {
-					return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_registryList_unvalid") );
-				}
-			}
+			xxlJobRegistryDao.saveBatch(xxlJobRegistryList);
 		}
 
 		// process
-		xxlJobGroup.setUpdateTime(new Date());
+		xxlJobGroup.setUpdateTime(current);
 
 		int ret = xxlJobGroupDao.save(xxlJobGroup);
 		return (ret>0)?ReturnT.SUCCESS:ReturnT.FAIL;
@@ -104,55 +115,61 @@ public class JobGroupController {
 
 	@RequestMapping("/update")
 	@ResponseBody
-	public ReturnT<String> update(XxlJobGroup xxlJobGroup){
+	public ReturnT<String> update(@RequestBody @Valid UpdateXxlJobGroupRequest request) {
 		// valid
-		if (xxlJobGroup.getAppname()==null || xxlJobGroup.getAppname().trim().length()==0) {
-			return new ReturnT<String>(500, (I18nUtil.getString("system_please_input")+"AppName") );
+		XxlJobGroup xxlJobGroup = xxlJobGroupDao.load(request.getId());
+		if (Objects.isNull(xxlJobGroup)) {
+			return new ReturnT<String>(500, "Invalid id");
 		}
-		if (xxlJobGroup.getAppname().length()<4 || xxlJobGroup.getAppname().length()>64) {
-			return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_appname_length") );
-		}
-		if (xxlJobGroup.getTitle()==null || xxlJobGroup.getTitle().trim().length()==0) {
-			return new ReturnT<String>(500, (I18nUtil.getString("system_please_input") + I18nUtil.getString("jobgroup_field_title")) );
-		}
-		if (xxlJobGroup.getAddressType() == 0) {
-			// 0=自动注册
-			List<String> registryList = findRegistryByAppName(xxlJobGroup.getAppname());
-			String addressListStr = null;
-			if (registryList!=null && !registryList.isEmpty()) {
-				Collections.sort(registryList);
-				addressListStr = "";
-				for (String item:registryList) {
-					addressListStr += item + ",";
-				}
-				addressListStr = addressListStr.substring(0, addressListStr.length()-1);
+		// 无论是自动注册还是手动注册，只要修改了地址，统一以修改后的地址为准，删除xxl_job_registry中的数据，重新添加
+		// 删除原有的xxl_job_registry中的数据
+		xxlJobRegistryDao.deleteByAppName(xxlJobGroup.getAppname());
+		// 重新添加
+		Date current = new Date();
+		List<XxlJobRegistry> xxlJobRegistryList = Arrays.stream(request.getAddressList().split(",")).map(each -> {
+			if (!StringUtils.hasText(each)) {
+				throw new XxlJobException("Invalid address");
 			}
-			xxlJobGroup.setAddressList(addressListStr);
-		} else {
-			// 1=手动录入
-			if (xxlJobGroup.getAddressList()==null || xxlJobGroup.getAddressList().trim().length()==0) {
-				return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_addressType_limit") );
-			}
-			String[] addresss = xxlJobGroup.getAddressList().split(",");
-			for (String item: addresss) {
-				if (item==null || item.trim().length()==0) {
-					return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_registryList_unvalid") );
-				}
-			}
-		}
-
-		// process
-		xxlJobGroup.setUpdateTime(new Date());
-
-		int ret = xxlJobGroupDao.update(xxlJobGroup);
-		return (ret>0)?ReturnT.SUCCESS:ReturnT.FAIL;
+			XxlJobRegistry registry = new XxlJobRegistry();
+			registry.setRegistryGroup(xxlJobGroup.getAddressType() == 0 ? RegistryConstants.RegistryType.EXECUTOR.name() : RegistryConstants.RegistryType.ADMIN.name());
+			registry.setRegistryKey(xxlJobGroup.getAppname());
+			registry.setRegistryValue(each);
+			registry.setUpdateTime(current);
+			return registry;
+		}).collect(Collectors.toList());
+		xxlJobRegistryDao.saveBatch(xxlJobRegistryList);
+		// 更新xxlJobGroup
+		xxlJobGroup.setTitle(request.getTitle());
+		xxlJobGroup.setAddressList(request.getAddressList());
+		xxlJobGroup.setUpdateTime(current);
+		return (xxlJobGroupDao.update(xxlJobGroup) > 0) ? ReturnT.SUCCESS : ReturnT.FAIL;
 	}
 
-	private List<String> findRegistryByAppName(String appnameParam){
+	@RequestMapping("/remove")
+	@ResponseBody
+	public ReturnT<String> remove(int id) {
+		// valid
+		XxlJobGroup xxlJobGroup = xxlJobGroupDao.load(id);
+		if (Objects.isNull(xxlJobGroup)) {
+			return new ReturnT<String>(500, "Invalid id");
+		}
+		// 删除原有的xxl_job_registry中的数据
+		xxlJobRegistryDao.deleteByAppName(xxlJobGroup.getAppname());
+		return (xxlJobGroupDao.remove(id) > 0) ? ReturnT.SUCCESS : ReturnT.FAIL;
+	}
+
+	@RequestMapping("/loadById")
+	@ResponseBody
+	public ReturnT<XxlJobGroup> loadById(int id) {
+		XxlJobGroup jobGroup = xxlJobGroupDao.load(id);
+		return jobGroup != null ? new ReturnT<XxlJobGroup>(jobGroup) : new ReturnT<XxlJobGroup>(ReturnT.FAIL_CODE, null);
+	}
+
+	private List<String> findRegistryByAppName(String appnameParam) {
 		HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
 		List<XxlJobRegistry> list = xxlJobRegistryDao.findAll(RegistryConstants.DEAD_TIMEOUT, new Date());
 		if (list != null) {
-			for (XxlJobRegistry item: list) {
+			for (XxlJobRegistry item : list) {
 				if (RegistryConstants.RegistryType.EXECUTOR.name().equals(item.getRegistryGroup())) {
 					String appname = item.getRegistryKey();
 					List<String> registryList = appAddressMap.get(appname);
@@ -168,32 +185,6 @@ public class JobGroupController {
 			}
 		}
 		return appAddressMap.get(appnameParam);
-	}
-
-	@RequestMapping("/remove")
-	@ResponseBody
-	public ReturnT<String> remove(int id){
-
-		// valid
-		int count = xxlJobInfoDao.pageListCount(0, 10, id, -1,  null, null, null);
-		if (count > 0) {
-			return new ReturnT<String>(500, I18nUtil.getString("jobgroup_del_limit_0") );
-		}
-
-		List<XxlJobGroup> allList = xxlJobGroupDao.findAll();
-		if (allList.size() == 1) {
-			return new ReturnT<String>(500, I18nUtil.getString("jobgroup_del_limit_1") );
-		}
-
-		int ret = xxlJobGroupDao.remove(id);
-		return (ret>0)?ReturnT.SUCCESS:ReturnT.FAIL;
-	}
-
-	@RequestMapping("/loadById")
-	@ResponseBody
-	public ReturnT<XxlJobGroup> loadById(int id){
-		XxlJobGroup jobGroup = xxlJobGroupDao.load(id);
-		return jobGroup!=null?new ReturnT<XxlJobGroup>(jobGroup):new ReturnT<XxlJobGroup>(ReturnT.FAIL_CODE, null);
 	}
 
 }

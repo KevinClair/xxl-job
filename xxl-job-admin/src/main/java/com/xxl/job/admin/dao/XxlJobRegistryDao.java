@@ -47,4 +47,6 @@ public interface XxlJobRegistryDao {
                    @Param("date") Date date);
 
     int saveBatch(@Param("list") List<XxlJobRegistry> list);
+
+    int deleteByAppName(@Param("appName") String appName);
 }
