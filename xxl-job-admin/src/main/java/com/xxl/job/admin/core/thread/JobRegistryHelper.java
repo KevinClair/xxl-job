@@ -130,12 +130,14 @@ public class JobRegistryHelper {
             // remove dead address (admin/executor)
             // 删除最后活跃时间大于90秒的节点
             List<XxlJobRegistry> deadRegistry = jobRegistryDao.findDead(RegistryConstants.DEAD_TIMEOUT, new Date());
-            List<Integer> deadIds = new ArrayList<>();
-            for (XxlJobRegistry each : deadRegistry) {
-                deadIds.add(each.getId());
-                putToZombie(each);
+            if (!CollectionUtils.isEmpty(deadRegistry)) {
+                List<Integer> deadIds = new ArrayList<>();
+                for (XxlJobRegistry each : deadRegistry) {
+                    deadIds.add(each.getId());
+                    putToZombie(each);
+                }
+                jobRegistryDao.removeDead(deadIds);
             }
-            jobRegistryDao.removeDead(deadIds);
 
             // fresh online address (admin/executor)
             // 存储所有仍存活的节点
