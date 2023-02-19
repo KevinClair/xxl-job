@@ -45,7 +45,7 @@ public class ExecutorRegistryThread implements DisposableBean {
     public void startRegistry() {
 //        this.executorRegistryThreadPool.scheduleAtFixedRate(() -> {
 //        }, 0, RegistryConstants.BEAT_TIMEOUT, TimeUnit.SECONDS);
-        if (StringUtils.hasText(configuration.getAddress())) {
+        if (!StringUtils.hasText(configuration.getAddress())) {
             return;
         }
         RegistryParam registryParam = new RegistryParam(RegistryConstants.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());
@@ -72,7 +72,7 @@ public class ExecutorRegistryThread implements DisposableBean {
 //        } catch (InterruptedException exception) {
 //            logger.error(">>>>>>>>>>> xxl-job executorRegistryThreadPool shutdown error.", exception);
 //        }
-        if (StringUtils.hasText(configuration.getAddress())) {
+        if (!StringUtils.hasText(configuration.getAddress())) {
             return;
         }
         RegistryParam registryParam = new RegistryParam(RegistryConstants.RegistryType.EXECUTOR.name(), configuration.getAppName(), configuration.getExecutorAddress());

@@ -76,14 +76,14 @@
 	<select id="selectByAppName" resultMap="XxlJobRegistry">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM xxl_job_registry
+		FROM xxl_job_registry as t
 		WHERE registry_key = #{appName}
 	</select>
 
 	<select id="selectByKey" resultMap="XxlJobRegistry">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM xxl_job_registry
+		FROM xxl_job_registry as t
 		WHERE registry_group = #{registryGroup}
 		AND registry_key = #{registryKey}
 		AND registry_value = #{registryValue}
