@@ -122,6 +122,7 @@ public class Test {
 * 线程池关闭优化，全局线程工厂统一命名
 * 允许用户在Admin进行手动添加job，客户端的服务器正常启动，但是客户端不填写地址时，取消注册逻辑(done)
 * Admin上添加执行器时，操作xxl_job_registry表(done)
-* xxl_job_registry表三个字段唯一
+* xxl_job_registry表三个字段唯一(done)
 * Admin升级为主从架构，主节点负责负载均衡，选择从节点进行调度任务执行；主节点负责心跳检测，之后通过raft协议同步给从节点；
 * 当Admin主节点崩溃时，自动选举新的主节点；
+* 使用java时间轮算法优化Admin调度器
