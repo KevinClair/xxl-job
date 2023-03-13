@@ -9,6 +9,7 @@
 
 * 新增xxl-job-common模块，用于存放admin和core共用的类
 * 调整了一些Maven依赖
+* 增加了线程池的优雅关闭，以及线程工厂统一命名工具
 
 ## xxl-job-admin
 
@@ -41,6 +42,9 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
 }
 ```
+* admin统一对所有注册地址进行探活，删除心跳失败的地址
+* 对在admin上手动填写的执行器，也进行统一探活
+* 在admin上手动填写执行器的地址时，同步操作xxl_job_registry表
 
 ## xxl-job-core
 
@@ -98,6 +102,8 @@ public class Test {
 
 * 完善了@XxlJob注解功能，提供自动注册job任务
   * 暂时会根据job_desc判断是否重复，不重复则新增
+* 取消了重复注册的逻辑，改为只在启动时注册一次，心跳检测改为统一由admin处理
+* 当不填写admin的地址时，取消注册的逻辑
 
 ## xxl-job-spring-boot-starter
 
@@ -108,20 +114,10 @@ public class Test {
 
 ## todo
 
-* 取消admin对core的依赖，提取公共模块(done)
-* 在core中新增添加job,删除job,更新job方法(done)
 * 新增调度类型，固定延迟
-* 增加@XxlJob的属性(done)
-* Controller的参数校验(done)
-* 调整maven包依赖管理(done)
 * XxlJobGroup中的app_name字段唯一性(done)
 * XxlJobInfo中的job_desc字段唯一性(done)
 * core的Http服务对路由处理，使用策略模式重构
-* 取消客户端的重复注册逻辑，改为只在启动时注册，后续通过Admin进行探活(done)
-* 增加对手动注册的执行器的探活(done)
-* 线程池关闭优化，全局线程工厂统一命名
-* 允许用户在Admin进行手动添加job，客户端的服务器正常启动，但是客户端不填写地址时，取消注册逻辑(done)
-* Admin上添加执行器时，操作xxl_job_registry表(done)
 * xxl_job_registry表三个字段唯一(done)
 * Admin升级为主从架构，主节点负责负载均衡，选择从节点进行调度任务执行；主节点负责心跳检测，之后通过raft协议同步给从节点；
 * 当Admin主节点崩溃时，自动选举新的主节点；
