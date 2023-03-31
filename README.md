@@ -115,7 +115,6 @@ public class Test {
 ## todo
 
 * 新增调度类型，固定延迟
-* 动态registry注册
 * XxlJobGroup中的app_name字段唯一性(done)
 * XxlJobInfo中的job_desc字段唯一性(done)
 * core的Http服务对路由处理，使用策略模式重构
