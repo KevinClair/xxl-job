@@ -119,6 +119,5 @@ public class Test {
 * XxlJobInfo中的job_desc字段唯一性(done)
 * core的Http服务对路由处理，使用策略模式重构
 * xxl_job_registry表三个字段唯一(done)
-* Admin升级为主从架构，主节点负责负载均衡，选择从节点进行调度任务执行；主节点负责心跳检测，之后通过raft协议同步给从节点；
-* 当Admin主节点崩溃时，自动选举新的主节点；
+* 优化心跳检测逻辑，僵尸节点持久化，集群环境下的心跳检测使用分布式锁进行单节点检测；
 * 使用java时间轮算法优化Admin调度器
